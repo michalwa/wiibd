@@ -1,0 +1,4 @@
+# Apache server configuration
+
+RewriteEngine On
+RewriteRule ^(.*)$ index.php [L,QSA]

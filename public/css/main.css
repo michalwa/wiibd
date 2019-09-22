@@ -1,0 +1,37 @@
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'IBM Plex Serif', serif;
+}
+
+.container {
+    margin: 50px auto;
+    width: 70%;
+}
+
+.container :first-child {
+    margin-top: 0;
+}
+
+.container :last-child {
+    margin-bottom: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+}
+
+h1.title {
+    text-align: center;
+    font-weight: 400;
+    font-size: 3em;
+    font-style: italic;
+}
+
+code {
+    font-family: 'Consolas', monospace;
+    color: #88c;
+}
