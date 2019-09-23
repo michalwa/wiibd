@@ -4,6 +4,7 @@ namespace View;
 
 use \App;
 use Http\Response;
+use Files\Path;
 
 /**
  * A renderable view template
@@ -15,6 +16,12 @@ class View {
      * @var string
      */
     private $template;
+
+    /**
+     * The current app (valid during rendering)
+     * @var App
+     */
+    private $app;
 
     /**
      * Constructs a new `View` object
@@ -32,6 +39,7 @@ class View {
      * @param array $params Parameters for the template
      */
     public function render(App $app, $params = []): string {
+        $this->app = $app;
         ob_start();
         eval('?>'.$this->template);
         return ob_get_clean();
@@ -58,7 +66,29 @@ class View {
      * @param string $name The name of the view to load
      */
     public static function load(App $app, string $name): self {
-        return new self(file_get_contents($app->getViewFilename($name)));
+        $filename = new Path(
+            $app->getRootDir(),
+            $app->getConfig('views.dir'),
+            $name.$app->getConfig('views.fileSuffix'));
+
+        return new self(file_get_contents($filename));
+    }
+
+    /* BEGIN TEMPLATE FUNCTIONS */
+
+    /**
+     * Includes a reusable component and returns it rendered with the given parameters
+     * 
+     * @param string $name The name of the component to include
+     * @param array $params The params to render the component with
+     */
+    private function include(string $name, $params = []): string {
+        $filename = new Path(
+            $this->app->getRootDir(),
+            $this->app->getConfig('views.includeDir'),
+            $name.$this->app->getConfig('views.fileSuffix'));
+
+        return (new self(file_get_contents($filename)))->render($this->app, $params);
     }
 
 }

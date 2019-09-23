@@ -35,3 +35,8 @@ code {
     font-family: 'Consolas', monospace;
     color: #88c;
 }
+
+.example-component {
+    font-style: italic;
+    color: #888;
+}

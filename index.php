@@ -13,8 +13,9 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Initialize the app with the server-side root directory and client-side root URL
-$app = new App(__DIR__, '');
+// Read config, nitialize the app
+$config = new Config(new Files\Path(__DIR__, 'config.ini'));
+$app = new App(__DIR__, $config);
 
 // Configure the router
 $router = new Routing\Router();
@@ -26,8 +27,5 @@ $request = Http\Request::get($app);
 if(($response = $router->handle($app, $request)) !== null) {
     $response->send();
 } else {
-    // 404
-    $response = Http\Response::text("No matching route found for the URL ".$request);
-    $response->setStatus(404);
-    $response->send();
+    Http\Response::text("No matching route found for the URL: ".$request, 404)->send();
 }

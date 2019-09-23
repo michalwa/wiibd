@@ -80,9 +80,10 @@ class Request {
 
         $this->credentials = new Credentials($req['user'] ?? '', $req['pass'] ?? '');
 
-        $this->path = (new Path($req['path']))->relativeTo(new Path($app->getRootUrl()));
+        $this->path = (new Path($req['path']))->relativeTo($app->getRootUrl());
 
         parse_str($req['query'] ?? '', $this->query);
+        $this->method = $method;
         $this->fragment = $req['fragment'] ?? '';
         $this->post = $post;
         $this->headers = $headers;
@@ -93,6 +94,13 @@ class Request {
      */
     public function __toString(): string {
         return $this->unparsed;
+    }
+
+    /**
+     * The method of this request
+     */
+    public function getMethod(): string {
+        return $this->method;
     }
 
     /**

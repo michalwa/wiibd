@@ -1,2 +1,0 @@
-# /public/example.txt
-Hello, world!

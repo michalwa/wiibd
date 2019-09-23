@@ -10,22 +10,30 @@ use \App;
 class Path {
 
     /**
-     * The path split into parts/subdirectories
+     * The path split into elements/subdirectories
      * @var string[]
      */
-    private $parts = [];
+    private $elements = [];
 
     /**
-     * Parses the given string into a new `Path` object
+     * Constructs a new `Path` object from the given path elements.
+     * Each argument can be either a string - in which case it will be split
+     * into elements or another `Path`.
      * 
-     * @param string $path Parts of the path to parse
+     * @param mixed $paths Parts of the path to parse
      */
-    public function __construct(string ...$paths) {
+    public function __construct(...$paths) {
         foreach($paths as $path) {
-            foreach(explode('/', str_replace('\\', '/', $path)) as $part) {
-                if(strlen($part) > 0) {
-                    $this->parts[] = $part;
+            if($path instanceof self) {
+                array_push($this->elements, ...$path->elements);
+            } else if(is_string($path)) {
+                foreach(explode('/', str_replace('\\', '/', $path)) as $part) {
+                    if(strlen($part) > 0) {
+                        $this->elements[] = $part;
+                    }
                 }
+            } else {
+                die("Invalid argument given.");
             }
         }
     }
@@ -34,85 +42,105 @@ class Path {
      * Assembles the path into a string
      */
     public function __toString(): string {
-        return implode('/', $this->parts);
+        return implode('/', $this->elements);
     }
 
     /**
      * Returns the length (numer of elements) of this path
      */
     public function length(): int {
-        return count($this->parts);
+        return count($this->elements);
     }
 
     /**
-     * Parts of the path split by `/` or `\` characters
+     * Returns the specified element of this path.
+     * 
+     * @param int $index The index of the element to return
      */
-    public function getParts(): array {
-        return $this->parts;
+    public function getElement(int $index): string {
+        return $this->elements[$index];
+    }
+
+    /**
+     * Sets the specified element of this path to the given value.
+     * 
+     * @param int $index The index of the element to set
+     * @param string $value The new value for the element
+     */
+    public function setElement(int $index, string $value): void {
+        if($index >= $this->length()) {
+            $this->elements[] = $value;
+        } else {
+            $this->elements[$index] = $value;
+        }
     }
 
     /**
      * Returns the last element of the path.
      */
-    public function filename(): string {
-        $len = count($this->parts);
-        return $len > 0 ? $this->parts[$len - 1] : '';
+    public function lastElement(): string {
+        $len = count($this->elements);
+        return $len > 0 ? $this->elements[$len - 1] : '';
     }
 
     /**
-     * Returns a copy of this path that is prepended with the specified directory path
+     * Returns a copy of this path appended with the given path
      * 
-     * @param Path $prepend The path to prepend
+     * @param self $append The path to append
      */
-    public function prepend(Path $prepend): Path {
-        $new = new self('');
-        $new->parts = array_merge($prepend->parts, $this->parts);
-        return $new;
+    public function append(self $append): self {
+        return new self($this, $append);
     }
 
     /**
-     * Returns the full path to the resource pointed to by this path.
-     * Treats the path as relative to the app root directory.
+     * Returns a copy of this path prepended with the given path
      * 
-     * @param App $app The app
+     * @param self $prepend The path to prepend
      */
-    public function rooted(App $app): Path {
-        return $this->prepend($app->getRootDir());
-    }
-
-    /**
-     * Returns `true` if the path contains the app root directory and `false` otherwise.
-     * 
-     * @param App $app The app
-     */
-    public function isRooted(App $app): bool {
-        return $this->startsWith($app->getRootDir());
+    public function prepend(self $prepend): self {
+        return new self($prepend, $this);
     }
 
     /**
      * Returns `true` if this path starts with the given path
      * 
-     * @param Path $path The path to check
+     * @param self $path The path to check
      */
-    public function startsWith(Path $path): bool {
-        return $path->length() === 0 || strpos($this.'', $path.'') === 0;
+    public function startsWith(self $path): bool {
+        return $path->length() === 0
+            || $this->length() === 0
+            || strpos($this.'', $path.'') === 0;
+    }
+
+    /**
+     * Returns `true` if this path ends with the given path
+     * 
+     * @param self $path The path to check
+     */
+    public function endsWith(self $path): bool {
+        $thisStr = $this.'';
+        $pathStr = $path.'';
+
+        return $path->length() === 0
+            || $this->length() === 0
+            || strpos($thisStr, $pathStr) === strlen($thisStr) - strlen($pathStr);
     }
 
     /**
      * Returns a new path that is a copy of this path, relative to the given path.
      * 
-     * @param Path $path The "root" path
+     * @param self $path The "root" path
      */
-    public function relativeTo(Path $path): Path {
-        $pathLen = count($path->parts);
+    public function relativeTo(self $path): self {
+        $pathLen = count($path->elements);
         if(!$this->startsWith($path)) {
             die("This path does not contain the given path.");
         }
 
-        $result = new self($this.'');
+        $result = new self($this);
         $i = 0;
-        while($i < $pathLen && $path->parts[$i] === $result->parts[0]) {
-            array_shift($result->parts);
+        while($i < $pathLen && $path->elements[$i] === $result->elements[0]) {
+            array_shift($result->elements);
             $i++;
         }
         return $result;
@@ -136,10 +164,10 @@ class Path {
      */
     public function isPublicResource(App $app): bool {
         // Long enough
-        return count($this->parts) >= 2
-        // Inside public directory
-        && in_array($app->getPublicDirName(), $this->parts)
-        // Is readable file
+        return count($this->elements) >= 2
+            // Inside public directory
+            && $this->startsWith(new self($app->getConfig('app.publicDir')))
+            // Is readable file
             && $this->prepend($app->getRootDir())->isReadableFile();
     }
 

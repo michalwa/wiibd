@@ -83,9 +83,10 @@ class Response {
      * 
      * @param string $text The text to send
      * @param string $charset The charset to send in the Content-Type header
+     * @param int $status The status code to send
      */
-    public static function text(string $text, string $charset = 'utf-8'): Response {
-        $response = new self(200);
+    public static function text(string $text, string $charset = 'utf-8', int $status = 200): Response {
+        $response = new self($status);
         $response->setHeader('Content-Type', 'text/plain; charset='.$charset);
         $response->setBody($text);
         return $response;

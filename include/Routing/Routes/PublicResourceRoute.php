@@ -13,8 +13,8 @@ use Http\Response;
 class PublicResourceRoute extends Route {
 
     public function tryHandle(App $app, Request $request): ?Response {
-        if($request->getPath()->isPublicResource($app)) {
-            return Response::file($request->getPath()->rooted($app));
+        if($request->getMethod() === 'GET' && $request->getPath()->isPublicResource($app)) {
+            return Response::file($request->getPath()->prepend($app->getRootDir()));
         }
 
         return null;
