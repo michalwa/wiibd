@@ -79,6 +79,18 @@ class Response {
     }
 
     /**
+     * Constructs a redirect response to the given URL
+     * 
+     * @param string $url The URL to redirect to
+     * @param int $status The HTTP response status
+     */
+    public static function redirect(string $url, int $status = 302): Response {
+        $response = new self($status);
+        $response->setHeader('Location', $url);
+        return $response;
+    }
+
+    /**
      * Constructs a plain text resposne containing the given text
      * 
      * @param string $text The text to send

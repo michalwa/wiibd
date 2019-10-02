@@ -1,6 +1,7 @@
 <?php
 
 use Files\Path;
+use Routing\Router;
 
 /**
  * Stores app configuration and environment
@@ -20,6 +21,12 @@ class App {
     private $config;
 
     /**
+     * The router
+     * @var Router
+     */
+    private $router;
+
+    /**
      * Constructs a new `App` object
      * 
      * @param string $rootDir The path to the root directory of the app. If constructing
@@ -29,6 +36,7 @@ class App {
     public function __construct(string $rootDir, Config $config) {
         $this->rootDir = new Path($rootDir);
         $this->config = $config;
+        $this->router = new Router();
     }
 
     /**
@@ -44,9 +52,10 @@ class App {
      * e.g. to access `config['app']['rootUrl']` call `get('app.rootUrl')`
      * 
      * @param string $option Name of the option to return
+     * @param string $default The default/fallback value
      */
-    public function getConfig(string $option) {
-        return $this->config->get($option);
+    public function getConfig(string $option, string $default = '') {
+        return $this->config->get($option, $default);
     }
 
     /**
@@ -66,6 +75,13 @@ class App {
             $this->config->get('app.rootUrl'),
             $this->config->get('app.publicDir'),
             $resource));
+    }
+
+    /**
+     * Returns the router
+     */
+    public function getRouter(): Router {
+        return $this->router;
     }
 
 }

@@ -33,7 +33,7 @@ class Path {
                     }
                 }
             } else {
-                die("Invalid argument given.");
+                throw new PathException('Invalid path element: '.$path);
             }
         }
     }

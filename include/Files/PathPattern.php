@@ -72,7 +72,7 @@ class PathPattern {
 
         for($i = 0; $i < $len; $i++) {
             $expect = $this->elements[$i];
-            $actual = $path->getParts()[$i];
+            $actual = $path->getElement($i);
 
             if($expect[0] === self::PARAM_VALIDATED || $expect[0] === self::PARAM) {
                 if($expect[0] === self::PARAM_VALIDATED) {
@@ -86,6 +86,25 @@ class PathPattern {
         }
 
         return true;
+    }
+
+    /**
+     * Renders the pattern filling in the parameters with the specified values.
+     * 
+     * @param array $params Values for the parameters
+     */
+    public function render(array $params = []): Path {
+        $path = new Path();
+
+        foreach($this->elements as $elt) {
+            if($elt[0] === self::LITERAL) {
+                $path = $path->append($elt[1]);
+            } else {
+                $path = $path->append($params[$elt[1]] ?? '{'.$elt[1].'}');
+            }
+        }
+
+        return $path;
     }
 
 }

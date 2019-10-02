@@ -1,5 +1,6 @@
 <?php
 $title = $app->getConfig('app.name') ?? 'Title';
+$request = $params['request'];
 ?>
 
 <!DOCTYPE html>
@@ -11,26 +12,32 @@ $title = $app->getConfig('app.name') ?? 'Title';
     <title><?= $title ?></title>
 
     <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,500i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= $app->getPublicUrl('/css/main.css') ?>">
 </head>
 <body>
     <div class="container">
-        <h1 class="title"><?= $title ?></h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus facere quod dignissimos mollitia itaque, veritatis ducimus iusto nostrum minima vero eligendi voluptate soluta impedit corporis cumque esse repellendus tempora. Illo laudantium voluptates perferendis reprehenderit architecto numquam at obcaecati ratione sunt sint error, corrupti, ipsa voluptas tempora similique dolore repudiandae nostrum!</p>
+        <div class="cards cards-horizontal">
+            <div class="card container">
+                <h2>Request</h2>
+                <p>
+                    Route name: <i><code><?= $request->getRouteName() ?></code></i><br>
+                    Request URL: <i><code><?= '/'.$request->getPath() ?></code></i><br>
+                    Query params:
+                </p>
+                <ul>
+                    <?php foreach($request->getQuery() as $key => $value): ?>
+                        <li><i><code><?= $key ?></code></i>: <i><code><?= $value ?></code></i>
+                    <?php endforeach; ?>
+                </ul>
 
-        <h2>Lorem, ipsum dolor</h2>
-        <p>Aliquid, perspiciatis amet! Placeat maiores maxime ut labore rem vel rerum, atque facilis asperiores, consequatur tenetur excepturi officia provident ipsum id reprehenderit. Aperiam molestias iste ratione. Possimus nobis rerum accusantium praesentium odit perspiciatis natus! Sunt rem, consequuntur repellat modi, aut nihil fuga ad velit nulla minima placeat itaque necessitatibus possimus.</p>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptates, earum quos excepturi harum, distinctio ullam laboriosam reiciendis est magni et enim officiis cum, consequatur eius explicabo optio totam? Libero voluptate aliquid cumque unde autem earum, quis numquam facere? Perferendis sed voluptatem architecto dolor officia impedit quidem! Laborum at repellendus blanditiis ipsa quam dolor iure nam architecto sapiente, magnam vel sit, nostrum ullam reprehenderit itaque! Sequi minus nihil eaque! Molestiae commodi provident minus, error ratione vitae minima eum nemo reprehenderit reiciendis nisi magnam culpa labore quo suscipit. Eos cumque tenetur, laborum quam fuga repellat odio ut deleniti laudantium. Eligendi, excepturi architecto.</p>
-        <p>Incidunt omnis a soluta ipsum beatae! Provident, fuga. Quidem cumque, eveniet dolore eligendi dicta labore rem. Nam, eveniet quasi autem unde porro facilis nulla inventore aperiam, doloremque veniam dolore ullam! Debitis aut deleniti nostrum illum temporibus ipsum similique, nihil corrupti, sunt fugit praesentium sit tenetur dicta totam provident asperiores corporis, accusantium dolore? Quis, nihil. Voluptatibus assumenda nulla praesentium quam ullam! Deserunt numquam alias quo similique totam. Expedita ab perferendis velit obcaecati cupiditate similique. Dolores, expedita quibusdam perspiciatis deserunt odit non error sed, quos unde impedit illum! Minima, dolor. Dolorem facere quos illo explicabo eos molestiae ducimus iste nam.
-        
-        <!-- Include a reusable component -->
-        <?= $this->include('example-component', ['content' => 'Repudiandae, sint?']) ?>
-        
-        </p>
+                <p>
+                    Include component: <?= $this->include('example-component', ['content' => 'OK']) ?>
+                </p>
+            </div>
 
-        <h2>Lorem, ipsum</h2>
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dicta quibusdam eos illo facere sint dignissimos at perferendis repellendus consequatur eveniet, nostrum doloribus odio, commodi impedit! Ipsam temporibus praesentium, omnis reprehenderit officia modi architecto doloremque sed? Quibusdam, dolores? Doloribus praesentium quidem nam, omnis quia vitae, tenetur ad eligendi accusantium, ipsum iste!</p>
-        <p>Ex esse numquam fugiat optio velit perspiciatis, harum deleniti cum molestias commodi quasi nisi dignissimos! Expedita laboriosam, praesentium porro quidem nostrum provident dignissimos eveniet! Culpa maiores recusandae sit rem praesentium nihil asperiores neque quidem. Cupiditate, labore voluptatum, vitae eveniet qui in similique maxime maiores dolore cum explicabo, delectus id adipisci!</p>
+            <div class="card container"></div>
+        </div>
     </div>
 </body>
 </html>

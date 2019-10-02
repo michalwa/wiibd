@@ -28,7 +28,7 @@ abstract class Validator {
      */
     public static function register(string $name, Validator $validator) {
         if(array_key_exists($name, self::$validators)) {
-            die("Validator '".$name."' already exists.");
+            die('Validator "'.$name.'" already existst.');
         }
         self::$validators[$name] = $validator;
     }
@@ -43,7 +43,7 @@ abstract class Validator {
         if(array_key_exists($validator, self::$validators)) {
             return self::$validators[$validator]->isValid($value);
         }
-        die("No validator under the name '".$validator."' found.");
+        throw new ValidationException('No validator under the name "'.$validator.'" found');
     }
 
 }

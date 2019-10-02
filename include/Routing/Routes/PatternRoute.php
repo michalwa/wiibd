@@ -14,6 +14,12 @@ use Files\PathPattern;
 abstract class PatternRoute extends Route {
 
     /**
+     * The request method this route handles
+     * @var string
+     */
+    private $method;
+
+    /**
      * The pattern the path must match for this route to handle a request
      * @var PathPattern
      */
@@ -25,16 +31,27 @@ abstract class PatternRoute extends Route {
      * @param PathPattern $pattern The pattern the path must match
      *  for this route to handle a request
      */
-    public function __construct(PathPattern $pattern) {
+    public function __construct(string $method, PathPattern $pattern) {
+        $this->method = $method;
         $this->pattern = $pattern;
     }
 
     public function tryHandle(App $app, Request $request): ?Response {
-        if($this->pattern->match($request->getPath(), $params)) {
+        if($request->getMethod() === $this->method
+            && $this->pattern->match($request->getPath(), $params)
+        ) {
+            $request->setRouteName($this->getName());
             return $this->handle($app, $request, $params);
         }
 
         return null;
+    }
+
+    /**
+     * Returns the pattern
+     */
+    public function getPattern(): PathPattern {
+        return $this->pattern;
     }
 
     /**
@@ -49,17 +66,18 @@ abstract class PatternRoute extends Route {
     /**
      * Implements `PatternRoute` with the given pattern and callback
      * 
+     * @param string $method The request method the route will handle
      * @param string $pattern The pattern the path must match
      *  for this route to handle a request
      * @param callable $callback A function implementing
      *  `PatternRoute::handle(App $app, Request $request, $params)`
      */
-    public static function new(string $pattern, callable $callback): self {
-        return new class($pattern, $callback) extends PatternRoute {
+    public static function new(string $method, string $pattern, callable $callback): self {
+        return new class($method, $pattern, $callback) extends PatternRoute {
             private $cb;
 
-            function __construct($pattern, $cb) {
-                parent::__construct(new PathPattern($pattern));
+            function __construct($method, $pattern, $cb) {
+                parent::__construct($method, new PathPattern($pattern));
                 $this->cb = $cb;
             }
 

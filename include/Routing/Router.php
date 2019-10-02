@@ -5,6 +5,7 @@ namespace Routing;
 use \App;
 use Http\Request;
 use Http\Response;
+use Routing\Routes\PatternRoute;
 
 /**
  * Handles routing
@@ -30,6 +31,32 @@ class Router {
      */
     public function add(Route $route): void {
         $this->routes[] = $route;
+    }
+
+    /**
+     * Shorthand for adding a new `GET` `PatternRoute` with the specified pattern
+     * 
+     * @param string $pattern The route pattern
+     * @param callable $callback The route handler callback
+     */
+    public function get(string $pattern, callable $callback): Route {
+        $route = PatternRoute::new('GET', $pattern, $callback);
+        $this->add($route);
+        return $route;
+    }
+
+    /**
+     * Finds and return a registered route with the given name
+     * 
+     * @param string $name The name to search for
+     */
+    public function getRoute(string $name): ?Route {
+        foreach($this->routes as $route) {
+            if($route->getName() === $name) {
+                return $route;
+            }
+        }
+        return null;
     }
 
     /**

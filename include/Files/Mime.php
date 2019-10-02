@@ -73,13 +73,16 @@ class Mime {
     public static function get(string $filename): string {
         $split = explode('.', $filename);
         $extension = strtolower(array_pop($split));
+
         if(array_key_exists($extension, self::EXT)) {
             return self::EXT[$extension];
+
         } else if(function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME);
             $mimetype = finfo_file($finfo, $filename);
             finfo_close($finfo);
             return $mimetype;
+            
         } else {
             return 'application/octet-stream';
         }

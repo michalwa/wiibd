@@ -29,11 +29,15 @@ class Config {
      * e.g. to access `config['app']['rootUrl']` call `get('app.rootUrl')`
      * 
      * @param string $option Name of the option to return
+     * @param string $default The default/fallback value
      */
-    public function get(string $option) {
+    public function get(string $option, string $default = '') {
         $value = $this->config;
         foreach(explode('.', $option) as $key) {
             $value = $value[$key];
+            if($value === null) {
+                return $default;
+            }
         }
         return $value;
     }

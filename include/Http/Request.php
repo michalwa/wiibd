@@ -60,6 +60,12 @@ class Request {
     private $headers;
 
     /**
+     * Resolved route name
+     * @var string
+     */
+    private $routeName = '<unresolved>';
+
+    /**
      * Constructs a new `Request` object
      * 
      * @param App $app The app
@@ -147,6 +153,22 @@ class Request {
      */
     public function getHeaders() {
         return $this->headers;
+    }
+
+    /**
+     * Sets the route name
+     * 
+     * @param string $routeName The new route name
+     */
+    public function setRouteName(string $routeName) {
+        $this->routeName = $routeName;
+    }
+
+    /**
+     * Returns the route name for this request
+     */
+    public function getRouteName(): string {
+        return $this->routeName;
     }
 
     /**

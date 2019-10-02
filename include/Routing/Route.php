@@ -11,19 +11,10 @@ use Http\Response;
 abstract class Route {
 
     /**
-     * The name of this route (debugging purposes)
+     * The name of this route
      * @var string
      */
-    private $name;
-
-    /**
-     * Constructs a new `Route` object
-     * 
-     * @param string $name The name for this route
-     */
-    public function __construct(string $name = '<route>') {
-        $this->name = $name;
-    }
+    private $name = '<route>';
 
     /**
      * Returns a textual representation of this route
@@ -33,7 +24,16 @@ abstract class Route {
     }
 
     /**
-     * The name of this route (debugging purposes)
+     * Sets the name of this route
+     * 
+     * @param string $name The new name of this route
+     */
+    public function setName(string $name) {
+        $this->name = $name;
+    }
+
+    /**
+     * Returns the name of this route
      */
     public function getName(): string {
         return $this->name;
