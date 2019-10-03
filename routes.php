@@ -9,6 +9,6 @@ use Http\Request;
 use Http\Response;
 use View\View;
 
-$router->setFallback(function($app, $request) {
-    return View::load($app, 'errors/404')->toResponse($app, ['url' => $request.''], 404);
+$router->setFallback(function($request) {
+    return View::load('errors/404')->toResponse(['url' => $request.''], 404);
 });

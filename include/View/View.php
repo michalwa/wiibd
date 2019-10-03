@@ -18,12 +18,6 @@ class View {
     private $template;
 
     /**
-     * The current app (valid during rendering)
-     * @var App
-     */
-    private $app;
-
-    /**
      * Constructs a new `View` object
      * 
      * @param string $template The template to render
@@ -35,11 +29,9 @@ class View {
     /**
      * Renders this view and returns the resulting HTML document
      * 
-     * @param App $app The app
      * @param array $params Parameters for the template
      */
-    public function render(App $app, $params = []): string {
-        $this->app = $app;
+    public function render($params = []): string {
         ob_start();
         eval('?>'.$this->template);
         return ob_get_clean();
@@ -48,24 +40,23 @@ class View {
     /**
      * Renders this view and prepares an HTML response
      * 
-     * @param App $app The App
      * @param array $params Parameters for the template
      * @param int $status The HTTP status for the response
      */
-    public function toResponse(App $app, $params = [], int $status = 200): Response {
+    public function toResponse($params = [], int $status = 200): Response {
         $response = new Response($status);
         $response->setHeader('Content-Type', 'text/html; charset=utf-8');
-        $response->setBody($this->render($app, $params));
+        $response->setBody($this->render($params));
         return $response;
     }
 
     /**
      * Loads a view from an appropriate file based on the given name
      * 
-     * @param App $app The app
      * @param string $name The name of the view to load
      */
-    public static function load(App $app, string $name): self {
+    public static function load(string $name): self {
+        $app = App::get();
         $filename = new Path(
             $app->getRootDir(),
             $app->getConfig('views.dir'),
@@ -83,12 +74,13 @@ class View {
      * @param array $params The params to render the component with
      */
     private function include(string $name, $params = []): string {
+        $app = App::get();
         $filename = new Path(
-            $this->app->getRootDir(),
-            $this->app->getConfig('views.includeDir'),
-            $name.$this->app->getConfig('views.fileSuffix'));
+            $app->getRootDir(),
+            $app->getConfig('views.includeDir'),
+            $name.$app->getConfig('views.fileSuffix'));
 
-        return (new self(file_get_contents($filename)))->render($this->app, $params);
+        return (new self(file_get_contents($filename)))->render($params);
     }
 
 }

@@ -36,12 +36,12 @@ abstract class PatternRoute extends Route {
         $this->pattern = $pattern;
     }
 
-    public function tryHandle(App $app, Request $request): ?Response {
+    public function tryHandle(Request $request): ?Response {
         if($request->getMethod() === $this->method
             && $this->pattern->match($request->getPath(), $params)
         ) {
             $request->setRouteName($this->getName());
-            return $this->handle($app, $request, $params);
+            return $this->handle($request, $params);
         }
 
         return null;
@@ -57,11 +57,10 @@ abstract class PatternRoute extends Route {
     /**
      * Actually handles the request with the path matching the pattern of this route
      * 
-     * @param App $app The app
      * @param Request $request The request to handle
      * @param array $params Values of the pattern parameters as an associative array
      */
-    protected abstract function handle(App $app, Request $request, $params): Response;
+    protected abstract function handle(Request $request, $params): Response;
 
     /**
      * Implements `PatternRoute` with the given pattern and callback
@@ -81,8 +80,8 @@ abstract class PatternRoute extends Route {
                 $this->cb = $cb;
             }
 
-            protected function handle(App $app, Request $request, $params): Response {
-                return call_user_func($this->cb, $app, $request, $params);
+            protected function handle(Request $request, $params): Response {
+                return call_user_func($this->cb, $request, $params);
             }
         };
     }

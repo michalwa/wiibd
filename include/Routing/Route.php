@@ -42,9 +42,8 @@ abstract class Route {
     /**
      * Handles the given request and returns a response or `null`.
      * 
-     * @param \App $app The app
      * @param Request $request The request to handle
      */
-    public abstract function tryHandle(\App $app, Request $request): ?Response;
+    public abstract function tryHandle(Request $request): ?Response;
 
 }

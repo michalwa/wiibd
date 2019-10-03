@@ -8,10 +8,10 @@ use View\View;
 class ExampleController extends Controller {
 
     /**
-     * Route: GET "/"
+     * @Routing\Annotations\Route('GET', '/')
      */
-    public function index(App $app, Request $request, $params): Response {
-        return View::load($app, 'example')->toResponse($app, [ 'request' => $request ]);
+    public function index(Request $request, $params): Response {
+        return View::load('example')->toResponse([ 'request' => $request ]);
     }
 
 }

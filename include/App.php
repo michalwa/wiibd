@@ -9,6 +9,12 @@ use Routing\Router;
 class App {
 
     /**
+     * The singleton instance of the app
+     * @var App
+     */
+    private static $instance = null;
+
+    /**
      * The path to the root directory of the app
      * @var Path
      */
@@ -27,13 +33,27 @@ class App {
     private $router;
 
     /**
-     * Constructs a new `App` object
+     * Initializes and returns the app
      * 
      * @param string $rootDir The path to the root directory of the app. If constructing
      *  from index.php in root directory, use `__DIR__`.
      * @param Config $config Loaded app configuration
      */
-    public function __construct(string $rootDir, Config $config) {
+    public static function init(string $rootDir, Config $config): App {
+        if(self::$instance === null) {
+            self::$instance = new self($rootDir, $config);
+        }
+        return self::$instance;
+    }
+    
+    /**
+     * Returns the singleton app instance
+     */
+    public static function get(): App {
+        return self::$instance;
+    }
+
+    private function __construct(string $rootDir, Config $config) {
         $this->rootDir = new Path($rootDir);
         $this->config = $config;
         $this->router = new Router();

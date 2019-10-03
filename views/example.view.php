@@ -1,4 +1,5 @@
 <?php
+$app = App::get();
 $title = $app->getConfig('app.name') ?? 'Title';
 $request = $params['request'];
 ?>
@@ -30,7 +31,6 @@ $request = $params['request'];
                         <li><i><code><?= $key ?></code></i>: <i><code><?= $value ?></code></i>
                     <?php endforeach; ?>
                 </ul>
-
                 <p>
                     Include component: <?= $this->include('example-component', ['content' => 'OK']) ?>
                 </p>

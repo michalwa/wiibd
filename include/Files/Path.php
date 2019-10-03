@@ -159,10 +159,9 @@ class Path {
     /**
      * Returns `true`, if the path points to an existing public resource or `false` otherwise.
      * Treats the path as relative to the app root directory.
-     * 
-     * @param App $app The app
      */
-    public function isPublicResource(App $app): bool {
+    public function isPublicResource(): bool {
+        $app = App::get();
         // Long enough
         return count($this->elements) >= 2
             // Inside public directory

@@ -19,11 +19,4 @@ class Methods {
         'TRACE'
     ];
 
-    /**
-     * Returns a regular expression matching any HTTP method mnemonic
-     */
-    public static function getRegex(): string {
-        return implode('|', self::METHODS);
-    }
-
 }

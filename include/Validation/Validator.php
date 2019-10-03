@@ -49,4 +49,5 @@ abstract class Validator {
 }
 
 // Register default validators
-Validator::register('uint', new UIntValidator());
+Validator::register('uint',   new UIntValidator());
+Validator::register('number', new NumberValidator());

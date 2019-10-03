@@ -2,7 +2,6 @@
 
 namespace Routing;
 
-use \App;
 use Http\Request;
 use Http\Response;
 use Routing\Routes\PatternRoute;
@@ -73,18 +72,17 @@ class Router {
     /**
      * Handles the given HTTP request and returns a response.
      * 
-     * @param App $app The app
      * @param Request $request The request to handle.
      */
-    public function handle(App $app, Request $request): ?Response {
+    public function handle(Request $request): ?Response {
         foreach($this->routes as $route) {
-            if(($response = $route->tryHandle($app, $request)) !== null) {
+            if(($response = $route->tryHandle($request)) !== null) {
                 return $response;
             }
         }
 
         if($this->fallback !== null) {
-            return call_user_func($this->fallback, $app, $request);
+            return call_user_func($this->fallback, $request);
         }
 
         return null;

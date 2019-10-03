@@ -68,14 +68,12 @@ class Request {
     /**
      * Constructs a new `Request` object
      * 
-     * @param App $app The app
      * @param string $method The request method used
      * @param string $url The requested URL
      * @param array $post Submitted `POST` parameters
      * @param array $post HTTP Headers attached to the request
      */
     public function __construct(
-        App $app,
         string $method,
         string $url,
         array $post,
@@ -86,7 +84,7 @@ class Request {
 
         $this->credentials = new Credentials($req['user'] ?? '', $req['pass'] ?? '');
 
-        $this->path = (new Path($req['path']))->relativeTo($app->getRootUrl());
+        $this->path = (new Path($req['path']))->relativeTo(App::get()->getRootUrl());
 
         parse_str($req['query'] ?? '', $this->query);
         $this->method = $method;
@@ -176,9 +174,8 @@ class Request {
      * 
      * @param App $app The app
      */
-    public static function get(App $app): self {
+    public static function get(): self {
         return new self(
-            $app,
             $_SERVER['REQUEST_METHOD'],
             $_SERVER['REQUEST_URI'],
             $_POST,

@@ -12,7 +12,8 @@ use Http\Response;
  */
 class PublicResourceRoute extends Route {
 
-    public function tryHandle(App $app, Request $request): ?Response {
+    public function tryHandle(Request $request): ?Response {
+        $app = App::get();
         if($request->getMethod() === 'GET' && $request->getPath()->isPublicResource($app)) {
             return Response::file($request->getPath()->prepend($app->getRootDir()));
         }
