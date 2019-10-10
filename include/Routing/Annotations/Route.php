@@ -2,6 +2,10 @@
 
 namespace Routing\Annotations;
 
+use \Reflector;
+use \ReflectionFunction;
+use \ReflectionMethod;
+use \App;
 use Meta\Annotation;
 use Meta\AnnotationException;
 use Routing\Routes\PatternRoute;
@@ -12,11 +16,11 @@ use Routing\Routes\PatternRoute;
  */
 class Route extends Annotation {
 
-    public static function instantiate(?object $object, \Reflector $item, $params): Annotation {
-        if($item instanceof \ReflectionFunction) {
+    public static function instantiate(Reflector $item, ?object $object, $params): Annotation {
+        if($item instanceof ReflectionFunction) {
             $closure = $item->getClosure();
             $name = $item->name;
-        } else if($item instanceof \ReflectionMethod) {
+        } else if($item instanceof ReflectionMethod) {
             $closure = $item->getClosure($object);
             $name = $item->class.'::'.$item->name;
         } else {
@@ -25,7 +29,7 @@ class Route extends Annotation {
         
         $route = PatternRoute::new($params[0], $params[1], $closure);
         $route->setName($name);
-        \App::get()->getRouter()->add($route);
+        App::get()->getRouter()->add($route);
 
         return new self();
     }

@@ -2,8 +2,8 @@
 
 namespace Controller;
 
-use \App;
 use \ReflectionClass;
+use \App;
 use Http\Response;
 use Http\Methods;
 use Routing\Routes\PatternRoute;
@@ -20,7 +20,9 @@ abstract class Controller {
     public function __construct() {
         $class = new ReflectionClass($this);
         foreach($class->getMethods() as $method) {
-            Annotations::parseAll($this, $method, $method->getDocComment());
+            Annotations::parseAll($method, $this, $method->getDocComment(), [
+                'Route' => 'Routing\Annotations\Route'
+            ]);
         }
     }
 

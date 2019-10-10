@@ -8,7 +8,7 @@ use View\View;
 class ExampleController extends Controller {
 
     /**
-     * @Routing\Annotations\Route('GET', '/')
+     * @Route('GET', '/')
      */
     public function index(Request $request, $params): Response {
         return View::load('example')->toResponse([ 'request' => $request ]);
