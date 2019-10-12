@@ -53,14 +53,15 @@ class Annotations {
                     if(substr($doc, $offset, 1) === ')') $end = true;
                 }
 
+                $lineOffset = -substr_count(substr($doc, $match[0][1]), "\n") - 1;
+
                 $class = new \ReflectionClass($className);
                 if(!$class->isSubclassOf('Meta\Annotations\Annotation')) {
-                    throw new AnnotationException('Type '.$className.' is not a subclass of Meta\Annotations\Annotation', $item);
+                    throw new AnnotationException('Type '.$className.' is not a subclass of Meta\Annotations\Annotation', $item, $lineOffset);
                 }
 
                 if($className::single() && in_array($className, $types)) {
                     // FIXME: This doesn't work if there are newlines between the doc comment and the item
-                    $lineOffset = -substr_count(substr($doc, $match[0][1]), "\n") - 1;
                     throw new AnnotationException('Annotation @'.$className.' can only be used once on a single item.', $item, $lineOffset);
                 }
                 $types[] = $className;
