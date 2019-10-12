@@ -13,6 +13,8 @@ use Http\Response;
 use Database\Database;
 use View\View;
 
+require 'common.php';
+
 // Register an autoloader
 spl_autoload_register(function(string $class) {
     $file = rtrim(__DIR__, '/\\').'/include/'.str_replace('\\', '/', $class).'.php';

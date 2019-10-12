@@ -25,7 +25,9 @@ class Path {
     public function __construct(...$paths) {
         foreach($paths as $path) {
             if($path instanceof self) {
-                array_push($this->elements, ...$path->elements);
+                foreach($path->elements as $elt) {
+                    array_push($this->elements, $elt);
+                }
             } else if(is_string($path)) {
                 foreach(explode('/', str_replace('\\', '/', $path)) as $part) {
                     if(strlen($part) > 0) {

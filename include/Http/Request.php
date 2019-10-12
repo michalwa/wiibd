@@ -70,8 +70,8 @@ class Request {
      * 
      * @param string $method The request method used
      * @param string $url The requested URL
-     * @param string[string] $post Submitted `POST` parameters
-     * @param string[string] $post HTTP Headers attached to the request
+     * @param array $post Submitted `POST` parameters
+     * @param array $post HTTP Headers attached to the request
      */
     public function __construct(
         string $method,

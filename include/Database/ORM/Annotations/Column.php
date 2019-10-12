@@ -4,8 +4,8 @@ namespace Database\ORM\Annotations;
 
 use \Reflector;
 use \ReflectionProperty;
-use \InvalidArgumentException;
-use Meta\Annotation;
+use Meta\Annotations\Annotation;
+use Meta\Annotations\AnnotationException;
 
 /**
  * @Column annotation to be used on entity class properties
@@ -26,14 +26,6 @@ class Column extends Annotation {
     private $propertyName;
 
     /**
-     * Constructs a new `Column` annotation object
-     */
-    private function __construct(string $name, string $propertyName) {
-        $this->name = $name;
-        $this->propertyName = $propertyName;
-    }
-
-    /**
      * Returns the column name
      */
     public function getName(): string {
@@ -50,13 +42,14 @@ class Column extends Annotation {
     /**
      * {@inheritDoc}
      */
-    public static function instantiate(Reflector $item, ?object $object, $params): Annotation {
+    public function __construct(Reflector $item, $params) {
+        parent::__construct($item);
         if( !($item instanceof ReflectionProperty) ) {
-            throw new InvalidArgumentException("@Column can only be used on properties");
+            throw new AnnotationException("@Column annotation can only be used on properties");
         }
-        $itemName = $item->getName();
-        $name = count($params) > 0 && is_string($params[0]) ? $params[0] : $itemName;
-        return new Column($name, $itemName);
+
+        $this->name = count($params) > 0 && is_string($params[0]) ? $params[0] : $item->getName();
+        $this->propertyName = $item->getName();
     }
 
 }

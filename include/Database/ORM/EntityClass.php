@@ -4,13 +4,21 @@ namespace Database\ORM;
 
 use \ReflectionClass;
 use \InvalidArgumentException;
-use Meta\Annotations;
+use Meta\Annotations\ReflectionClassAnnotated;
 use Database\ORM\Annotations\Column;
 
 /**
  * Reflects an entity class
  */
 class EntityClass {
+
+    /**
+     * Annotation class aliases used for annotation parsing
+     */
+    private const ANNOTATION_ALIASES = [
+        'Table'  => 'Database\ORM\Annotations\Table',
+        'Column' => 'Database\ORM\Annotations\Column'
+    ];
 
     /**
      * Instances of `EntityClass` for class names
@@ -25,7 +33,7 @@ class EntityClass {
     private $class;
 
     /**
-     * Columns
+     * Column annotations
      * @var Column[]
      */
     private $columns = [];
@@ -37,29 +45,25 @@ class EntityClass {
         if(!$class->isSubclassOf('Database\ORM\Entity')) {
             throw new InvalidArgumentException('Entity class must extend Database\ORM\Entity');
         }
-        $this->class = $class;
-        foreach($this->class->getProperties() as $property) {
-            $annotations = Annotations::parseAll($property, null, $property->getDocComment(), [
-                'Column' => 'Database\ORM\Annotations\Column'
-            ]);
 
-            foreach($annotations as $annotation) {
-                if($annotation instanceof Column) {
-                    $this->columns[] = $annotation;
-                }
-            }
+        $this->class = $class;
+        $properties = ReflectionClassAnnotated::from($class, self::ANNOTATION_ALIASES)->getPropertiesAnnotated();
+        /** @var \Meta\Annotations\ReflectionPropertyAnnotated $property */
+        foreach($properties as $property) {
+            $annotation = $property->getAnnotation('Database\ORM\Annotations\Column');
+            if($annotation !== null) $this->columns[] = $annotation;
         }
     }
 
     /**
      * Instantiates the entity class based on the given values.
      * 
-     * @param mixed[string] @values The column values
+     * @param array @values The column values
      * 
-     * @return Entity|null The instantiated entity or `null` if `null` was passed
+     * @return Entity|null The instantiated entity or `null` if `null` or `false` was passed
      */
     public function instantiate($values): ?Entity {
-        if($values === null) return null;
+        if($values === null || $values === false) return null;
         $entity = $this->class->newInstance();
         foreach($this->columns as $column) {
             $property = $column->getPropertyName();

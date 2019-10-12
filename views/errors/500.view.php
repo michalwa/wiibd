@@ -4,24 +4,11 @@ $extendedInfo = $app->getConfig('mode') === 'development';
 $appName      = $app->getConfig('app.name');
 $status       = Http\Status::toString(500);
 
+$invalidArgFunc = null;
+$invalidArg = -1;
 if(preg_match('/^Argument (\d+?) passed to (.*?)\(\) must be/', $params['message'], $matches)) {
     $invalidArg = (int)$matches[1] - 1;
     $invalidArgFunc = $matches[2];
-}
-
-function __to_string($obj) {
-    if(is_object($obj)) {
-        return get_class($obj);
-    } else if(is_string($obj)) {
-        return '"'.stripcslashes($obj).'"';
-    } else if(is_array($obj)) {
-        $str = '[ ';
-        foreach($obj as $item) {
-            if($str !== '[ ') $str .= ', ';
-            $str .= __to_string($item);
-        }
-        return $str.' ]';
-    }
 }
 ?>
 
@@ -33,7 +20,7 @@ function __to_string($obj) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?= $appName ?> | <?= Http\Status::toString(500) ?></title>
 
-    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400i,500i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:500i&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300&display=swap" rel="stylesheet">
 
@@ -88,28 +75,33 @@ function __to_string($obj) {
             (<span class="error-code"><?= $params['code'] ?></span>)
             in <span class="error-file"><?= $params['file'] ?></span>, line <?= $params['line'] ?>
 
+            <!-- Message -->
+            <p class="error-message"><?= $params['message'] ?></p>
+
             <!-- Stack trace -->
             <ul class="error-trace">
                 <?php foreach($params['trace'] as $trace): ?>
                     <?php
-                    $function = ($trace['class'] ? $trace['class'].'::' : '');
+                    $function = (key_exists('class', $trace) && $trace['class'] ? $trace['class'].'::' : '');
                     $function .= (key_exists('function', $trace) ? $trace['function'] : '');
                     ?>
             
                     <!-- Stack trace entry -->
                     <li class="error-trace-entry">
-                        <span class="error-file"><?= $trace['file'] ?></span>, line <?= $trace['line'] ?><br>
-                        <code class="error-func"><?= $function ?>(
+                        <?php if(key_exists('file', $trace)): ?>
+                            <span class="error-file"><?= $trace['file'] ?></span>, line <?= $trace['line'] ?><br>
+                        <?php endif; ?>
+                        <code class="error-func-call"><?= $function ?>(
 
                         <!-- Arguments -->
                         <?php if(key_exists('args', $trace)): ?>
                             <?php foreach($trace['args'] as $i => $arg): ?>
 
                                 <?php if($invalidArgFunc === $function && $invalidArg === $i): ?>
-                                    <span class="invalid-arg"><?= __to_string($arg); ?></span><?= $i === count($trace['args']) - 1 ? '' : ', ' ?>
+                                    <span class="invalid-arg"><?= htmlentities(stringify($arg)); ?></span><?= $i === count($trace['args']) - 1 ? '' : ', ' ?>
 
                                 <?php else: ?>
-                                    <?= __to_string($arg); ?><?= $i === count($trace['args']) - 1 ? '' : ', ' ?>
+                                    <?= htmlentities(stringify($arg)); ?><?= $i === count($trace['args']) - 1 ? '' : ', ' ?>
 
                                 <?php endif; ?>
                             <?php endforeach; ?>
@@ -119,8 +111,6 @@ function __to_string($obj) {
                     </li>
                 <?php endforeach; ?>
             </ul>
-
-            <p class="error-message"><?= $params['message'] ?></p>
         <?php endif; ?>
     </div>
 </body>

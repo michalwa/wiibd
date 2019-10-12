@@ -5,9 +5,8 @@ namespace Controller;
 use \ReflectionClass;
 use \App;
 use Http\Response;
-use Http\Methods;
+use Meta\Annotations\ReflectionClassAnnotated;
 use Routing\Route\PatternRoute;
-use Meta\Annotations;
 
 /**
  * Base class for controllers
@@ -15,14 +14,21 @@ use Meta\Annotations;
 abstract class Controller {
 
     /**
+     * Annotation class aliases for annotation parsing
+     */
+    private const ANNOTATION_ALIASES = [
+        'Route' => 'Routing\Route\Annotations\Route'
+    ];
+
+    /**
      * Constructs a controller
      */
     public function __construct() {
-        $class = new ReflectionClass($this);
-        foreach($class->getMethods() as $method) {
-            Annotations::parseAll($method, $this, $method->getDocComment(), [
-                'Route' => 'Routing\Annotations\Route'
-            ]);
+        $class = new ReflectionClassAnnotated($this);
+        foreach($class->getMethodsAnnotated(null, self::ANNOTATION_ALIASES) as $method) {
+            /** @var \Routing\Route\Annotations\Route|null $annotation */
+            $annotation = $method->getAnnotation('Routing\Route\Annotations\Route');
+            if($annotation !== null) $annotation->create($this);
         }
     }
 
@@ -30,7 +36,9 @@ abstract class Controller {
      * Returns a redirect response to the rendered URL of the specified `PatternRoute`
      * 
      * @param string $name The name of the route to redirect to
-     * @param mixed[string] $params Parameter values for the path pattern
+     * @param array $params Parameter values for the path pattern
+     * 
+     * @throws ControllerException If the route is not found or is invalid
      */
     protected function redirect(string $name, $params = []): Response {
         $route = App::get()->getRouter()->getRoute($name);
@@ -50,7 +58,9 @@ abstract class Controller {
      * The given name is prepended with `self` class name.
      * 
      * @param string $name The name of the route to redirect to
-     * @param mixed[string] $params Parameter values for the path pattern
+     * @param array $params Parameter values for the path pattern
+     * 
+     * @throws ControllerException If the route is not found or is invalid
      */
     protected function redirectToSelf(string $name, $params = []): Response {
         return $this->redirect(get_called_class().'::'.$name, $params);

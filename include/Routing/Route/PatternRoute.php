@@ -58,7 +58,7 @@ abstract class PatternRoute extends Route {
      * Actually handles the request with the path matching the pattern of this route
      * 
      * @param Request $request The request to handle
-     * @param mixed[string] $params Values of the pattern parameters as an associative array
+     * @param array $params Values of the pattern parameters as an associative array
      */
     protected abstract function handle(Request $request, $params): Response;
 

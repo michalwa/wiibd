@@ -99,7 +99,7 @@ class Result implements Iterator {
     /**
      * {@inheritDoc}
      */
-    public function current(): ?array {
+    public function current() {
         if(!$this->success) return null;
         $missingRows = $this->row - count($this->cachedRows) + 1;
         while($missingRows > 0) {

@@ -2,9 +2,9 @@
 
 namespace Database\ORM\Annotations;
 
-use InvalidArgumentException;
 use \Reflector;
-use Meta\Annotation;
+use Meta\Annotations\Annotation;
+use Meta\Annotations\AnnotationException;
 
 /**
  * @Table annotation to be used on entity classes
@@ -19,15 +19,6 @@ class Table extends Annotation {
     private $name;
 
     /**
-     * Constructs a new `Table` annotation object
-     * 
-     * @param string $name The table name
-     */
-    private function __construct(string $name) {
-        $this->name = $name;
-    }
-
-    /**
      * Returns the table name
      */
     public function getName(): string {
@@ -37,11 +28,12 @@ class Table extends Annotation {
     /**
      * {@inheritDoc}
      */
-    public static function instantiate(Reflector $item, ?object $object, $params): Annotation {
+    public function __construct(Reflector $item, $params) {
+        parent::__construct($item);
         if(count($params) != 1) {
-            throw new InvalidArgumentException("Invalid number of parameters.");
+            throw new AnnotationException("Invalid number of parameters.");
         }
-        return new Table($params[0].'');
+        $this->name = (string)$params[0];
     }
 
 }

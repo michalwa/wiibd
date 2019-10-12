@@ -13,6 +13,6 @@ class Dummy extends Entity {
      * @Column()
      * @var string
      */
-    public $name = null;
+    public $name;
 
 }

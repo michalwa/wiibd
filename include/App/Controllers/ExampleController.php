@@ -29,6 +29,7 @@ class ExampleController extends Controller {
      */
     public function getDummy(Request $request, $params): Response {
         $repository = Dummy::getRepository();
+        /** @var \App\Entities\Dummy $dummy */
         $dummy = $repository->findById($params['id']);
         if($dummy !== null) {
             return Response::text($dummy->name);
