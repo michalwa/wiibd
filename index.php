@@ -11,9 +11,10 @@ use Routing\Route\PublicResourceRoute;
 use Http\Request;
 use Http\Response;
 use Database\Database;
+use View\View;
 
 // Register an autoloader
-spl_autoload_register(function ($class) {
+spl_autoload_register(function(string $class) {
     $file = rtrim(__DIR__, '/\\').'/include/'.str_replace('\\', '/', $class).'.php';
     if(file_exists($file)) {
         include $file;
@@ -23,6 +24,32 @@ spl_autoload_register(function ($class) {
 // Read config, nitialize the app
 $config = new Config(new Path(__DIR__, 'config.ini').'');
 $app = App::init(__DIR__, $config);
+
+// Set error handler
+set_error_handler(function(int $errno, string $errstr, string $errfile, int $errline) {
+    View::load('errors/500')->toResponse([
+        'class'   => null,
+        'code'    => $errno,
+        'file'    => $errfile,
+        'line'    => $errline,
+        'message' => $errstr,
+        'trace'   => [],
+    ], 500)->send();
+    die();
+});
+
+// Set exception handler
+set_exception_handler(function(Throwable $e) {
+    View::load('errors/500')->toResponse([
+        'class'   => get_class($e),
+        'code'    => $e->getCode(),
+        'file'    => $e->getFile(),
+        'line'    => $e->getLine(),
+        'message' => $e->getMessage(),
+        'trace'   => $e->getTrace(),
+    ], 500)->send();
+    die();
+});
 
 // Initialize database
 Database::init($config);
@@ -41,5 +68,5 @@ $request = Request::get();
 if(($response = $router->handle($request)) !== null) {
     $response->send();
 } else {
-    Response::text("No matching route found for the URL: ".$request, 404)->send();
+    Response::text("No matching route found for the URL: ".$request, 'utf-8', 404)->send();
 }

@@ -55,8 +55,8 @@ h1.title {
 }
 
 code {
-    color: #88a;
-    font-family: 'IBM Plex Mono', monospace;
+    color: #777;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
     font-size: 14px;
     font-weight: 400;
     display: inline-block;

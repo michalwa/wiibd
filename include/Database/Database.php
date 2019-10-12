@@ -8,6 +8,7 @@ use \PDOException;
 use Database\Query\Select;
 use Database\Query\Update;
 use Database\Query\Delete;
+use Exception;
 
 /**
  * Main database interface

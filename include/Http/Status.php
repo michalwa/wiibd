@@ -73,7 +73,7 @@ class Status {
      * Converts the given code value into a string
      */
     public static function toString($code): string {
-        $text = in_array($code, self::TEXT) ? ' '.(self::TEXT[$code]) : '';
+        $text = key_exists($code, self::TEXT) ? ' '.(self::TEXT[$code]) : '';
         return $code.$text;
     }
 

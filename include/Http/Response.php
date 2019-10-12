@@ -50,9 +50,9 @@ class Response {
      * Sets the specified header to the given value
      * 
      * @param string $header The header to set
-     * @param string $value The value to set
+     * @param mixed $value The value to set
      */
-    public function setHeader(string $header, string $value): void {
+    public function setHeader(string $header, $value): void {
         $this->headers[$header] = $value;
     }
 

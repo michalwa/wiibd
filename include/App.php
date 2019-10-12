@@ -63,6 +63,13 @@ class App {
     }
 
     /**
+     * The app name
+     */
+    public function getName(): string {
+        return $this->getConfig('app.name');
+    }
+
+    /**
      * The path to the root directory of the app.
      */
     public function getRootDir(): Path {
