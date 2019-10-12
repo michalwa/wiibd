@@ -81,9 +81,9 @@ class Result implements Iterator {
      * 
      * @throws DatabaseException If this result has more than one row
      */
-    public function get(): ?array {
+    public function get() {
         if($this->numRows > 1) {
-            throw new DatabaseException('`Result::get()` requires the result to have a single row.');
+            throw new DatabaseException('`Result::get()` requires the result to have a single row or value.');
         }
         $this->rewind();
         return $this->current();

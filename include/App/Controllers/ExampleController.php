@@ -2,10 +2,12 @@
 
 namespace App\Controllers;
 
+use \App;
 use Controller\Controller;
 use Http\Request;
 use Http\Response;
 use View\View;
+use Database\Database;
 use App\Entities\Dummy;
 
 class ExampleController extends Controller {
@@ -14,7 +16,12 @@ class ExampleController extends Controller {
      * @Route('GET', '/')
      */
     public function index(Request $request, $params): Response {
-        return View::load('example')->toResponse([ 'request' => $request ]);
+        Database::get()->connect();
+        return View::load('example')->toResponse([
+            'request' => $request,
+            'db_ok'   => Database::get()->isConnected(),
+            'db_name' => App::get()->getConfig('database.name'),
+        ]);
     }
 
     /**

@@ -4,7 +4,7 @@ body, html {
 }
 
 body {
-    font-family: 'IBM Plex Serif', serif;
+    font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 
 .container {
@@ -30,6 +30,7 @@ body {
 
 .card {
     flex: 1;
+    min-width: 300px;
     margin: 10px;
     padding: 20px;
     border: 1px solid #ccc;
@@ -42,6 +43,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
+    font-family: 'IBM Plex Serif';
     font-weight: 500;
     font-style: italic;
 }
@@ -70,4 +72,12 @@ code {
 
 ul {
     margin: 0;
+}
+
+.ok {
+    color: rgb(51, 192, 121);
+}
+
+.error {
+    color: rgb(204, 76, 91);
 }
