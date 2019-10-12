@@ -7,6 +7,10 @@ use \ReflectionProperty;
 use \InvalidArgumentException;
 use Meta\Annotation;
 
+/**
+ * @Column annotation to be used on entity class properties
+ * Usage: `@Column([name])`
+ */
 class Column extends Annotation {
 
     /**

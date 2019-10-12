@@ -1,9 +1,12 @@
 <?php
 
+namespace App\Controllers;
+
 use Controller\Controller;
 use Http\Request;
 use Http\Response;
 use View\View;
+use App\Entities\Dummy;
 
 class ExampleController extends Controller {
 

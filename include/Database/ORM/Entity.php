@@ -3,6 +3,8 @@
 namespace Database\ORM;
 
 use \ReflectionClass;
+use Database\ORM\Annotations\Table;
+use Meta\Annotations;
 
 /**
  * Entity classes define models for database entries
@@ -13,7 +15,18 @@ class Entity {
      * Returns the repository for this entity type
      */
     public static function getRepository(): Repository {
-        return Repository::for(get_called_class());
+        $class = new ReflectionClass(get_called_class());
+        $annotations = Annotations::parseAll($class, null, $class->getDocComment(), [
+            'Table' => 'Database\ORM\Annotations\Table'
+        ]);
+        $tableName = str_replace('\\', '_', $class->getName());
+        foreach($annotations as $annotation) {
+            if($annotation instanceof Table) {
+                $tableName = $annotation->getName();
+                break;
+            }
+        }
+        return Repository::for($class->getName(), $tableName);
     }
 
     /**

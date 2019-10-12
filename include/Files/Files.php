@@ -24,9 +24,16 @@ class Files {
     public static function requireAll(string $dir, bool $instantiate = false): void {
         foreach(self::scandir($dir) as $file) {
             if(strpos($file, '.php') === strlen($file) - 4) {
-                require (new Path($dir, $file));
+                $path = new Path($dir, $file);
+                require $path;
+
+                $code = file_get_contents($path);
+                if(preg_match('/namespace (.*?);/', $code, $matches)) {
+                    $namespace = $matches[1].'\\';
+                }
+
                 if($instantiate) {
-                    $className = explode('.', $file)[0];
+                    $className = $namespace.explode('.', $file)[0];
                     new $className();
                 }
             }

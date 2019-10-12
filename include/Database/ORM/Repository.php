@@ -32,9 +32,9 @@ class Repository {
      * 
      * @param ReflectionClass $entityClass The entity class
      */
-    private function __construct(ReflectionClass $entityClass) {
+    private function __construct(ReflectionClass $entityClass, string $tableName) {
         $this->entityClass = $entityClass;
-        $this->tableName = str_replace('\\', '_', $entityClass->getName());
+        $this->tableName = $tableName;
     }
 
     /**
@@ -58,9 +58,9 @@ class Repository {
      * 
      * @param string $className The full name of the entity class
      */
-    public static function for(string $className): Repository {
+    public static function for(string $className, string $tableName): Repository {
         if(!key_exists($className, self::$repositories)) {
-            self::$repositories[$className] = new Repository(new ReflectionClass($className));
+            self::$repositories[$className] = new Repository(new ReflectionClass($className), $tableName);
         }
         return self::$repositories[$className];
     }
