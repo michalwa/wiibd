@@ -8,7 +8,7 @@ use \ReflectionMethod;
 use \App;
 use Meta\Annotation;
 use Meta\AnnotationException;
-use Routing\Routes\PatternRoute;
+use Routing\Route\PatternRoute;
 
 /**
  * Route annotation used on controller methods.

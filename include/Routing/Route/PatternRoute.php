@@ -1,9 +1,9 @@
 <?php
 
-namespace Routing\Routes;
+namespace Routing\Route;
 
 use \App;
-use Routing\Route;
+use Routing\Route\Route;
 use Http\Request;
 use Http\Response;
 use Files\PathPattern;
@@ -58,7 +58,7 @@ abstract class PatternRoute extends Route {
      * Actually handles the request with the path matching the pattern of this route
      * 
      * @param Request $request The request to handle
-     * @param array $params Values of the pattern parameters as an associative array
+     * @param mixed[string] $params Values of the pattern parameters as an associative array
      */
     protected abstract function handle(Request $request, $params): Response;
 

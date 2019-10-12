@@ -1,6 +1,6 @@
 <?php
 
-namespace Routing;
+namespace Routing\Route;
 
 use Http\Request;
 use Http\Response;
@@ -20,7 +20,7 @@ abstract class Route {
      * Returns a textual representation of this route
      */
     public function __toString(): string {
-        return $this->name;
+        return 'Route "'.$this->name.'"';
     }
 
     /**

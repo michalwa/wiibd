@@ -2,6 +2,8 @@
 
 namespace Meta;
 
+use \Reflector;
+
 /**
  * An annotation is an expression included in a doc-comment beginning with an `@`
  * followed by the annotation class name, then parameters in parentheses, e.g.
@@ -12,13 +14,15 @@ class Annotations {
     /**
      * Finds and parses all annotations present in the given doc string.
      * 
-     * @param $item The annotated item
-     * @param $object The object to process annotations for
+     * @param Reflector $item The annotated item
+     * @param object|null $object The object to process annotations for
      * @param string $doc The doc-comment attached to the item
-     * @param $aliases An associative array of class name aliases that will be
+     * @param string[string] $aliases An associative array of class name aliases that will be
      *  used to resolve the name of the annotation class
+     * 
+     * @return Annotation[]
      */
-    public static function parseAll($item, $object = null, string $doc, $aliases = []): array {
+    public static function parseAll(Reflector $item, ?object $object = null, string $doc, $aliases = []): array {
         $beginRegex = '/@(([a-zA-Z_-][a-zA-Z0-9_-]+)(\\\([a-zA-Z_-][a-zA-Z0-9_-]+))*)\(/';
         $valueRegex = '/((-?(\d*\.)?\d+)|(\'(.*?)\')|("(.*?)")|true|false)\s*(,\s*)?/';
 

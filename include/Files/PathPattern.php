@@ -91,11 +91,10 @@ class PathPattern {
     /**
      * Renders the pattern filling in the parameters with the specified values.
      * 
-     * @param array $params Values for the parameters
+     * @param mixed[] $params Values for the parameters
      */
-    public function render(array $params = []): Path {
+    public function render(iterable $params = []): Path {
         $path = new Path();
-
         foreach($this->elements as $elt) {
             if($elt[0] === self::LITERAL) {
                 $path = $path->append($elt[1]);
@@ -103,7 +102,6 @@ class PathPattern {
                 $path = $path->append($params[$elt[1]] ?? '{'.$elt[1].'}');
             }
         }
-
         return $path;
     }
 

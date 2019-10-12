@@ -29,7 +29,7 @@ class View {
     /**
      * Renders this view and returns the resulting HTML document
      * 
-     * @param array $params Parameters for the template
+     * @param mixed[string] $params Parameters for the template
      */
     public function render($params = []): string {
         ob_start();
@@ -40,7 +40,7 @@ class View {
     /**
      * Renders this view and prepares an HTML response
      * 
-     * @param array $params Parameters for the template
+     * @param mixed[string] $params Parameters for the template
      * @param int $status The HTTP status for the response
      */
     public function toResponse($params = [], int $status = 200): Response {
@@ -71,7 +71,7 @@ class View {
      * Includes a reusable component and returns it rendered with the given parameters
      * 
      * @param string $name The name of the component to include
-     * @param array $params The params to render the component with
+     * @param mixed[string] $params The params to render the component with
      */
     private function include(string $name, $params = []): string {
         $app = App::get();

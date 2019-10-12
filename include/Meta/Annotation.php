@@ -15,7 +15,7 @@ abstract class Annotation {
      * @param Reflector $item The item the annotation is attached to
      * @param object|null $object An object of the class $item is attached to
      *  for which the annotation should be instantiated (or `null`).
-     * @param $params The parameters passed to the annotation expression
+     * @param mixed[] $params The parameters passed to the annotation expression
      */
     public static abstract function instantiate(Reflector $item, ?object $object, $params): Annotation;
 

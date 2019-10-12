@@ -1,9 +1,9 @@
 <?php
 
-namespace Routing\Routes;
+namespace Routing\Route;
 
 use \App;
-use Routing\Route;
+use Routing\Route\Route;
 use Http\Request;
 use Http\Response;
 

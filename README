@@ -1,0 +1,6 @@
+A blind, by-hand implementation of the Model View Controller paradigm in PHP
+together with a basic ORM implementation
+
+Requirements
+------------
+Most likely requires PHP 7+

@@ -53,6 +53,9 @@ class App {
         return self::$instance;
     }
 
+    /**
+     * Constructs a new `App` object
+     */
     private function __construct(string $rootDir, Config $config) {
         $this->rootDir = new Path($rootDir);
         $this->config = $config;

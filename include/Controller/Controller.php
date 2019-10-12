@@ -6,7 +6,7 @@ use \ReflectionClass;
 use \App;
 use Http\Response;
 use Http\Methods;
-use Routing\Routes\PatternRoute;
+use Routing\Route\PatternRoute;
 use Meta\Annotations;
 
 /**
@@ -30,15 +30,30 @@ abstract class Controller {
      * Returns a redirect response to the rendered URL of the specified `PatternRoute`
      * 
      * @param string $name The name of the route to redirect to
-     * @param array $params Parameter values for the path pattern
+     * @param mixed[string] $params Parameter values for the path pattern
      */
-    protected function redirect(string $name, array $params = []): Response {
+    protected function redirect(string $name, $params = []): Response {
         $route = App::get()->getRouter()->getRoute($name);
-        if( !($route instanceof PatternRoute) ) {
-            throw new ControllerException('Route "'.$route.'" is not an instance of PatternRoute');
+        if($route === null) {
+            throw new ControllerException('Route "'.$name.'" not found.');
         }
-        $url = $route->getPattern()->render($params);
+        if( !($route instanceof PatternRoute) ) {
+            throw new ControllerException($route.' is not an instance of PatternRoute');
+        }
+        $url = '/'.App::get()->getRootUrl()->append($route->getPattern()->render($params));
         return Response::redirect($url);
+    }
+
+    /**
+     * Returns a redirect response to the rendered URL of the specified `PatternRoute`
+     * defined in this controller class.
+     * The given name is prepended with `self` class name.
+     * 
+     * @param string $name The name of the route to redirect to
+     * @param mixed[string] $params Parameter values for the path pattern
+     */
+    protected function redirectToSelf(string $name, $params = []): Response {
+        return $this->redirect(get_called_class().'::'.$name, $params);
     }
 
 }

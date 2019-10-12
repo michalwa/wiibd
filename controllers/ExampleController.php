@@ -14,4 +14,17 @@ class ExampleController extends Controller {
         return View::load('example')->toResponse([ 'request' => $request ]);
     }
 
+    /**
+     * @Route('GET', '/dummy/{id:uint}')
+     */
+    public function getDummy(Request $request, $params): Response {
+        $repository = Dummy::getRepository();
+        $dummy = $repository->findById($params['id']);
+        if($dummy !== null) {
+            return Response::text($dummy->name);
+        }
+        
+        return $this->redirectToSelf('index');
+    }
+
 }

@@ -4,7 +4,8 @@ namespace Routing;
 
 use Http\Request;
 use Http\Response;
-use Routing\Routes\PatternRoute;
+use Routing\Route\Route;
+use Routing\Route\PatternRoute;
 
 /**
  * Handles routing
