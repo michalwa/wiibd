@@ -68,4 +68,11 @@ class Route extends Annotation {
         return $route;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public static function single(): bool {
+        return false;
+    }
+
 }

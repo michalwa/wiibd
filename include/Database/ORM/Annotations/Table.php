@@ -36,4 +36,11 @@ class Table extends Annotation {
         $this->name = (string)$params[0];
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public static function single(): bool {
+        return true;
+    }
+
 }

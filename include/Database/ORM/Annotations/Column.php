@@ -52,4 +52,11 @@ class Column extends Annotation {
         $this->propertyName = $item->getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public static function single(): bool {
+        return true;
+    }
+
 }

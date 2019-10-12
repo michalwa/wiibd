@@ -16,7 +16,7 @@ abstract class Annotation {
     private $item;
 
     /**
-     * Constructs an annotation of the appropriate type
+     * Constructs an annotation for the given item
      * 
      * @param Reflector $item The item the annotation is attached to
      * @param mixed[] $params The parameters passed to the annotation expression
@@ -31,5 +31,10 @@ abstract class Annotation {
     public function getItem(): Reflector {
         return $this->item;
     }
+
+    /**
+     * Returns whether the annotation type can have at most one occurence on a single item
+     */
+    public static abstract function single(): bool;
 
 }

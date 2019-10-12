@@ -14,6 +14,7 @@ class ExampleController extends Controller {
 
     /**
      * @Route('GET', '/')
+     * @Route('GET', 'asdasda')
      */
     public function index(Request $request, $params): Response {
         Database::get()->connect();

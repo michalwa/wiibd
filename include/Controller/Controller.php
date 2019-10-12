@@ -2,7 +2,6 @@
 
 namespace Controller;
 
-use \ReflectionClass;
 use \App;
 use Http\Response;
 use Meta\Annotations\ReflectionClassAnnotated;
@@ -26,9 +25,10 @@ abstract class Controller {
     public function __construct() {
         $class = new ReflectionClassAnnotated($this);
         foreach($class->getMethodsAnnotated(null, self::ANNOTATION_ALIASES) as $method) {
-            /** @var \Routing\Route\Annotations\Route|null $annotation */
-            $annotation = $method->getAnnotation('Routing\Route\Annotations\Route');
-            if($annotation !== null) $annotation->create($this);
+            /** @var \Routing\Route\Annotations\Route $annotation */
+            foreach($method->getAnnotations('Routing\Route\Annotations\Route') as $annotation) {
+                $annotation->create($this);
+            }
         }
     }
 
