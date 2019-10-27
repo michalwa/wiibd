@@ -15,9 +15,11 @@ use View\View;
 
 require 'common.php';
 
+define('INCLUDE_DIR', rtrim(__DIR__, '/\\').'/include/');
+
 // Register an autoloader
 spl_autoload_register(function(string $class) {
-    $file = rtrim(__DIR__, '/\\').'/include/'.str_replace('\\', '/', $class).'.php';
+    $file = INCLUDE_DIR.str_replace('\\', '/', $class).'.php';
     if(file_exists($file)) {
         include $file;
     }
@@ -55,7 +57,7 @@ set_exception_handler(function(Throwable $e) {
 
 // Initialize database
 Database::init($config);
-Files::requireAll($app->getConfig('database.entitiesDir'));
+Files::requireAll(INCLUDE_DIR.$app->getConfig('database.entitiesDir'));
 
 // Configure the router
 $router = $app->getRouter();
@@ -63,7 +65,7 @@ $router->add(new PublicResourceRoute());
 include 'routes.php';
 
 // Initialize controllers
-Files::requireAll($app->getConfig('controllers.dir'), true);
+$controllers = Files::requireAll(INCLUDE_DIR.$app->getConfig('controllers.dir'), true);
 
 // Handle the request
 $request = Request::get();

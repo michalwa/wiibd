@@ -42,12 +42,6 @@ class Request {
     private $query;
 
     /**
-     * The fragment specified in the URL
-     * @var string
-     */
-    private $fragment;
-
-    /**
      * `POST` parameters
      * @var array
      */
@@ -88,7 +82,6 @@ class Request {
 
         parse_str($req['query'] ?? '', $this->query);
         $this->method = $method;
-        $this->fragment = $req['fragment'] ?? '';
         $this->post = $post;
         $this->headers = $headers;
     }
@@ -130,13 +123,6 @@ class Request {
      */
     public function getQuery(?string $param = null) {
         return $param ? $this->query[$param] : $this->query;
-    }
-
-    /**
-     * The fragment specified in the URL
-     */
-    public function getFragment(): string {
-        return $this->fragment;
     }
 
     /**

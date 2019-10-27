@@ -10,6 +10,19 @@ if(preg_match('/^Argument (\d+?) passed to (.*?)\(\) must be/', $params['message
     $invalidArg = (int)$matches[1] - 1;
     $invalidArgFunc = $matches[2];
 }
+
+$message = $params['message'];
+if($params['class'] === 'TypeError') {
+    $message = preg_replace(
+        '/must be of the type (.+?), (.+?) /',
+        'must be of type <code>$1</code>, <code>$2</code> ',
+        $message);
+
+    $message = preg_replace(
+        '/must be an instance of (.+?), (.+?) /',
+        'must be an instance of <code>$1</code>, <code>$2</code> ',
+        $message);
+}
 ?>
 
 <!DOCTYPE html>
@@ -76,7 +89,7 @@ if(preg_match('/^Argument (\d+?) passed to (.*?)\(\) must be/', $params['message
             in <span class="error-file"><?= $params['file'] ?></span>, line <?= $params['line'] ?>
 
             <!-- Message -->
-            <p class="error-message"><?= $params['message'] ?></p>
+            <p class="error-message"><?= $message ?></p>
 
             <!-- Stack trace -->
             <ul class="error-trace">
@@ -98,7 +111,7 @@ if(preg_match('/^Argument (\d+?) passed to (.*?)\(\) must be/', $params['message
                             <?php foreach($trace['args'] as $i => $arg): ?>
 
                                 <?php if($invalidArgFunc === $function && $invalidArg === $i): ?>
-                                    <span class="invalid-arg"><?= htmlentities(stringify($arg)); ?></span><?= $i === count($trace['args']) - 1 ? '' : ', ' ?>
+                                    <span class="invalid-arg"><?= htmlentities(stringify($arg)); ?><?= $i === count($trace['args']) - 1 ? '</span>' : ',</span> ' ?>
 
                                 <?php else: ?>
                                     <?= htmlentities(stringify($arg)); ?><?= $i === count($trace['args']) - 1 ? '' : ', ' ?>

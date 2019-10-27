@@ -2,6 +2,9 @@
 
 namespace Files;
 
+/**
+ * File utility functions
+ */
 class Files {
 
     /**
@@ -20,8 +23,12 @@ class Files {
      * the classes they contain will each be instantiated.
      * 
      * @param string $dir The directory to scan for files
+     * 
+     * @return void|object[] The constructed objects, if `$instantiate` is `true`, or `void`
      */
-    public static function requireAll(string $dir, bool $instantiate = false): void {
+    public static function requireAll(string $dir, bool $instantiate = false) {
+        $instances = [];
+
         foreach(self::scandir($dir) as $file) {
             if(strpos($file, '.php') === strlen($file) - 4) {
                 $path = new Path($dir, $file);
@@ -34,10 +41,12 @@ class Files {
 
                 if($instantiate) {
                     $className = $namespace.explode('.', $file)[0];
-                    new $className();
+                    $instances[] = new $className();
                 }
             }
         }
+
+        if($instantiate) return $instances;
     }
 
 }

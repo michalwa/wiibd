@@ -23,15 +23,18 @@ $request = $params['request'];
             <div class="card container">
                 <h2>Request</h2>
                 <p>
-                    Route name: <i><code><?= $request->getRouteName() ?></code></i><br>
-                    Request URL: <i><code><?= '/'.$request->getPath() ?></code></i><br>
+                    Route name: <code><?= $request->getRouteName() ?></code><br>
+                    Request URL: <code><?= '/'.$request->getPath() ?></code>
                 </p>
-                Query params:
-                <ul style="list-style: none; padding-left: 20px">
-                    <?php foreach($request->getQuery() as $key => $value): ?>
-                        <li><i><code><?= $key ?></code></i> = <i><code><?= $value ?></code></i>
-                    <?php endforeach; ?>
-                </ul>
+
+                <?php if(($query = $request->getQuery()) !== []): ?>
+                    Query params:
+                    <ul style="list-style: none; padding-left: 20px">
+                        <?php foreach($query as $key => $value): ?>
+                            <li><code><?= $key ?></code> = <code><?= $value ?></code>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
             </div>
 
             <div class="card container">
