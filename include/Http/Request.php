@@ -78,7 +78,7 @@ class Request {
 
         $this->credentials = new Credentials($req['user'] ?? '', $req['pass'] ?? '');
 
-        $this->path = (new Path($req['path']))->relativeTo(App::get()->getRootUrl());
+        $this->path = (new Path($req['path']))->toRelative(App::get()->getRootUrl());
 
         parse_str($req['query'] ?? '', $this->query);
         $this->method = $method;

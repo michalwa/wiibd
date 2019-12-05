@@ -133,10 +133,14 @@ class Path {
      * 
      * @param self $path The "root" path
      */
-    public function relativeTo(self $path): self {
+    public function toRelative(self $path): self {
+        if(count($this->elements) == 0) {
+            return $path;
+        }
+
         $pathLen = count($path->elements);
         if(!$this->startsWith($path)) {
-            die("This path does not contain the given path.");
+            die("The path ".$this." does not start with ".$path);
         }
 
         $result = new self($this);
