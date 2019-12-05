@@ -140,7 +140,7 @@ class Path {
 
         $pathLen = count($path->elements);
         if(!$this->startsWith($path)) {
-            die("The path ".$this." does not start with ".$path);
+            throw new PathException('The path '.$this.' does not start with '.$path);
         }
 
         $result = new self($this);
