@@ -4,6 +4,8 @@ namespace Database\ORM;
 
 use \ReflectionClass;
 use Database\Database;
+use Database\DatabaseException;
+use Utils\Stream;
 
 /**
  * Allows retrieving and persisting entities from and to the database
@@ -47,10 +49,32 @@ class Repository {
             ::select()
             ->from($this->tableName)
             ->where('id', '=', $id)
-            ->execute()
-            ->get();
+            ->execute();
 
-        return Entity::deserialize($result, $this->entityClass);
+        if(!$result->ok()) {
+            throw new DatabaseException("Query failed: ".$result->getQueryString());
+        }
+
+        return Entity::deserialize($result->get(), $this->entityClass);
+    }
+
+    /**
+     * Queries the database for all entities of the appropriate type and returns the result
+     * 
+     * @return Iterator[Entity]
+     */
+    public function all(): iterable {
+        $result = Database
+            ::select()
+            ->from($this->tableName)
+            ->execute();
+
+        if(!$result->ok()) {
+            throw new DatabaseException("Query failed: ".$result->getQueryString());
+        }
+
+        return Stream::begin($result)
+            ->map(function($row) { return Entity::deserialize($row, $this->entityClass); });
     }
 
     /**

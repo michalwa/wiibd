@@ -31,14 +31,16 @@ class Route extends Annotation {
     /**
      * {@inheritDoc}
      */
-    public function __construct(Reflector $item, $params) {
-        parent::__construct($item);
+    public function __construct(Reflector $item, $lineOffset, $params) {
+        parent::__construct($item, $lineOffset);
 
         if(count($params) != 2) {
-            throw new AnnotationException("Invalid number of parameters.");
+            throw new AnnotationException("Invalid number of parameters.",
+                $this->getItem(), $this->getLineOffset());
         }
         if( !($item instanceof ReflectionFunction) && !($item instanceof ReflectionMethod) ) {
-            throw new AnnotationException('The @Route annotation can only be used on functions or methods');
+            throw new AnnotationException('The @Route annotation can only be used on functions or methods',
+                $this->getItem(), $this->getLineOffset());
         }
         
         $this->method  = $params[0];
@@ -48,7 +50,7 @@ class Route extends Annotation {
     /**
      * Creates the described route
      * 
-     * @param object|null $object The object to create the route for
+     * @param null|object $object The object to create the route for
      *  or `null` if the annotated item was a function
      */
     public function create(?object $object = null): \Routing\Route\Route {
@@ -59,6 +61,9 @@ class Route extends Annotation {
         } else if($item instanceof ReflectionMethod) {
             $closure = $item->getClosure($object);
             $name = $item->class.'::'.$item->name;
+        } else {
+            throw new AnnotationException("The @Route annotation can only be used on functions or methods",
+                $this->getItem(), $this->getLineOffset());
         }
         
         $route = PatternRoute::new($this->method, $this->pattern, $closure);
@@ -71,8 +76,8 @@ class Route extends Annotation {
     /**
      * {@inheritDoc}
      */
-    public static function single(): bool {
-        return false;
+    public static function allowMultiple(): bool {
+        return true;
     }
 
 }

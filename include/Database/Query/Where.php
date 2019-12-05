@@ -33,7 +33,7 @@ class Where {
      * @param string $operator The operator to use for the test
      * @param mixed $operand The second operand
      */
-    public function __construct(string $column, string $operator = '=', $operand = true) {
+    public function __construct(string $column, string $operator = '=', $operand = 1) {
         $this->column   = $column;
         $this->operator = $operator;
         $this->operand  = $operand;
@@ -55,7 +55,7 @@ class Where {
     public static function buildClause(iterable $conditions, iterable $operators): string {
         $str = '';
         if(count($operators) < count($conditions) - 1) {
-            throw new InvalidArgumentException("Not enough logical operators to join.");
+            throw new InvalidArgumentException("Not enough logical operators to join");
         }
         for($i = 0; $i < count($conditions); $i++) {
             if($i > 0) {

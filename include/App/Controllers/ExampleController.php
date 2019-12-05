@@ -25,7 +25,17 @@ class ExampleController extends Controller {
     }
 
     /**
-     * @Route('GET', '/dummy/{id:uint}')
+     * @Route('GET', '/dummies')
+     */
+    public function getDummies(Request $request, $params): Response {
+        $repository = Dummy::getRepository();
+        return View::load('dummies/index')->toResponse([
+            'dummies' => $repository->all()
+        ]);
+    }
+
+    /**
+     * @Route('GET', '/dummies/{id:uint}')
      */
     public function getDummy(Request $request, $params): Response {
         $repository = Dummy::getRepository();

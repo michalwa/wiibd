@@ -6,6 +6,7 @@ use \Throwable;
 use \App;
 use Http\Response;
 use Files\Path;
+use Utils\NotFoundException;
 
 /**
  * A renderable view template
@@ -77,13 +78,16 @@ class View {
             $app->getConfig('views.dir'),
             $name.$app->getConfig('views.fileSuffix')))->__toString();
 
+        if(!file_exists($filename)) {
+            throw new NotFoundException("View '".$name."' not found");
+        }
+
         return new self(file_get_contents($filename), $filename);
     }
 
-    /* BEGIN TEMPLATE FUNCTIONS */
-
     /**
-     * Includes a reusable component and returns it rendered with the given parameters
+     * Includes a reusable component and returns it rendered with the given parameters.
+     * To be used from a template
      * 
      * @param string $name The name of the component to include
      * @param array $params The params to render the component with
@@ -94,6 +98,10 @@ class View {
             $app->getRootDir(),
             $app->getConfig('views.includeDir'),
             $name.$app->getConfig('views.fileSuffix'));
+
+        if(!file_exists($filename)) {
+            throw new NotFoundException("View '".$name."' not found");
+        }
 
         return (new self(file_get_contents($filename)))->render($params);
     }

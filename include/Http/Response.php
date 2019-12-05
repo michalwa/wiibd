@@ -108,7 +108,7 @@ class Response {
      * Constructs a file response containing the specified file
      * 
      * @param Path $path The path to the file to send
-     * @param string|null $mime A custom MIME type to use.
+     * @param null|string $mime A custom MIME type to use.
      *  If not provided, the type will be detected automatically
      */
     public static function file(Path $path, ?string $mime = null): self {

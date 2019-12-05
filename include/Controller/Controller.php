@@ -43,7 +43,7 @@ abstract class Controller {
     protected function redirect(string $name, $params = []): Response {
         $route = App::get()->getRouter()->getRoute($name);
         if($route === null) {
-            throw new ControllerException('Route "'.$name.'" not found.');
+            throw new ControllerException("Route '".$name."' not found");
         }
         if( !($route instanceof PatternRoute) ) {
             throw new ControllerException($route.' is not an instance of PatternRoute');
@@ -55,7 +55,6 @@ abstract class Controller {
     /**
      * Returns a redirect response to the rendered URL of the specified `PatternRoute`
      * defined in this controller class.
-     * The given name is prepended with `self` class name.
      * 
      * @param string $name The name of the route to redirect to
      * @param array $params Parameter values for the path pattern

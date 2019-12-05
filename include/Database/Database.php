@@ -145,7 +145,7 @@ class Database {
         if(self::$instance !== null) {
             return self::$instance;
         }
-        throw new DatabaseException('Database not initialized.');
+        throw new DatabaseException("Database not initialized");
     }
 
     /**

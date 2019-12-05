@@ -50,12 +50,12 @@ abstract class TableQuery extends Query {
      * @param string $column The column to test
      * @param string $operator The operator to use for the test
      * @param mixed $operand The second operand
-     * @param string $join The logical operator to join this `WHERE` condition with previous conditions
+     * @param string $_join The logical operator to join this `WHERE` condition with previous conditions
      * 
      * @return self for chaining
      */
-    public function where(string $column, string $operator = '=', $operand = true, string $join = 'AND'): self {
-        if(count($this->where) > 0) $this->whereOps[] = $join;
+    public function where(string $column, string $operator = '=', $operand = 1, string $_join = 'AND'): self {
+        if(count($this->where) > 0) $this->whereOps[] = $_join;
         $this->where[] = new Where($column, $operator, $operand);
         return $this;
     }
@@ -69,7 +69,7 @@ abstract class TableQuery extends Query {
      * 
      * @return self for chaining
      */
-    public function and(string $column, string $operator = '=', $operand = true): self {
+    public function and(string $column, string $operator = '=', $operand = 1): self {
         return $this->where($column, $operator, $operand, 'AND');
     }
 

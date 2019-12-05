@@ -6,6 +6,7 @@ use \ReflectionClass;
 use \InvalidArgumentException;
 use Meta\Annotations\ReflectionClassAnnotated;
 use Database\ORM\Annotations\Column;
+use ReflectionProperty;
 
 /**
  * Reflects an entity class
@@ -43,7 +44,7 @@ class EntityClass {
      */
     private function __construct(ReflectionClass $class) {
         if(!$class->isSubclassOf('Database\ORM\Entity')) {
-            throw new InvalidArgumentException('Entity class must extend Database\ORM\Entity');
+            throw new InvalidArgumentException("Entity class must extend Database\ORM\Entity");
         }
 
         $this->class = $class;
@@ -60,7 +61,7 @@ class EntityClass {
      * 
      * @param array @values The column values
      * 
-     * @return Entity|null The instantiated entity or `null` if `null` or `false` was passed
+     * @return null|Entity The instantiated entity or `null` if `null` or `false` was passed
      */
     public function instantiate($values): ?Entity {
         if($values === null || $values === false) return null;

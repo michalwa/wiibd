@@ -22,8 +22,9 @@ class Entity {
      */
     public static function getRepository(): Repository {
         $class = new ReflectionClassAnnotated(get_called_class(), self::ANNOTATION_ALIASES);
-        $tableName = str_replace('\\', '_', $class->getName());
-        /** @var \Database\ORM\Annotations\Table|null $annotation */
+        $tableName = (string)str_replace('\\', '_', $class->getName());
+        
+        /** @var null|Database\ORM\Annotations\Table $annotation */
         $annotation = $class->getAnnotation('Database\ORM\Annotations\Table');
         if($annotation !== null) $tableName = $annotation->getName();
         
@@ -37,7 +38,7 @@ class Entity {
      * @param array $values The row fetched from the database
      * @param ReflectionClass $entityClass The entity class to instantiate
      * 
-     * @return Entity|null The deserialized entity or `null` if `null` or `false` was passed
+     * @return null|Entity The deserialized entity or `null` if `null` or `false` was passed
      */
     public static function deserialize($values, ReflectionClass $entityClass): ?Entity {
         return EntityClass::for($entityClass)->instantiate($values);

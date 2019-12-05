@@ -118,7 +118,7 @@ class Request {
      * Returns an arrayiative array of query parameters, if `param` is `null`.
      * Otherwise, returns the value of the query parameter with the given name.
      * 
-     * @param string|null $param Name of the parameter to return or `null`
+     * @param null|string $param Name of the parameter to return or `null`
      * @return array|string
      */
     public function getQuery(?string $param = null) {

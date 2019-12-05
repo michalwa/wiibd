@@ -3,7 +3,7 @@
 namespace Meta\Annotations;
 
 /**
- * An annotated reflection. To be used on Reflection* classes
+ * An annotated reflection. To be used on `Reflection...Annotated` classes
  */
 trait Annotated {
 
@@ -16,7 +16,7 @@ trait Annotated {
      * Returns all annotations attached to this item. If `$className` is passed,
      * returns all annotations of the specified class.
      * 
-     * @param string|null $className The name of the annotation class
+     * @param null|string $className The name of the annotation class
      * 
      * @return Annotation[]
      */
@@ -38,7 +38,7 @@ trait Annotated {
      * 
      * @param string $className The name of the annotation class
      * 
-     * @return Annotation|null
+     * @return null|Annotation
      */
     public function getAnnotation(string $className): ?Annotation {
         $annotations = $this->getAnnotations($className);

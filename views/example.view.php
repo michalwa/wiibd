@@ -1,6 +1,6 @@
 <?php
 $app = App::get();
-$title = $app->getConfig('app.name') ?? 'Title';
+$title = $app->getConfig('app.name') ?? '';
 $request = $params['request'];
 ?>
 

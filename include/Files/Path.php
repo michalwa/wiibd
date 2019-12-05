@@ -88,18 +88,18 @@ class Path {
     /**
      * Returns a copy of this path appended with the given path
      * 
-     * @param self $append The path to append
+     * @param self|string $append The path to append
      */
-    public function append(self $append): self {
+    public function append($append): self {
         return new self($this, $append);
     }
 
     /**
      * Returns a copy of this path prepended with the given path
      * 
-     * @param self $prepend The path to prepend
+     * @param self|string $prepend The path to prepend
      */
-    public function prepend(self $prepend): self {
+    public function prepend($prepend): self {
         return new self($prepend, $this);
     }
 

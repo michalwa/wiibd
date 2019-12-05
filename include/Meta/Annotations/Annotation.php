@@ -16,13 +16,21 @@ abstract class Annotation {
     private $item;
 
     /**
+     * The line index offset between the line where the annotation was declared
+     * and the first line of the annotated item
+     * @var int
+     */
+    private $lineOffset;
+
+    /**
      * Constructs an annotation for the given item
      * 
      * @param Reflector $item The item the annotation is attached to
-     * @param mixed[] $params The parameters passed to the annotation expression
+     * @param int $lineOffset The line index offset between the line where the annotation was declared and the first line of the annotated item
      */
-    public function __construct(Reflector $item) {
+    public function __construct(Reflector $item, int $lineOffset) {
         $this->item = $item;
+        $this->lineOffset = $lineOffset;
     }
 
     /**
@@ -33,8 +41,16 @@ abstract class Annotation {
     }
 
     /**
-     * Returns whether the annotation type can have at most one occurence on a single item
+     * Returns the line index offset between the line where the annotation was declared
+     * and the first line of the annotated item
      */
-    public static abstract function single(): bool;
+    public function getLineOffset(): int {
+        return $this->lineOffset;
+    }
+
+    /**
+     * Returns whether a single item can be annotated with multiple annotations of this type
+     */
+    public static abstract function allowMultiple(): bool;
 
 }

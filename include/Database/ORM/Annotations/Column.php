@@ -26,6 +26,27 @@ class Column extends Annotation {
     private $propertyName;
 
     /**
+     * {@inheritDoc}
+     */
+    public function __construct(Reflector $item, int $lineOffset, $params) {
+        parent::__construct($item, $lineOffset);
+        if( !($item instanceof ReflectionProperty) ) {
+            throw new AnnotationException("@Column annotation can only be used on properties",
+                $this->getItem(), $this->getLineOffset());
+        }
+
+        $this->name = count($params) > 0 && is_string($params[0]) ? $params[0] : $item->getName();
+        $this->propertyName = $item->getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function allowMultiple(): bool {
+        return false;
+    }
+
+    /**
      * Returns the column name
      */
     public function getName(): string {
@@ -37,26 +58,6 @@ class Column extends Annotation {
      */
     public function getPropertyName(): string {
         return $this->propertyName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function __construct(Reflector $item, $params) {
-        parent::__construct($item);
-        if( !($item instanceof ReflectionProperty) ) {
-            throw new AnnotationException("@Column annotation can only be used on properties");
-        }
-
-        $this->name = count($params) > 0 && is_string($params[0]) ? $params[0] : $item->getName();
-        $this->propertyName = $item->getName();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function single(): bool {
-        return true;
     }
 
 }

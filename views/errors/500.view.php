@@ -14,6 +14,11 @@ if(preg_match('/^Argument (\d+?) passed to (.*?)\(\) must be/', $params['message
 $message = $params['message'];
 if($params['class'] === 'TypeError') {
     $message = preg_replace(
+        '/passed to (.*?) must be/',
+        'passed to <code>$1</code> must be',
+        $message);
+
+    $message = preg_replace(
         '/must be of the type (.+?), (.+?) /',
         'must be of type <code>$1</code>, <code>$2</code> ',
         $message);
@@ -21,6 +26,11 @@ if($params['class'] === 'TypeError') {
     $message = preg_replace(
         '/must be an instance of (.+?), (.+?) /',
         'must be an instance of <code>$1</code>, <code>$2</code> ',
+        $message);
+
+    $message = preg_replace(
+        '/called in (.*?) on line/',
+        'called in <span class="error-file">$1</span> on line',
         $message);
 }
 ?>

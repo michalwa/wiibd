@@ -25,7 +25,7 @@ class Result implements Iterator {
 
    /**
     * The statement
-    * @var PDOStatement|null
+    * @var null|PDOStatement
     */
     private $stmt;
 
@@ -55,7 +55,7 @@ class Result implements Iterator {
      */
     public function __construct(string $queryString, $stmt) {
         $this->queryString = $queryString;
-        $this->success = $stmt !== false;
+        $this->success = $stmt !== false && $stmt->errorCode() === PDO::ERR_NONE;
         $this->stmt = $this->success ? $stmt : null;
         $this->numRows = $this->success ? $stmt->rowCount() : 0;
     }
@@ -65,6 +65,13 @@ class Result implements Iterator {
      */
     public function getQueryString(): string {
         return $this->queryString;
+    }
+
+    /**
+     * Returns the number of rows this result has
+     */
+    public function getNumRows(): int {
+        return $this->numRows;
     }
 
     /**
@@ -82,9 +89,6 @@ class Result implements Iterator {
      * @throws DatabaseException If this result has more than one row
      */
     public function get() {
-        if($this->numRows > 1) {
-            throw new DatabaseException('`Result::get()` requires the result to have a single row or value.');
-        }
         $this->rewind();
         return $this->current();
     }
@@ -128,8 +132,7 @@ class Result implements Iterator {
      * {@inheritDoc}
      */
     public function valid(): bool {
-        return $this->row < $this->numRows
-            && $this->row < count($this->cachedRows);
+        return $this->row < $this->numRows;
     }
 
     /**
