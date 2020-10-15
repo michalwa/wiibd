@@ -12,7 +12,7 @@ class Update extends TableQuery {
     /**
      * The values to update
      */
-    private $record;
+    private $record = [];
 
     /**
      * Constructs an UPDATE query

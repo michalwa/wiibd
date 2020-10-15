@@ -23,7 +23,7 @@ class Stream implements Iterator {
 
     /**
      * Constructs a new stream from the given source
-     * 
+     *
      * @param Iterator $source the source iterator
      * @param null|callable $mapFunction the function to feed elements of the source iterator through
      */
@@ -35,7 +35,7 @@ class Stream implements Iterator {
     /**
      * Pipes this stream into another stream that will map each element by
      * feeding it throught the given mapping function
-     * 
+     *
      * @param callable $mapFunction the function to feed elements of the stream through
      */
     public function map(callable $mapFunction) {
@@ -89,8 +89,15 @@ class Stream implements Iterator {
     }
 
     /**
+     * Shorthand for `iterator_to_array($this)`
+     */
+    public function toArray(): array {
+        return iterator_to_array($this);
+    }
+
+    /**
      * Constructs and returns a new stream from the given iterable
-     * 
+     *
      * @param Iterator $iterable
      */
     public static function begin($iterator): self {

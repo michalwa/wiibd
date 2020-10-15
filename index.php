@@ -57,7 +57,6 @@ set_exception_handler(function(Throwable $e) {
 
 // Initialize database
 Database::init($config);
-Files::requireAll(INCLUDE_DIR.$app->getConfig('database.entitiesDir'));
 
 // Configure the router
 $router = $app->getRouter();

@@ -89,7 +89,14 @@ class EntityClass {
         $entity = $this->class->newInstance();
         foreach($this->columns as $column) {
             $property = $column->getPropertyName();
-            $entity->$property = $values[$column->getName()];
+            $value = $values[$column->getName()];
+
+            // Convert foreign keys to entities
+            if(($foreign = $column->getForeignEntityClassName()) !== null) {
+                $value = Repository::for($foreign)->findById($value);
+            }
+
+            $entity->$property = $value;
         }
         return $entity;
     }
@@ -101,15 +108,45 @@ class EntityClass {
      * @param bool $includeId Whether to include the primary key column
      */
     public function serialize(Entity $entity, bool $includeId = false): array {
+        if(!$this->class->isInstance($entity)) {
+            throw new InvalidArgumentException("Entity is not an instance of the reflected class");
+        }
+
         $record = [];
         foreach($this->columns as $column) {
             $prop = $column->getPropertyName();
-            $record[$column->getName()] = $entity->$prop;
+            $value = $entity->$prop;
+
+            // Convert foreign entities to their primary keys
+            if($column->getForeignEntityClassName() !== null) {
+                $value = ($value === null ? null : $value->id);
+            }
+
+            // Skip null values
+            if($value !== null) $record[$column->getName()] = $value;
         }
 
         if(!$includeId) unset($record['id']);
 
         return $record;
+    }
+
+    /**
+     * Returns a list of foreign entities contained within the given entity
+     *
+     * @param Entity $entity The entity to find foreign entities in
+     *
+     * @return Entity[] The foreign entities found
+     */
+    public function getForeignEntities(Entity $entity): array {
+        $foreign = [];
+        foreach($this->columns as $column) {
+            if($column->getForeignEntityClassName() !== null) {
+                $prop = $column->getPropertyName();
+                array_push($foreign, $entity->$prop);
+            }
+        }
+        return $foreign;
     }
 
     /**

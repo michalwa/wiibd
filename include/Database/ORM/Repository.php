@@ -84,6 +84,12 @@ class Repository {
      * @throws DatabaseException If the operation fails
      */
     public function persist(Entity $entity): void {
+
+        // Find foreign entities and persist them first
+        foreach($this->entityClass->getForeignEntities($entity) as $foreign) {
+            $foreign->persist();
+        }
+
         if($entity->id === null) {
             $result = Database
                 ::insert($this->entityClass->serialize($entity))
