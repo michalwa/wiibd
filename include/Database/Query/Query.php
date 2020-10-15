@@ -11,15 +11,21 @@ use Database\Result;
 abstract class Query {
 
     /**
-     * Builds the query into an SQL string
+     * Builds the query into an SQL string and populates the given `QueryParams`
+     * instance with parameters that need escaping (passed to prepared PDO statements as params)
+     *
+     * @param QueryParams $params The parameters to populate
+     *
+     * @return string The built query string
      */
-    protected abstract function build(): string;
+    protected abstract function build(QueryParams $params): string;
 
     /**
      * Submits the query to the database
      */
     public function execute(): Result {
-        return Database::get()->query($this->build());
+        $params = new QueryParams();
+        return Database::get()->query($this->build($params), $params);
     }
 
 }

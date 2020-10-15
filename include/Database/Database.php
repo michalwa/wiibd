@@ -8,6 +8,8 @@ use \PDOException;
 use Database\Query\Select;
 use Database\Query\Update;
 use Database\Query\Delete;
+use Database\Query\Insert;
+use Database\Query\QueryParams;
 use Exception;
 
 /**
@@ -59,7 +61,7 @@ class Database {
 
     /**
      * Constructs a new `Database` instance
-     * 
+     *
      * @param string $type one of `cubrid`, `dblib`, `mssql`, `mysql`, `pgsql`, `sqlite`
      * @param string $host The database server host
      * @param int $port The port
@@ -82,12 +84,13 @@ class Database {
 
     /**
      * Connects to the database
-     * 
+     *
      * @throws DatabaseException on failure
      */
     public function connect() {
         try {
             $this->pdo = new PDO($this->dsn, $this->username, $this->password);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e) {
             throw new DatabaseException("Could not connect: ".$e->getMessage());
         }
@@ -116,10 +119,19 @@ class Database {
     /**
      * Submits the given query to the database and returns the result
      */
-    public function query(string $query): Result {
+    public function query(string $query, QueryParams $params = null): Result {
         if(!$this->isConnected()) $this->connect();
-        $stmt = $this->pdo->query($query);
-        return new Result($query, $stmt);
+
+        if($params === null) $params = new QueryParams();
+
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params->getValues());
+        } catch(PDOException $e) {
+            return new Result($stmt, $query, $params, $e->errorInfo[2]);
+        }
+
+        return new Result($stmt, $query, $params);
     }
 
     /**
@@ -149,8 +161,8 @@ class Database {
     }
 
     /**
-     * Returns a SELECT query object associated with this database
-     * 
+     * Returns a new SELECT query object
+     *
      * @param string[] $fields The fields to select
      */
     public static function select($fields = ['*']): Select {
@@ -158,8 +170,8 @@ class Database {
     }
 
     /**
-     * Returns a UPDATE query object associated with this database
-     * 
+     * Returns a new UPDATE query object
+     *
      * @param string $tableName The name of the table to update
      */
     public static function update(string $tableName): Update {
@@ -167,10 +179,19 @@ class Database {
     }
 
     /**
-     * Returns a DELETE query object associated with this database
+     * Returns a new DELETE query object
      */
     public static function delete(): Delete {
         return new Delete();
+    }
+
+    /**
+     * Returns a new INSERT query object
+     *
+     * @param array $record The record to insert
+     */
+    public static function insert(array $record): Insert {
+        return new Insert($record);
     }
 
 }

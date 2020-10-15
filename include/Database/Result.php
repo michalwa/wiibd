@@ -2,6 +2,7 @@
 
 namespace Database;
 
+use Database\Query\QueryParams;
 use \Iterator;
 use \PDO;
 use \PDOStatement;
@@ -16,6 +17,18 @@ class Result implements Iterator {
      * @var string
      */
     private $queryString;
+
+    /**
+     * The query params used to fill in the query string used to fetch this result
+     * @var QueryParams
+     */
+    private $queryParams;
+
+    /**
+     * Error info, in case the query was unsuccessful
+     * @var null|string
+     */
+    private $errorInfo;
 
     /**
      * Whether the query used to fetch this result was successful
@@ -49,14 +62,25 @@ class Result implements Iterator {
 
     /**
      * Constructs a new `Result` object
-     * 
-     * @param string $queryString The query string used to fetch this result
+     *
      * @param PDOStatement|bool $stmt The result from calling `PDO::query()`
+     * @param string $queryString The query string used to fetch this result
+     * @param QueryParams $queryParams The query params used to fill in the query string
+     *                                 used to fetch this result
+     * @param string|null $errorInfo Error info, in case the query was unsuccessful
      */
-    public function __construct(string $queryString, $stmt) {
+    public function __construct(
+        $stmt,
+        string $queryString = '',
+        QueryParams $queryParams,
+        string $errorInfo = null
+    ) {
         $this->queryString = $queryString;
+        $this->queryParams = $queryParams;
+        $this->errorInfo = $errorInfo;
+
         $this->success = $stmt !== false && $stmt->errorCode() === PDO::ERR_NONE;
-        $this->stmt = $this->success ? $stmt : null;
+        $this->stmt = $stmt;
         $this->numRows = $this->success ? $stmt->rowCount() : 0;
     }
 
@@ -65,6 +89,28 @@ class Result implements Iterator {
      */
     public function getQueryString(): string {
         return $this->queryString;
+    }
+
+    /**
+     * Returns the query params used to fill in the query string used to fetch this result
+     */
+    public function getQueryParams(): QueryParams {
+        return $this->queryParams;
+    }
+
+    /**
+     * Returns a human-readable info about how this result was fetched
+     */
+    public function getQueryInfoHtml(): string {
+        return '<code>'.$this->queryString.'</code>'
+            .' with params: <code>'.stringify($this->queryParams->getValues()).'</code>';
+    }
+
+    /**
+     * Returns the error message present if the query was unsuccessful
+     */
+    public function getErrorInfo(): ?string {
+        return $this->errorInfo;
     }
 
     /**
@@ -85,7 +131,7 @@ class Result implements Iterator {
     /**
      * Returns the single row of this result. If this result is not successful, `null` is returned.
      * If this result has more than one row, an exception is thrown.
-     * 
+     *
      * @throws DatabaseException If this result has more than one row
      */
     public function get() {

@@ -2,8 +2,6 @@
 
 namespace Database\Query;
 
-use Database\Result;
-
 /**
  * A SELECT query
  */
@@ -17,7 +15,7 @@ class Select extends TableQuery {
 
     /**
      * Constructs a SELECT query
-     * 
+     *
      * @param string[] $fields The fields to select
      */
     public function __construct($fields = ['*']) {
@@ -42,11 +40,11 @@ class Select extends TableQuery {
     /**
      * {@inheritDoc}
      */
-    protected function build(): string {
-        $where = $this->whereClause();
-        
+    protected function build(QueryParams $params): string {
+        $where = $this->whereClause($params);
+
         return 'SELECT '.$this->fieldsString()
-            .' FROM `'.$this->tableName.'`'
+            .' FROM '.$this->tableName
             .($where !== '' ? ' WHERE '.$where : '');
     }
 

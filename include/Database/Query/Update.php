@@ -12,11 +12,11 @@ class Update extends TableQuery {
     /**
      * The values to update
      */
-    private $columnValues;
+    private $record;
 
     /**
      * Constructs an UPDATE query
-     * 
+     *
      * @param string $tableName The name of the table to update
      */
     public function __construct(string $tableName) {
@@ -25,38 +25,57 @@ class Update extends TableQuery {
 
     /**
      * Sets the value to set for the specified column
-     * 
+     *
      * @param string $column The column to set
      * @param mixed $value The value to set
-     * 
+     *
      * @return self for chaining
      */
     public function set(string $column, $value): self {
+        $this->record[$column] = $value;
         return $this;
     }
 
     /**
-     * Returns a string to be interpolated into the final query after the `SET` keyword
+     * Sets the values given in the associative array as column names
+     * associated with values
+     *
+     * @param array $values The column values to set
+     *
+     * @return self for chaining
      */
-    private function setString(): string {
-        $str = '';
-        foreach($this->columnValues as $column => $value) {
-            if($str !== '') $str .= ', ';
-            $str .= '`'.$column.'`'.'='.$value;
-        }
-        return $str;
+    public function setAll(array $values): self {
+        $this->record = array_merge($this->record, $values);
+        return $this;
+    }
+
+    /**
+     * Removes the specified column from the query
+     *
+     * @param string $column The column to remove from the query
+     *
+     * @return self for chaining
+     */
+    public function except(string $column): self {
+        unset($this->record[$column]);
+        return $this;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function build(): string {
-        if(($set = $this->setString()) === '') {
-            return 'SELECT 1';
-        }
-        $where = $this->whereClause();
+    protected function build(QueryParams $params): string {
 
-        return 'UPDATE'.'`'.$this->tableName.'`'
+        $sets = array_map_assoc(
+            fn($col, $val) => $col.' = '.$params->add($val),
+            $this->record);
+
+        $set = implode(', ', $sets);
+
+        $where = $this->whereClause($params);
+
+        return 'UPDATE'
+            .' '.$this->tableName
             .' SET '.$set
             .($where !== '' ? ' WHERE '.$where : '');
     }

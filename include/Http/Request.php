@@ -61,7 +61,7 @@ class Request {
 
     /**
      * Constructs a new `Request` object
-     * 
+     *
      * @param string $method The request method used
      * @param string $url The requested URL
      * @param array $post Submitted `POST` parameters
@@ -90,7 +90,7 @@ class Request {
      * Returns a textual representation of this request
      */
     public function __toString(): string {
-        return $this->unparsed;
+        return $this->method.' '.$this->unparsed;
     }
 
     /**
@@ -117,7 +117,7 @@ class Request {
     /**
      * Returns an arrayiative array of query parameters, if `param` is `null`.
      * Otherwise, returns the value of the query parameter with the given name.
-     * 
+     *
      * @param null|string $param Name of the parameter to return or `null`
      * @return array|string
      */
@@ -141,7 +141,7 @@ class Request {
 
     /**
      * Sets the route name
-     * 
+     *
      * @param string $routeName The new route name
      */
     public function setRouteName(string $routeName) {
@@ -157,7 +157,7 @@ class Request {
 
     /**
      * Constructs a request based on the current context
-     * 
+     *
      * @param App $app The app
      */
     public static function get(): self {
@@ -179,7 +179,7 @@ class Request {
             if(strpos($key, 'HTTP_') === 0) {
                 $name = ucwords(str_replace('_', '-', strtolower(substr($key, 5))), '-');
                 $headers[$name] = $value;
-            }  
+            }
         }
         return $headers;
     }

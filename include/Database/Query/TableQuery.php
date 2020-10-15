@@ -28,15 +28,15 @@ abstract class TableQuery extends Query {
     /**
      * Builds and returns the `WHERE` clause for this query
      */
-    protected function whereClause(): string {
-        return Where::buildClause($this->where, $this->whereOps);
+    protected function whereClause(QueryParams $params): string {
+        return Where::buildClause($this->where, $this->whereOps, $params);
     }
 
     /**
      * Sets the table name
-     * 
+     *
      * @param string $tableName The name of the table to query
-     * 
+     *
      * @return self for chaining
      */
     public function from(string $tableName): self {
@@ -46,12 +46,12 @@ abstract class TableQuery extends Query {
 
     /**
      * Adds a `WHERE` condition to this query
-     * 
+     *
      * @param string $column The column to test
      * @param string $operator The operator to use for the test
      * @param mixed $operand The second operand
      * @param string $_join The logical operator to join this `WHERE` condition with previous conditions
-     * 
+     *
      * @return self for chaining
      */
     public function where(string $column, string $operator = '=', $operand = 1, string $_join = 'AND'): self {
@@ -62,11 +62,11 @@ abstract class TableQuery extends Query {
 
     /**
      * Appends a `WHERE` condition preceded with an `AND` operator
-     * 
+     *
      * @param string $column The column to test
      * @param string $operator The operator to use for the test
      * @param mixed $operand The second operand
-     * 
+     *
      * @return self for chaining
      */
     public function and(string $column, string $operator = '=', $operand = 1): self {
@@ -75,11 +75,11 @@ abstract class TableQuery extends Query {
 
     /**
      * Appends a `WHERE` condition preceded with an `OR` operator
-     * 
+     *
      * @param string $column The column to test
      * @param string $operator The operator to use for the test
      * @param mixed $operand The second operand
-     * 
+     *
      * @return self for chaining
      */
     public function or(string $column, string $operator = '=', $operand = true): self {

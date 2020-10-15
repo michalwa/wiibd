@@ -6,7 +6,7 @@
 
 /**
  * Returns `true` if the length of the given iterable is equal to `0`.
- * 
+ *
  * @param iterable $iterable The iterable to test
  */
 function is_empty(iterable $iterable): bool {
@@ -24,15 +24,15 @@ function is_empty(iterable $iterable): bool {
  * Finds a predicate in the keys of `$cases` that returns `true` for `$value`,
  * then returns the value associated with that predicate or the result of calling the value
  * with `$value` as an argument, if the value is a function.
- * 
+ *
  * If no predicate succeeds, uses the mapper associated with a `null` key or returns `$value` unchanged.
- * 
+ *
  * Examples:
  *  - `predicate_map(3, [ 'is_object' => 'foo', null => 'bar' ])` returns `'bar'`
- *  - `predicate_map(null, [ 'is_null' => function($_) { return 'is null'; } ])` returns `'is null'`
+ *  - `predicate_map(null, [ 'is_null' => fn($_) => 'is null' ])` returns `'is null'`
  *  - `predicate_map(123, [])` returns `123`
  *  - `predicate_map(123, [ null => 456 ])` returns `456`
- * 
+ *
  * @param mixed $value The value to map
  * @param callable[callable] $cases Predicates associated with mapping functions
  */
@@ -62,14 +62,21 @@ function predicate_map($value, $cases) {
  *  - arrays get converted to strings starting with `'['`,
  *    followed by each element also converted using `stringify()`
  *    separated with `', '` and ending with `']'`
- * 
+ *
  * @param mixed $value The value to stringify
+ *
+ * @return string The stringified value
  */
-function stringify($value) {
+function stringify($value): string {
     return predicate_map($value, [
         'is_null'   => 'null',
-        'is_bool'   => function($bool) { return $bool ? 'true' : 'false'; },
-        'is_object' => function($obj) { return '<'.get_class($obj).'>'; },
+        'is_bool'   => fn($bool) => $bool ? 'true' : 'false',
+
+        'is_object' => fn($obj) =>
+            method_exists($obj, '__toString')
+                ? $obj->__toString()
+                : '<'.get_class($obj).'>',
+
         'is_string' => function($str) {
             $unesc = addcslashes($str, "\0..\37\\\"\177..\377"); // ASCII 000..037, \, ", 177..377
             if($unesc !== $str) {
@@ -77,6 +84,7 @@ function stringify($value) {
             }
             return "'".$str."'";
         },
+
         'is_array' => function($arr) {
             $assoc = array_keys($arr) !== range(0, count($arr) - 1);
             $str = '[';
@@ -86,6 +94,14 @@ function stringify($value) {
             }
             return $str.']';
         },
-        null => function($any) { return (string)$any; }
+
+        null => fn($any) => (string)$any
     ]);
+}
+
+/**
+ * Shortcut for `array_map($callback, array_keys($array), $array)`
+ */
+function array_map_assoc($callback, array $array): array {
+    return array_map($callback, array_keys($array), $array);
 }

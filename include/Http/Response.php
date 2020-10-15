@@ -30,7 +30,7 @@ class Response {
 
     /**
      * Constructs a response with the given status
-     * 
+     *
      * @param int $status The status to set
      */
     public function __construct(int $status) {
@@ -39,7 +39,7 @@ class Response {
 
     /**
      * Sets the status code
-     * 
+     *
      * @param int $status The new status code
      */
     public function setStatus(int $status): void {
@@ -48,7 +48,7 @@ class Response {
 
     /**
      * Sets the specified header to the given value
-     * 
+     *
      * @param string $header The header to set
      * @param mixed $value The value to set
      */
@@ -58,7 +58,7 @@ class Response {
 
     /**
      * Sets the body of this response to the given value
-     * 
+     *
      * @param string $body The body for this response
      * @param bool $setLength Whether to set the `Content-Length` header automatically
      */
@@ -80,7 +80,7 @@ class Response {
 
     /**
      * Constructs a redirect response to the given URL
-     * 
+     *
      * @param string $url The URL to redirect to
      * @param int $status The HTTP response status
      */
@@ -92,12 +92,12 @@ class Response {
 
     /**
      * Constructs a plain text resposne containing the given text
-     * 
+     *
      * @param string $text The text to send
-     * @param string $charset The charset to send in the Content-Type header
      * @param int $status The status code to send
+     * @param string $charset The charset to send in the Content-Type header
      */
-    public static function text(string $text, string $charset = 'utf-8', int $status = 200): Response {
+    public static function text(string $text, int $status = 200, string $charset = 'utf-8'): Response {
         $response = new self($status);
         $response->setHeader('Content-Type', 'text/plain; charset='.$charset);
         $response->setBody($text);
@@ -106,7 +106,7 @@ class Response {
 
     /**
      * Constructs a file response containing the specified file
-     * 
+     *
      * @param Path $path The path to the file to send
      * @param null|string $mime A custom MIME type to use.
      *  If not provided, the type will be detected automatically
