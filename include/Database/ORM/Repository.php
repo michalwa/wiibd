@@ -25,6 +25,12 @@ class Repository {
     protected $entityClass;
 
     /**
+     * Cached entities (id => entity)
+     * @var Entity[]
+     */
+    private $cached = [];
+
+    /**
      * Constructs a new repository for the given entity class
      *
      * @param EntityClass $entityClass The entity class
@@ -39,6 +45,10 @@ class Repository {
      * @param int $id The id of the entity to find in the database
      */
     public function findById(int $id): ?Entity {
+        if(key_exists($id, $this->cached)) {
+            return $this->cached[$id];
+        }
+
         $result = Database
             ::select()
             ->from($this->entityClass->getTableName())
@@ -51,15 +61,17 @@ class Repository {
                 .' '.$result->getErrorInfo());
         }
 
-        return $this->entityClass->deserialize($result->get());
+        $entity = $this->entityClass->deserialize($result->get());
+        $this->cached[$entity->id] = $entity;
+        return $entity;
     }
 
     /**
      * Queries the database for all entities of the appropriate type and returns the result
      *
-     * @return Iterator[Entity]
+     * @return Entity[]
      */
-    public function all(): iterable {
+    public function all(): array {
         $result = Database
             ::select()
             ->from($this->entityClass->getTableName())
@@ -71,8 +83,17 @@ class Repository {
                 .' ('.$result->getErrorInfo().')');
         }
 
-        return Stream::begin($result)
-            ->map(fn($row) => $this->entityClass->deserialize($row));
+        $entities = Stream::begin($result)
+            ->map(fn($row) => $this->entityClass->deserialize($row))
+            // Substitute new entities with existing cached entities
+            ->map(fn($en) => key_exists($en->id, $this->cached) ? $this->cached[$en->id] : $en)
+            ->toArray();
+
+        foreach($entities as $entity) {
+            $this->cached[$entity->id] = $entity;
+        }
+
+        return $entities;
     }
 
     /**
