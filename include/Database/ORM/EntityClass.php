@@ -3,12 +3,13 @@
 namespace Database\ORM;
 
 use App;
-use Database\ORM\Annotations\Atomic;
 use \ReflectionClass;
 use \InvalidArgumentException;
 use Meta\Annotations\ReflectionClassAnnotated;
-use Database\ORM\Annotations\One;
 use Database\ORM\Annotations\Table;
+use Database\ORM\Annotations\Atomic;
+use Database\ORM\Annotations\One;
+use Database\ORM\Annotations\Many;
 
 /**
  * Reflects an entity class
@@ -19,9 +20,10 @@ class EntityClass {
      * Annotation class aliases used for annotation parsing
      */
     private const ANNOTATION_ALIASES = [
-        'Table'  => Table::class,
+        'Table' => Table::class,
         'Atomic' => Atomic::class,
-        'One'    => One::class,
+        'One' => One::class,
+        'Many' => Many::class,
     ];
 
     /**
@@ -68,6 +70,7 @@ class EntityClass {
         foreach($props as $prop) {
             if($anno = $prop->getAnnotation(Atomic::class)) $this->serde[] = $anno->getSerde();
             elseif($anno = $prop->getAnnotation(One::class)) $this->serde[] = $anno->getSerde();
+            elseif($anno = $prop->getAnnotation(Many::class)) $this->serde[] = $anno->getSerde();
         }
     }
 
@@ -76,25 +79,6 @@ class EntityClass {
      */
     public function getTableName(): string {
         return $this->tableName;
-    }
-
-    /**
-     * Instantiates the entity class based on the given values.
-     *
-     * @param mixed[string] @values The column values
-     *
-     * @return null|Entity The instantiated entity or `null` if `null` or `false` was passed
-     */
-    public function deserialize(array $values): ?Entity {
-        if(!$values) return null;
-
-        $entity = $this->class->newInstance();
-
-        foreach($this->serde as $serde) {
-            $serde->deserialize($values, $entity);
-        }
-
-        return $entity;
     }
 
     /**
@@ -121,6 +105,25 @@ class EntityClass {
         if(!$includeId) unset($record['id']);
 
         return $record;
+    }
+
+    /**
+     * Instantiates the entity class based on the given values.
+     *
+     * @param mixed[string] @values The column values
+     *
+     * @return null|Entity The instantiated entity or `null` if `null` or `false` was passed
+     */
+    public function deserialize(array $values): ?Entity {
+        if(!$values) return null;
+
+        $entity = $this->class->newInstance();
+
+        foreach($this->serde as $serde) {
+            $serde->deserialize($values, $entity);
+        }
+
+        return $entity;
     }
 
     /**

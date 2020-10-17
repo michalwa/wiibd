@@ -42,20 +42,6 @@ class SingleForeignColumnSerde implements ColumnSerde {
     /**
      * {@inheritDoc}
      */
-    public function deserialize(array $record, Entity &$entity): void {
-        if(!key_exists($this->columnName, $record)) {
-            throw new ColumnSerdeException("Value for column {$this->columnName} missing");
-        }
-
-        $prop = $this->propertyName;
-        $entity->$prop = Repository
-            ::for($this->foreignEntityClassName)
-            ->findById($record[$this->columnName]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function serialize(Entity $entity, array &$record, array &$refs): void {
         if(!property_exists(get_class($entity), $this->propertyName)) {
             throw new ColumnSerdeException("Column property {$this->propertyName} does not exist");
@@ -67,6 +53,20 @@ class SingleForeignColumnSerde implements ColumnSerde {
         $refs[] = Repository
             ::for($this->foreignEntityClassName)
             ->findById($entity->$prop->id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deserialize(array $record, Entity &$entity): void {
+        if(!key_exists($this->columnName, $record)) {
+            throw new ColumnSerdeException("Value for column {$this->columnName} missing");
+        }
+
+        $prop = $this->propertyName;
+        $entity->$prop = Repository
+            ::for($this->foreignEntityClassName)
+            ->findById($record[$this->columnName]);
     }
 
 }

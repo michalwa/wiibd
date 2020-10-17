@@ -2,7 +2,6 @@
 
 namespace Database\ORM\Annotations;
 
-use Database\ORM\AtomicColumnSerde;
 use Database\ORM\ColumnSerde;
 use Database\ORM\EntityClass;
 use Database\ORM\SingleForeignColumnSerde;
@@ -56,8 +55,8 @@ class One extends Annotation {
                 $this->getItem(), $this->getLineOffset());
         }
 
-        $this->foreignEntityClassName = EntityClass::find($params[0]);
         $this->propertyName = $item->getName();
+        $this->foreignEntityClassName = EntityClass::find($params[0]);
         $this->columnName = count($params) >= 1 ? $params[1] : $this->propertyName;
     }
 

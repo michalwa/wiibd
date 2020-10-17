@@ -43,8 +43,8 @@ class Atomic extends Annotation {
                 $this->getItem(), $this->getLineOffset());
         }
 
-        $this->columnName = count($params) >= 1 ? $params[0] : $item->getName();
         $this->propertyName = $item->getName();
+        $this->columnName = count($params) >= 1 ? $params[0] : $this->propertyName;
     }
 
     /**

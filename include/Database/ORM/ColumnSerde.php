@@ -8,15 +8,6 @@ namespace Database\ORM;
 interface ColumnSerde {
 
     /**
-     * Extracts the value for the column property from the given record
-     * and injects it into the given entity
-     *
-     * @param array $record The record as an associative array
-     * @param Entity $entity The entity to inject the value into
-     */
-    public function deserialize(array $record, Entity &$entity): void;
-
-    /**
      * Extracts the value for this column from the given entity
      * and injects it into the given record associative array
      *
@@ -27,5 +18,14 @@ interface ColumnSerde {
      *                       need to be updated before the given entity.
      */
     public function serialize(Entity $entity, array &$record, array &$refs): void;
+
+    /**
+     * Extracts the value for the column property from the given record
+     * and injects it into the given entity
+     *
+     * @param array $record The record as an associative array
+     * @param Entity $entity The entity to inject the value into
+     */
+    public function deserialize(array $record, Entity &$entity): void;
 
 }
