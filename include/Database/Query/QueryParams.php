@@ -17,7 +17,7 @@ class QueryParams {
      * to be interpolated into a PDO statement
      */
     public function add($param): string {
-        array_push($this->values, $param);
+        $this->values[] = $param;
         return '?';
     }
 

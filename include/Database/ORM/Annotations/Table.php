@@ -8,8 +8,12 @@ use Meta\Annotations\AnnotationException;
 use ReflectionClass;
 
 /**
- * @Table annotation to be used on entity classes
- * Usage: `@Table(name)`
+ * `@Table` annotation to be used on entity classes. Associates the class with
+ * a database table.
+ *
+ * Usage: `@Table([name])`
+ *   - `name` - the name of the associated database table (optional - defaults
+ *              to the short class name)
  */
 class Table extends Annotation {
 
@@ -27,7 +31,7 @@ class Table extends Annotation {
         if( !($item instanceof ReflectionClass) ) {
             throw new AnnotationException("@Table annotation can only be used on classes");
         }
-        $this->name = count($params) > 0 && is_string($params[0]) ? $params[0] : $item->getShortName();
+        $this->name = count($params) >= 1 ? $params[0] : $item->getShortName();
     }
 
     /**

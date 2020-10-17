@@ -18,7 +18,7 @@ abstract class Query {
      *
      * @return string The built query string
      */
-    protected abstract function build(QueryParams $params): string;
+    public abstract function build(QueryParams $params): string;
 
     /**
      * Submits the query to the database

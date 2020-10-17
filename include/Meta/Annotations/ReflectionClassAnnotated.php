@@ -19,7 +19,7 @@ class ReflectionClassAnnotated extends ReflectionClass {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @param array $annotationAliases Annotation class aliases passed to `Annotations::parseAll()`
      */
     public function __construct($argument, $annotationAliases = []) {
@@ -30,12 +30,14 @@ class ReflectionClassAnnotated extends ReflectionClass {
 
     /**
      * Returns reflections of methods of this class as `ReflectionMethodAnnotated`
-     * 
+     *
      * @param ?int $filter Filters the methods to only include those with certain attributes
      * @param array $annotationAliases Annotation class aliases passed to `Annotations::parseAll()`.
      *  These aliases will be joined with the aliases used to construct this reflection.
+     *
+     * @return ReflectionPropertyAnnotated[]
      */
-    public function getMethodsAnnotated(?int $filter = null, $annotationAliases = []) {
+    public function getMethodsAnnotated(?int $filter = null, $annotationAliases = []): array {
         $methods = $filter !== null ? $this->getMethods($filter) : $this->getMethods();
         $all = [];
         foreach($methods as $method) {
@@ -49,12 +51,14 @@ class ReflectionClassAnnotated extends ReflectionClass {
 
     /**
      * Returns reflections of properies of this class as `ReflectionPropertyAnnotated`
-     * 
+     *
      * @param ?int $filter Filters the properties to only include those with certain attributes
      * @param array $annotationAliases Annotation class aliases passed to `Annotations::parseAll()`.
      *  These aliases will be joined with the aliases used to construct this reflection.
+     *
+     * @return ReflectionPropertyAnnotated[]
      */
-    public function getPropertiesAnnotated(?int $filter = null, $annotationAliases = []) {
+    public function getPropertiesAnnotated(?int $filter = null, $annotationAliases = []): array {
         $properties = $filter !== null ? $this->getProperties($filter) : $this->getProperties();
         $all = [];
         foreach($properties as $property) {
@@ -68,7 +72,7 @@ class ReflectionClassAnnotated extends ReflectionClass {
 
     /**
      * Extends the given reflection object into this class
-     * 
+     *
      * @param ReflectionClass $class The reflection object to convert
      * @param array $annotationAliases Annotation class aliases passed to `Annotations::parseAll()`
      */

@@ -45,7 +45,7 @@ class Where {
      * @param QueryParams $params The query params to populate
      */
     public function build(QueryParams $params): string {
-        return '`'.$this->column.'` '.$this->operator.' '.$params->add($this->operand);
+        return $this->column.' '.$this->operator.' '.$params->add($this->operand);
     }
 
     /**

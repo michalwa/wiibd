@@ -10,7 +10,7 @@ class Delete extends TableQuery {
     /**
      * {@inheritDoc}
      */
-    protected function build(QueryParams $params): string {
+    public function build(QueryParams $params): string {
         $where = $this->whereClause($params);
 
         return 'DELETE FROM'

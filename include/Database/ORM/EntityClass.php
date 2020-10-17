@@ -2,10 +2,12 @@
 
 namespace Database\ORM;
 
+use App;
+use Database\ORM\Annotations\Atomic;
 use \ReflectionClass;
 use \InvalidArgumentException;
 use Meta\Annotations\ReflectionClassAnnotated;
-use Database\ORM\Annotations\Column;
+use Database\ORM\Annotations\One;
 use Database\ORM\Annotations\Table;
 
 /**
@@ -18,7 +20,8 @@ class EntityClass {
      */
     private const ANNOTATION_ALIASES = [
         'Table'  => Table::class,
-        'Column' => Column::class,
+        'Atomic' => Atomic::class,
+        'One'    => One::class,
     ];
 
     /**
@@ -40,10 +43,10 @@ class EntityClass {
     private $tableName;
 
     /**
-     * Column annotations
-     * @var Column[]
+     * Column (de)serializers
+     * @var ColumnSerde[]
      */
-    private $columns = [];
+    private $serde = [];
 
     /**
      * Constructs a new `EntityClass` object
@@ -61,12 +64,10 @@ class EntityClass {
         $tableAnno = $this->class->getAnnotation(Table::class);
         if($tableAnno !== null) $this->tableName = $tableAnno->getName();
 
-        $properties = $this->class->getPropertiesAnnotated();
-
-        /** @var \Meta\Annotations\ReflectionPropertyAnnotated $property */
-        foreach($properties as $property) {
-            $annotation = $property->getAnnotation(Column::class);
-            if($annotation !== null) $this->columns[] = $annotation;
+        $props = $this->class->getPropertiesAnnotated();
+        foreach($props as $prop) {
+            if($anno = $prop->getAnnotation(Atomic::class)) $this->serde[] = $anno->getSerde();
+            elseif($anno = $prop->getAnnotation(One::class)) $this->serde[] = $anno->getSerde();
         }
     }
 
@@ -80,24 +81,19 @@ class EntityClass {
     /**
      * Instantiates the entity class based on the given values.
      *
-     * @param array @values The column values
+     * @param mixed[string] @values The column values
      *
      * @return null|Entity The instantiated entity or `null` if `null` or `false` was passed
      */
-    public function deserialize($values): ?Entity {
-        if($values === null || $values === false) return null;
+    public function deserialize(array $values): ?Entity {
+        if(!$values) return null;
+
         $entity = $this->class->newInstance();
-        foreach($this->columns as $column) {
-            $property = $column->getPropertyName();
-            $value = $values[$column->getName()];
 
-            // Convert foreign keys to entities
-            if(($foreign = $column->getForeignEntityClassName()) !== null) {
-                $value = Repository::for($foreign)->findById($value);
-            }
-
-            $entity->$property = $value;
+        foreach($this->serde as $serde) {
+            $serde->deserialize($values, $entity);
         }
+
         return $entity;
     }
 
@@ -105,48 +101,26 @@ class EntityClass {
      * Serializes the given entity into a record as an associative array
      *
      * @param Entity $entity The entity to serialize
+     * @param Entity[] $refs Array to be populated with entities that need to be updated
+     *                       before this entity
      * @param bool $includeId Whether to include the primary key column
+     *
+     * @return mixed[string]
      */
-    public function serialize(Entity $entity, bool $includeId = false): array {
+    public function serialize(Entity $entity, array &$refs = [], bool $includeId = false): array {
         if(!$this->class->isInstance($entity)) {
             throw new InvalidArgumentException("Entity is not an instance of the reflected class");
         }
 
         $record = [];
-        foreach($this->columns as $column) {
-            $prop = $column->getPropertyName();
-            $value = $entity->$prop;
 
-            // Convert foreign entities to their primary keys
-            if($column->getForeignEntityClassName() !== null) {
-                $value = ($value === null ? null : $value->id);
-            }
-
-            // Skip null values
-            if($value !== null) $record[$column->getName()] = $value;
+        foreach($this->serde as $serde) {
+            $serde->serialize($entity, $record, $refs);
         }
 
         if(!$includeId) unset($record['id']);
 
         return $record;
-    }
-
-    /**
-     * Returns a list of foreign entities contained within the given entity
-     *
-     * @param Entity $entity The entity to find foreign entities in
-     *
-     * @return Entity[] The foreign entities found
-     */
-    public function getForeignEntities(Entity $entity): array {
-        $foreign = [];
-        foreach($this->columns as $column) {
-            if($column->getForeignEntityClassName() !== null) {
-                $prop = $column->getPropertyName();
-                array_push($foreign, $entity->$prop);
-            }
-        }
-        return $foreign;
     }
 
     /**
@@ -159,6 +133,29 @@ class EntityClass {
             self::$classes[$className] = new EntityClass($className);
         }
         return self::$classes[$className];
+    }
+
+    /**
+     * Finds the entity class with the given name. Can be full name or short name,
+     * in which case the configured entities namespace will be searched for the class.
+     *
+     * @param string $name The entity class name to find
+     *
+     * @return string The resolved full class name
+     */
+    public static function find(string $name): string {
+        if(class_exists($name)) {
+            return $name;
+        } else {
+            $entitiesNamespace = App::get()->getConfig('database.entities');
+            $name = $entitiesNamespace.'\\'.$name;
+
+            if(!class_exists($name)) {
+                throw new InvalidArgumentException("Entity class $name could not be found");
+            }
+
+            return $name;
+        }
     }
 
 }

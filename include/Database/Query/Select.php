@@ -14,6 +14,12 @@ class Select extends TableQuery {
     private $fields;
 
     /**
+     * The appended join clauses
+     * @var Join[]
+     */
+    private $joins = [];
+
+    /**
      * Constructs a SELECT query
      *
      * @param string[] $fields The fields to select
@@ -23,28 +29,36 @@ class Select extends TableQuery {
     }
 
     /**
-     * Builds and returns the string to be interpolated into the query after the `SELECT` keyword
+     * Adds a join to this query
+     *
+     * @param string $type Join type (`''`, `'INNER'`, `'OUTER'`, `'LEFT'`, `'RIGHT'`)
+     * @param string $table The table to join
+     * @param string $foreignKey The column in the specified table referencing primary keys
+     *                           of the selected table
+     *
+     * @return self for chaining
      */
-    private function fieldsString(): string {
-        if($this->fields === [] || $this->fields[0] === '*') {
-            return '*';
-        }
-        $str = '';
-        foreach($this->fields as $field) {
-            if($str !== '') $str .= ', ';
-            $str .= '`'.$field.'`';
-        }
-        return $str;
+    public function join(string $type, string $table, string $foreignKey): self {
+        $this->joins[] = new Join($type, $table, $foreignKey);
+        return $this;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function build(QueryParams $params): string {
+    public function build(QueryParams $params): string {
+        if($this->fields === [] || $this->fields[0] === '*') {
+            $fields = '*';
+        }
+        $fields = implode(', ', $this->fields);
+
         $where = $this->whereClause($params);
 
-        return 'SELECT '.$this->fieldsString()
+        $join = implode(' ', array_map(fn($j) => $j->build($this->tableName), $this->joins));
+
+        return 'SELECT '.$fields
             .' FROM '.$this->tableName
+            .($join !== '' ? ' '.$join : '')
             .($where !== '' ? ' WHERE '.$where : '');
     }
 

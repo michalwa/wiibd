@@ -11,7 +11,7 @@ class Entity {
      * The required primary key column.
      * Non-nullity indicates existence in the database.
      *
-     * @Column('id')
+     * @Atomic()
      * @var int
      */
     public $id;

@@ -2,10 +2,8 @@
 
 namespace Database\ORM;
 
-use \ReflectionClass;
 use Database\Database;
 use Database\DatabaseException;
-use Database\Result;
 use Utils\Stream;
 
 /**
@@ -69,9 +67,9 @@ class Repository {
     /**
      * Queries the database for all entities of the appropriate type and returns the result
      *
-     * @return Entity[]
+     * @return Stream<Entity>
      */
-    public function all(): array {
+    public function all(): Stream {
         $result = Database
             ::select()
             ->from($this->entityClass->getTableName())
@@ -84,14 +82,15 @@ class Repository {
         }
 
         $entities = Stream::begin($result)
+
+            // Deserialize
             ->map(fn($row) => $this->entityClass->deserialize($row))
+
             // Substitute new entities with existing cached entities
             ->map(fn($en) => key_exists($en->id, $this->cached) ? $this->cached[$en->id] : $en)
-            ->toArray();
 
-        foreach($entities as $entity) {
-            $this->cached[$entity->id] = $entity;
-        }
+            // Cache each consumed entity
+            ->map(function($en) { $this->cached[$en->id] = $en; return $en; });
 
         return $entities;
     }
@@ -106,20 +105,22 @@ class Repository {
      */
     public function persist(Entity $entity): void {
 
-        // Find foreign entities and persist them first
-        foreach($this->entityClass->getForeignEntities($entity) as $foreign) {
-            $foreign->persist();
+        $refs = [];
+        $record = $this->entityClass->serialize($entity, $refs);
+
+        foreach($refs as $ref) {
+            $ref->persist();
         }
 
         if($entity->id === null) {
             $result = Database
-                ::insert($this->entityClass->serialize($entity))
+                ::insert($record)
                 ->into($this->entityClass->getTableName())
                 ->execute();
         } else {
             $result = Database
                 ::update($this->entityClass->getTableName())
-                ->setAll($this->entityClass->serialize($entity))
+                ->setAll($record)
                 ->except('id')
                 ->where('id', '=', $entity->id)
                 ->execute();

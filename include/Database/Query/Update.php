@@ -64,7 +64,7 @@ class Update extends TableQuery {
     /**
      * {@inheritDoc}
      */
-    protected function build(QueryParams $params): string {
+    public function build(QueryParams $params): string {
 
         $sets = array_map_assoc(
             fn($col, $val) => $col.' = '.$params->add($val),
