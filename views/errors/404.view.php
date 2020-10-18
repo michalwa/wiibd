@@ -15,7 +15,7 @@ $status  = Http\Status::toString(404);
     <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300&display=swap" rel="stylesheet">
 
-    <?= $this->include('error-style') ?>
+    <?= $this->include('errors/error-style') ?>
 </head>
 <body>
     <div class="wrapper">

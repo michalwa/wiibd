@@ -34,7 +34,7 @@ class App {
 
     /**
      * Initializes and returns the app
-     * 
+     *
      * @param string $rootDir The path to the root directory of the app. If constructing
      *  from index.php in root directory, use `__DIR__`.
      * @param Config $config Loaded app configuration
@@ -45,7 +45,7 @@ class App {
         }
         return self::$instance;
     }
-    
+
     /**
      * Returns the singleton app instance
      */
@@ -80,7 +80,7 @@ class App {
      * Returns the specified configuration option. If no such option exists,
      * return `$default`. Nested array accesses are concatenated into one string joined with dots,
      * e.g. to access `config['app']['rootUrl']` call `get('app.rootUrl')`
-     * 
+     *
      * @param string $option Name of the option to return
      * @param string $default The default/fallback value
      */
@@ -97,7 +97,7 @@ class App {
 
     /**
      * Returns the full URL path to the specified public resource
-     * 
+     *
      * @param string $resource The path to the resource (relative to the public directory)
      */
     public function getPublicUrl(string $resource): string {
@@ -112,6 +112,21 @@ class App {
      */
     public function getRouter(): Router {
         return $this->router;
+    }
+
+    /**
+     * Shorthand for unparsing a URL for a controller route
+     *
+     * @param string $controller The class name of the controller containing the route
+     * @param string $name The name of the route (handler)
+     * @param mixed[string] $params The parameters for the route URL
+     */
+    public function routeUrl(
+        string $controller,
+        string $name,
+        array $params = []
+    ): string {
+        return $this->router->getRoute("$controller::$name")->unparseUrl($params);
     }
 
 }

@@ -58,7 +58,7 @@ $request = $params['request'];
                 <h2>Views</h2>
                 <p>
                     Views directory: <code><?= '/'.App::get()->getConfig('views.dir') ?></code><br>
-                    Include view component: <?= $this->include('example-component', ['content' => 'OK']) ?>
+                    Include view component: <?= $this->include('include/example-component', ['content' => 'OK']) ?>
                 </p>
             </div>
         </div>

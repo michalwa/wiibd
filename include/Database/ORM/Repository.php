@@ -139,6 +139,7 @@ class Repository {
                 ->get()['@@IDENTITY'];
 
             $entity->setId($id);
+            $this->cached[$id] = $entity;
         } else {
             Database
                 ::update($this->entityClass->getTableName())

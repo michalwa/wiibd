@@ -3,6 +3,7 @@
 namespace Routing\Route;
 
 use \App;
+use BadMethodCallException;
 use Routing\Route\Route;
 use Http\Request;
 use Http\Response;
@@ -12,6 +13,9 @@ use Http\Response;
  */
 class PublicResourceRoute extends Route {
 
+    /**
+     * {@inheritDoc}
+     */
     public function tryHandle(Request $request): ?Response {
         $app = App::get();
         if($request->getMethod() === 'GET' && $request->getPath()->isPublicResource($app)) {
@@ -19,6 +23,13 @@ class PublicResourceRoute extends Route {
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function unparseUrl(array $params = []): string {
+        throw new BadMethodCallException("PublicResourceRoute cannot be unparsed");
     }
 
 }

@@ -120,6 +120,7 @@ class Database {
      * Begins a transaction with the database
      */
     public function beginTransaction(): void {
+        if(!$this->isConnected()) $this->connect();
         $this->pdo->beginTransaction();
     }
 
@@ -127,6 +128,7 @@ class Database {
      * Commits the last transaction
      */
     public function commit(): void {
+        if(!$this->isConnected()) $this->connect();
         $this->pdo->commit();
     }
 
@@ -134,6 +136,7 @@ class Database {
      * Rolls back the last transaction
      */
     public function rollBack(): void {
+        if(!$this->isConnected()) $this->connect();
         $this->pdo->rollBack();
     }
 
@@ -209,10 +212,10 @@ class Database {
     /**
      * Returns a new INSERT query object
      *
-     * @param array $record The record to insert
+     * @param mixed[string][] $record The record to insert
      */
-    public static function insert(array $record): Insert {
-        return new Insert($record);
+    public static function insert(...$records): Insert {
+        return new Insert(...$records);
     }
 
 }

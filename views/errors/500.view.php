@@ -47,7 +47,7 @@ if($params['class'] === 'TypeError') {
     <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300&display=swap" rel="stylesheet">
 
-    <?= $this->include('error-style') ?>
+    <?= $this->include('errors/error-style') ?>
 
     <style>
         .error-class {
@@ -108,7 +108,7 @@ if($params['class'] === 'TypeError') {
                     $function = (key_exists('class', $trace) && $trace['class'] ? $trace['class'].'::' : '');
                     $function .= (key_exists('function', $trace) ? $trace['function'] : '');
                     ?>
-            
+
                     <!-- Stack trace entry -->
                     <li class="error-trace-entry">
                         <?php if(key_exists('file', $trace)): ?>

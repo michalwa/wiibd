@@ -25,7 +25,7 @@ abstract class Route {
 
     /**
      * Sets the name of this route
-     * 
+     *
      * @param string $name The new name of this route
      */
     public function setName(string $name) {
@@ -41,9 +41,16 @@ abstract class Route {
 
     /**
      * Handles the given request and returns a response or `null`.
-     * 
+     *
      * @param Request $request The request to handle
      */
     public abstract function tryHandle(Request $request): ?Response;
+
+    /**
+     * Constructs a URL to this route with the specified parameters
+     *
+     * @param mixed[string] $params The parameters to plug into the URL
+     */
+    public abstract function unparseUrl(array $params = []): string;
 
 }

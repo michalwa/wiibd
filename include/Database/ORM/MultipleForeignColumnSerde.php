@@ -109,6 +109,8 @@ class MultipleForeignColumnSerde implements ColumnSerde {
      * {@inheritDoc}
      */
     public function beforePersist(EntityProxy $entity): void {
+        if(!$entity->getEntity()->hasRecord()) return;
+
         $dbIds = $this->fetchForeignIds($entity->getEntity()->getId())
             ->toArray();
 
@@ -117,13 +119,11 @@ class MultipleForeignColumnSerde implements ColumnSerde {
             ->map(fn($entity) => $entity->getId())
             ->toArray();
 
-        foreach(array_diff($dbIds, $actualIds) as $deletedId) {
-            Database::delete()
-                ->from($this->crossTableName)
-                ->where($this->leftForeignKeyColumnName, '=', $entity->getEntity()->getId())
-                ->and($this->rightForeignKeyColumnName, '=', $deletedId)
-                ->execute();
-        }
+        Database::delete()
+            ->from($this->crossTableName)
+            ->where($this->leftForeignKeyColumnName, '=', $entity->getEntity()->getId())
+            ->and($this->rightForeignKeyColumnName, 'IN', array_diff($dbIds, $actualIds))
+            ->execute();
     }
 
     /**

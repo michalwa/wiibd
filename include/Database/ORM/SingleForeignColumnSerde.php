@@ -47,7 +47,7 @@ class SingleForeignColumnSerde implements ColumnSerde {
         $id = $record[$this->columnName]
             = $foreign === null ? null : $foreign->getId();
 
-        if($foreign) {
+        if($id) {
             $refs[] = Repository
                 ::for($this->foreignEntityClassName)
                 ->findById($id);
@@ -83,7 +83,11 @@ class SingleForeignColumnSerde implements ColumnSerde {
     /**
      * {@inheritDoc}
      */
-    public function beforePersist(EntityProxy $entity): void {}
+    public function beforePersist(EntityProxy $entity): void {
+        if($entity->getProperty($this->propertyName) !== null) {
+            $entity->getProperty($this->propertyName)->persist(false);
+        }
+    }
 
     /**
      * {@inheritDoc}

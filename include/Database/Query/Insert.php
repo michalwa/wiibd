@@ -16,15 +16,15 @@ class Insert extends Query {
     /**
      * The column values to insert
      */
-    private $record;
+    private $records;
 
     /**
      * Constructs an INSERT query
      *
-     * @param array $record Column names associated with the values to insert
+     * @param mixed[string][] $records Column names associated with the values to insert
      */
-    public function __construct($record) {
-        $this->record = $record;
+    public function __construct(...$records) {
+        $this->records = $records;
     }
 
     /**
@@ -39,10 +39,27 @@ class Insert extends Query {
      * {@inheritDoc}
      */
     public function build(QueryParams $params): string {
+        $keys = [];
+        foreach($this->records as $record) {
+            array_append($keys, array_keys($record));
+        }
+        $keys = array_unique($keys);
+
+        $allValues = [];
+        foreach($this->records as $record) {
+            $values = [];
+            foreach($keys as $key) {
+                $values[] = key_exists($key, $record) ? $record[$key] : null;
+            }
+            $allValues[] = $values;
+        }
+
+        $values = implode(', ', array_map(fn($v) => '('.$params->addAll($v).')', $allValues));
+
         return 'INSERT INTO'
             .' '.$this->tableName
-            .' ('.implode(', ', array_keys($this->record)).')'
-            .' VALUES ('.$params->addAll(array_values($this->record)).')';
+            .' ('.implode(', ', $keys).')'
+            .' VALUES '.$values;
     }
 
 }

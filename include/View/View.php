@@ -27,7 +27,7 @@ class View {
 
     /**
      * Constructs a new `View` object
-     * 
+     *
      * @param string $template The template to render
      * @param null|string $file The template filename, if template loaded from file
      */
@@ -39,7 +39,7 @@ class View {
 
     /**
      * Renders this view and returns the resulting HTML document
-     * 
+     *
      * @param array $params Parameters for the template
      */
     public function render($params = []): string {
@@ -55,7 +55,7 @@ class View {
 
     /**
      * Renders this view and prepares an HTML response
-     * 
+     *
      * @param array $params Parameters for the template
      * @param int $status The HTTP status for the response
      */
@@ -68,7 +68,7 @@ class View {
 
     /**
      * Loads a view from an appropriate file based on the given name
-     * 
+     *
      * @param string $name The name of the view to load
      */
     public static function load(string $name): self {
@@ -88,7 +88,7 @@ class View {
     /**
      * Includes a reusable component and returns it rendered with the given parameters.
      * To be used from a template
-     * 
+     *
      * @param string $name The name of the component to include
      * @param array $params The params to render the component with
      */
@@ -96,7 +96,7 @@ class View {
         $app = App::get();
         $filename = new Path(
             $app->getRootDir(),
-            $app->getConfig('views.includeDir'),
+            $app->getConfig('views.dir'),
             $name.$app->getConfig('views.fileSuffix'));
 
         if(!file_exists($filename)) {

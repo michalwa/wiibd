@@ -27,7 +27,7 @@ abstract class PatternRoute extends Route {
 
     /**
      * Constructs a new pattern-matching route
-     * 
+     *
      * @param PathPattern $pattern The pattern the path must match
      *  for this route to handle a request
      */
@@ -48,6 +48,13 @@ abstract class PatternRoute extends Route {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function unparseUrl(array $params = []): string {
+        return '/'.$this->pattern->render($params);
+    }
+
+    /**
      * Returns the pattern
      */
     public function getPattern(): PathPattern {
@@ -56,7 +63,7 @@ abstract class PatternRoute extends Route {
 
     /**
      * Actually handles the request with the path matching the pattern of this route
-     * 
+     *
      * @param Request $request The request to handle
      * @param array $params Values of the pattern parameters as an associative array
      */
@@ -64,7 +71,7 @@ abstract class PatternRoute extends Route {
 
     /**
      * Implements `PatternRoute` with the given pattern and callback
-     * 
+     *
      * @param string $method The request method the route will handle
      * @param string $pattern The pattern the path must match
      *  for this route to handle a request
