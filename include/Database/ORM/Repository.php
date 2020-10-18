@@ -4,6 +4,7 @@ namespace Database\ORM;
 
 use Database\Database;
 use Database\DatabaseException;
+use InvalidArgumentException;
 use Utils\Stream;
 
 /**
@@ -51,16 +52,11 @@ class Repository {
             ::select()
             ->from($this->entityClass->getTableName())
             ->where('id', '=', $id)
-            ->execute();
-
-        if(!$result->ok()) {
-            throw new DatabaseException("Query failed:"
-                .' '.$result->getQueryInfoHtml()
-                .' '.$result->getErrorInfo());
-        }
+            ->execute()
+            ->expect();
 
         $entity = $this->entityClass->deserialize($result->get());
-        $this->cached[$entity->id] = $entity;
+        $this->cached[$entity->getId()] = $entity;
         return $entity;
     }
 
@@ -73,13 +69,8 @@ class Repository {
         $result = Database
             ::select()
             ->from($this->entityClass->getTableName())
-            ->execute();
-
-        if(!$result->ok()) {
-            throw new DatabaseException("Query failed:"
-                .' '.$result->getQueryInfoHtml()
-                .' ('.$result->getErrorInfo().')');
-        }
+            ->execute()
+            ->expect();
 
         $entities = Stream::begin($result)
 
@@ -87,10 +78,10 @@ class Repository {
             ->map(fn($row) => $this->entityClass->deserialize($row))
 
             // Substitute new entities with existing cached entities
-            ->map(fn($en) => key_exists($en->id, $this->cached) ? $this->cached[$en->id] : $en)
+            ->map(fn($en) => key_exists($en->getId(), $this->cached) ? $this->cached[$en->getId()] : $en)
 
             // Cache each consumed entity
-            ->map(function($en) { $this->cached[$en->id] = $en; return $en; });
+            ->map(function($en) { $this->cached[$en->getid()] = $en; return $en; });
 
         return $entities;
     }
@@ -104,6 +95,13 @@ class Repository {
      * @throws DatabaseException If the operation fails
      */
     public function persist(Entity $entity): void {
+        $cls = $this->entityClass->getReflection();
+        if(!$cls->isInstance($entity)) {
+            throw new InvalidArgumentException(
+                "Entity is not associated with this repository (must be an instance of {$cls->getName()})");
+        }
+
+        $this->entityClass->beforePersist($entity);
 
         $refs = [];
         $record = $this->entityClass->serialize($entity, $refs);
@@ -112,25 +110,60 @@ class Repository {
             $ref->persist();
         }
 
-        if($entity->id === null) {
-            $result = Database
+        if(!$entity->hasRecord()) {
+            Database
                 ::insert($record)
                 ->into($this->entityClass->getTableName())
-                ->execute();
+                ->execute()
+                ->expect();
+
+            $id = Database::get()
+                ->query('SELECT @@IDENTITY')
+                ->expect()
+                ->get()['@@IDENTITY'];
+
+            $entity->setId($id);
         } else {
-            $result = Database
+            Database
                 ::update($this->entityClass->getTableName())
                 ->setAll($record)
                 ->except('id')
-                ->where('id', '=', $entity->id)
-                ->execute();
+                ->where('id', '=', $entity->getId())
+                ->execute()
+                ->expect();
         }
 
-        if(!$result->ok()) {
-            throw new DatabaseException("Query failed:"
-                .' '.$result->getQueryInfoHtml()
-                .' ('.$result->getErrorInfo().')');
+        $this->entityClass->afterPersist($entity);
+    }
+
+    /**
+     * Deletes the entity from the database and from the repository
+     *
+     * @param Entity $entity The entity to delete
+     *
+     * @throws DatabaseException If the operation fails
+     */
+    public function delete(Entity $entity): void {
+        $cls = $this->entityClass->getReflection();
+        if(!$cls->isInstance($entity)) {
+            throw new InvalidArgumentException(
+                "Entity is not associated with this repository (must be an instance of {$cls->getName()})");
         }
+
+        foreach($entity->deleteRefs() as $affected) {
+            if($affected->hasRecord()) {
+                $affected->persist();
+            }
+        }
+
+        Database::delete()
+            ->from($this->entityClass->getTableName())
+            ->where('id', '=', $entity->getId())
+            ->execute()
+            ->expect();
+
+        unset($this->cached[$entity->getId()]);
+        $entity->unlink();
     }
 
     /**

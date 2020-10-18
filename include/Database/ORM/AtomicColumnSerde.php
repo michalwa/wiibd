@@ -31,25 +31,36 @@ class AtomicColumnSerde implements ColumnSerde {
     /**
      * {@inheritDoc}
      */
-    public function serialize(Entity $entity, array &$record, array &$refs): void {
-        if(!property_exists(get_class($entity), $this->propertyName)) {
-            throw new ColumnSerdeException("Column property {$this->propertyName} does not exist");
-        }
-
-        $prop = $this->propertyName;
-        $record[$this->columnName] = $entity->$prop;
+    public function serialize(EntityProxy $entity, array &$record, array &$refs): void {
+        $record[$this->columnName] = $entity->getProperty($this->propertyName);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deserialize(array $record, Entity &$entity): void {
+    public function deserialize(array $record, EntityProxy $entity): void {
         if(!key_exists($this->columnName, $record)) {
             throw new ColumnSerdeException("Value for column {$this->columnName} missing");
         }
 
-        $prop = $this->propertyName;
-        $entity->$prop = $record[$this->columnName];
+        $entity->setProperty($this->propertyName, $record[$this->columnName]);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function unref(EntityProxy $referrer, Entity $referee): array {
+        return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function beforePersist(EntityProxy $entity): void {}
+
+    /**
+     * {@inheritDoc}
+     */
+    public function afterPersist(EntityProxy $entity): void {}
 
 }

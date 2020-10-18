@@ -3,6 +3,7 @@
 namespace Database\ORM;
 
 use Database\Database;
+use Utils\Stream;
 
 /**
  * many-to-many foreign entity column (de)serializer
@@ -72,45 +73,110 @@ class MultipleForeignColumnSerde implements ColumnSerde {
     /**
      * {@inheritDoc}
      */
-    public function serialize(Entity $entity, array &$record, array &$refs): void {
-        $cls = get_class($entity);
-
-        if(!property_exists($cls, $this->propertyName)) {
-            throw new ColumnSerdeException(
-                "Column property $cls::{$this->propertyName} does not exist");
-        }
-
-        $prop = $this->propertyName;
-        $refs = array_merge($refs, $entity->$prop);
+    public function serialize(EntityProxy $entity, array &$record, array &$refs): void {
+        array_append($refs, $entity->getProperty($this->propertyName));
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deserialize(array $record, Entity &$entity): void {
+    public function deserialize(array $record, EntityProxy $entity): void {
+        $entities = [];
+
+        foreach($this->fetchForeignIds($record['id']) as $id) {
+            $foreign = $entities[] = Repository
+                ::for($this->foreignEntityClassName)
+                ->findById($id);
+
+            $foreign->addRef($entity->getEntity());
+        }
+
+        $entity->setProperty($this->propertyName, $entities);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function unref(EntityProxy $referrer, Entity $referee): array {
+        $entities = $referrer->getProperty($this->propertyName);
+        array_remove($entities, $referee);
+        $referrer->setProperty($this->propertyName, $entities);
+
+        return [$referrer->getEntity()];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function beforePersist(EntityProxy $entity): void {
+        $dbIds = $this->fetchForeignIds($entity->getEntity()->getId())
+            ->toArray();
+
+        $actualIds = Stream
+            ::begin($entity->getProperty($this->propertyName))
+            ->map(fn($entity) => $entity->getId())
+            ->toArray();
+
+        foreach(array_diff($dbIds, $actualIds) as $deletedId) {
+            Database::delete()
+                ->from($this->crossTableName)
+                ->where($this->leftForeignKeyColumnName, '=', $entity->getEntity()->getId())
+                ->and($this->rightForeignKeyColumnName, '=', $deletedId)
+                ->execute();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function afterPersist(EntityProxy $entity): void {
+        $dbIds = $this->fetchForeignIds($entity->getEntity()->getId())
+            ->toArray();
+
+        foreach($entity->getProperty($this->propertyName) as $foreign) {
+            if(!$foreign->hasRecord()) {
+                $foreign->persist();
+            }
+        }
+
+        $actualIds = Stream
+            ::begin($entity->getProperty($this->propertyName))
+            ->map(fn($entity) => $entity->getId())
+            ->toArray();
+
+        foreach(array_diff($actualIds, $dbIds) as $addedId) {
+            Database
+                ::insert([
+                    $this->leftForeignKeyColumnName => $entity->getEntity()->getId(),
+                    $this->rightForeignKeyColumnName => $addedId])
+                ->into($this->crossTableName)
+                ->execute()
+                ->expect();
+        }
+    }
+
+    /**
+     * Fetches foreign entity IDs from the database based on the entity ID
+     *
+     * @param int $id The primary key of the entity of the annotated class
+     *
+     * @return Stream<int> The fetched IDs
+     */
+    private function fetchForeignIds(int $id): Stream {
         $foreignTableName = EntityClass
             ::for($this->foreignEntityClassName)
             ->getTableName();
 
         $result = Database
-            ::select(["$foreignTableName.id"])
-            ->join('INNER', $this->crossTableName, $this->rightForeignKeyColumnName)
+            ::select("$foreignTableName.id")
             ->from($foreignTableName)
-            ->where($this->leftForeignKeyColumnName, '=', $record['id'])
-            ->execute();
+            ->join('INNER', $this->crossTableName, $this->rightForeignKeyColumnName)
+            ->where($this->leftForeignKeyColumnName, '=', $id)
+            ->execute()
+            ->expect();
 
-        if(!$result->ok()) {
-            throw new ColumnSerdeException("Could not fetch foreign entity IDs");
-        }
-
-        $prop = $this->propertyName;
-        $entity->$prop = [];
-
-        foreach(iterator_to_array($result) as $id) {
-            $entity->$prop[] = Repository
-                ::for($this->foreignEntityClassName)
-                ->findById($id['id']);
-        }
+        return Stream::begin($result)
+            ->map(fn($row) => $row['id']);
     }
 
 }

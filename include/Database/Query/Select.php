@@ -24,8 +24,19 @@ class Select extends TableQuery {
      *
      * @param string[] $fields The fields to select
      */
-    public function __construct($fields = ['*']) {
+    public function __construct(...$fields) {
         $this->fields = $fields;
+
+        if($fields === [] || $fields[0] === '*') {
+            $this->fields = ['*'];
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function from(string $tableName): Select {
+        return parent::from($tableName);
     }
 
     /**
@@ -47,13 +58,8 @@ class Select extends TableQuery {
      * {@inheritDoc}
      */
     public function build(QueryParams $params): string {
-        if($this->fields === [] || $this->fields[0] === '*') {
-            $fields = '*';
-        }
         $fields = implode(', ', $this->fields);
-
         $where = $this->whereClause($params);
-
         $join = implode(' ', array_map(fn($j) => $j->build($this->tableName), $this->joins));
 
         return 'SELECT '.$fields

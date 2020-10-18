@@ -56,7 +56,8 @@ function predicate_map($value, $cases) {
  * Converts the given value to a string according to the following rules:
  *  - `null` gets converted to `'null'`
  *  - booleans get converted to `'true'` and `'false'` respectively
- *  - objects get converted to their class name enclosed in parentheses
+ *  - objects get converted to their class name enclosed in parentheses unless
+ *    they implement `__toString()` which is called in such case
  *  - strings get converted to their unescaped form, enclosed in single-
  *    or double-quotes if they contain escaped characters
  *  - arrays get converted to strings starting with `'['`,
@@ -100,8 +101,36 @@ function stringify($value): string {
 }
 
 /**
+ * Echoes out the value stringified and HTML-escaped
+ */
+function dump($value): void {
+    echo htmlentities(stringify($value));
+}
+
+/**
  * Shortcut for `array_map($callback, array_keys($array), $array)`
  */
 function array_map_assoc($callback, array $array): array {
     return array_map($callback, array_keys($array), $array);
+}
+
+/**
+ * Removes the first occurence of the specified value from the given array
+ *
+ * @param array $array The array to remove the element from
+ * @param mixed $search The element to remove
+ * @param bool $strict Whether to use strict comparison for searching
+ */
+function array_remove(array &$array, $search, bool $strict = true): void {
+    array_splice($array, array_search($search, $array, $strict), 1);
+}
+
+/**
+ * Appends the given arrays to the first array
+ *
+ * @param array $array The array to append to
+ * @param array[] $new The arrays to append to the first array
+ */
+function array_append(array &$array, array ...$new): void {
+    $array = array_merge($array, ...$new);
 }

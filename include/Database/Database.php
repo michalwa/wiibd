@@ -165,8 +165,8 @@ class Database {
      *
      * @param string[] $fields The fields to select
      */
-    public static function select($fields = ['*']): Select {
-        return new Select($fields);
+    public static function select(...$fields): Select {
+        return new Select(...$fields);
     }
 
     /**

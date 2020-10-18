@@ -42,31 +42,52 @@ class SingleForeignColumnSerde implements ColumnSerde {
     /**
      * {@inheritDoc}
      */
-    public function serialize(Entity $entity, array &$record, array &$refs): void {
-        if(!property_exists(get_class($entity), $this->propertyName)) {
-            throw new ColumnSerdeException("Column property {$this->propertyName} does not exist");
+    public function serialize(EntityProxy $entity, array &$record, array &$refs): void {
+        $foreign = $entity->getProperty($this->propertyName);
+        $id = $record[$this->columnName]
+            = $foreign === null ? null : $foreign->getId();
+
+        if($foreign) {
+            $refs[] = Repository
+                ::for($this->foreignEntityClassName)
+                ->findById($id);
         }
-
-        $prop = $this->propertyName;
-        $record[$this->columnName] = $entity->$prop->id;
-
-        $refs[] = Repository
-            ::for($this->foreignEntityClassName)
-            ->findById($entity->$prop->id);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deserialize(array $record, Entity &$entity): void {
+    public function deserialize(array $record, EntityProxy $entity): void {
         if(!key_exists($this->columnName, $record)) {
             throw new ColumnSerdeException("Value for column {$this->columnName} missing");
         }
 
-        $prop = $this->propertyName;
-        $entity->$prop = Repository
+        $foreign = Repository
             ::for($this->foreignEntityClassName)
             ->findById($record[$this->columnName]);
+
+        $entity->setProperty($this->propertyName, $foreign);
+        $foreign->addRef($entity->getEntity());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function unref(EntityProxy $referrer, Entity $referee): array {
+        if($referrer->getProperty($this->propertyName) === $referee) {
+            $referrer->setProperty($this->propertyName, null);
+        }
+        return [$referrer->getEntity()];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function beforePersist(EntityProxy $entity): void {}
+
+    /**
+     * {@inheritDoc}
+     */
+    public function afterPersist(EntityProxy $entity): void {}
 
 }

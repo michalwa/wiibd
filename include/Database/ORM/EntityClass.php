@@ -96,10 +96,11 @@ class EntityClass {
             throw new InvalidArgumentException("Entity is not an instance of the reflected class");
         }
 
+        $proxy = new EntityProxy($entity, $this->class);
         $record = [];
 
         foreach($this->serde as $serde) {
-            $serde->serialize($entity, $record, $refs);
+            $serde->serialize($proxy, $record, $refs);
         }
 
         if(!$includeId) unset($record['id']);
@@ -115,15 +116,75 @@ class EntityClass {
      * @return null|Entity The instantiated entity or `null` if `null` or `false` was passed
      */
     public function deserialize(array $values): ?Entity {
-        if(!$values) return null;
-
         $entity = $this->class->newInstance();
+        $proxy = new EntityProxy($entity, $this->class);
 
         foreach($this->serde as $serde) {
-            $serde->deserialize($values, $entity);
+            $serde->deserialize($values, $proxy);
         }
 
         return $entity;
+    }
+
+    /**
+     * Removes all references to the referee from the referrer
+     *
+     * @param Entity $referrer The entity holding a reference to the other entity
+     * @param Entity $referee The entity to which the reference is held
+     *
+     * @param Entity[] Array of entities that need to be updated
+     */
+    public function unref(Entity $referrer, Entity $referee): array {
+        if(!$this->class->isInstance($referrer)) {
+            throw new InvalidArgumentException("Entity is not an instance of the reflected class");
+        }
+
+        $proxy = new EntityProxy($referrer, $this->class);
+
+        $affected = [];
+        foreach($this->serde as $serde) {
+            array_append($affected, $serde->unref($proxy, $referee));
+        }
+        return $affected;
+    }
+
+    /**
+     * Called before the entity is persisted to the database
+     *
+     * @param Entity $entity The entity to be persisted
+     */
+    public function beforePersist(Entity $entity): void {
+        if(!$this->class->isInstance($entity)) {
+            throw new InvalidArgumentException("Entity is not an instance of the reflected class");
+        }
+
+        $proxy = new EntityProxy($entity, $this->class);
+        foreach($this->serde as $serde) {
+            $serde->beforePersist($proxy);
+        }
+    }
+
+    /**
+     * Called after the entity is persisted to the database
+     *
+     * @param Entity $entity The persisted entity
+     */
+    public function afterPersist(Entity $entity): void {
+        if(!$this->class->isInstance($entity)) {
+            throw new InvalidArgumentException("Entity is not an instance of the reflected class");
+        }
+
+        $proxy = new EntityProxy($entity, $this->class);
+        foreach($this->serde as $serde) {
+            $serde->afterPersist($proxy);
+        }
+    }
+
+    /**
+     * Returns the reflection of the entity class
+     */
+    public function getReflection(): ReflectionClass {
+        return $this->class;
     }
 
     /**

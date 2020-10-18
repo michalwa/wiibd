@@ -114,6 +114,21 @@ class Result implements Iterator {
     }
 
     /**
+     * Throws an exception, if the result is a failure. Returns self otherwise.
+     *
+     * @throws DatabaseException If this result is unsuccessful
+     */
+    public function expect(): self {
+        if(!$this->ok()) {
+            throw new DatabaseException("Query failed:"
+                .' '.$this->getQueryInfoHtml()
+                .' ('.$this->getErrorInfo().')');
+        }
+
+        return $this;
+    }
+
+    /**
      * Returns the number of rows this result has
      */
     public function getNumRows(): int {
@@ -179,13 +194,6 @@ class Result implements Iterator {
      */
     public function valid(): bool {
         return $this->row < $this->numRows;
-    }
-
-    /**
-     * Returns an empty result with success status `false`
-     */
-    public static function fail(): Result {
-        return new Result('', false);
     }
 
 }

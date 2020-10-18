@@ -2,6 +2,7 @@
 
 namespace Utils;
 
+use ArrayIterator;
 use \Iterator;
 
 /**
@@ -24,11 +25,11 @@ class Stream implements Iterator {
     /**
      * Constructs a new stream from the given source
      *
-     * @param Iterator $source the source iterator
+     * @param Iterator|array $source the source iterator or array
      * @param null|callable $mapFunction the function to feed elements of the source iterator through
      */
-    private function __construct(Iterator $source, ?callable $mapFunction = null) {
-        $this->source = $source;
+    private function __construct($source, ?callable $mapFunction = null) {
+        $this->source = is_array($source) ? new ArrayIterator($source) : $source;
         $this->mapFunction = $mapFunction;
     }
 
