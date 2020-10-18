@@ -117,6 +117,27 @@ class Database {
     }
 
     /**
+     * Begins a transaction with the database
+     */
+    public function beginTransaction(): void {
+        $this->pdo->beginTransaction();
+    }
+
+    /**
+     * Commits the last transaction
+     */
+    public function commit(): void {
+        $this->pdo->commit();
+    }
+
+    /**
+     * Rolls back the last transaction
+     */
+    public function rollBack(): void {
+        $this->pdo->rollBack();
+    }
+
+    /**
      * Submits the given query to the database and returns the result
      */
     public function query(string $query, QueryParams $params = null): Result {

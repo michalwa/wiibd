@@ -135,7 +135,7 @@ class MultipleForeignColumnSerde implements ColumnSerde {
 
         foreach($entity->getProperty($this->propertyName) as $foreign) {
             if(!$foreign->hasRecord()) {
-                $foreign->persist();
+                $foreign->persist(false);
             }
         }
 

@@ -91,10 +91,26 @@ class Repository {
      * or updating its record (if it exists).
      *
      * @param Entity $entity The entity to persist
+     * @param bool $safe If `true`, the entire operation will be done in a transaction
+     *             and rolled back if something fails
      *
      * @throws DatabaseException If the operation fails
      */
-    public function persist(Entity $entity): void {
+    public function persist(Entity $entity, bool $safe = true): void {
+        if($safe) {
+            Database::get()->beginTransaction();
+
+            try {
+                $this->persist($entity, false);
+            } catch(\Exception $e) {
+                Database::get()->rollBack();
+                throw $e;
+            }
+
+            Database::get()->commit();
+            return;
+        }
+
         $cls = $this->entityClass->getReflection();
         if(!$cls->isInstance($entity)) {
             throw new InvalidArgumentException(
@@ -107,7 +123,7 @@ class Repository {
         $record = $this->entityClass->serialize($entity, $refs);
 
         foreach($refs as $ref) {
-            $ref->persist();
+            $ref->persist(false);
         }
 
         if(!$entity->hasRecord()) {
@@ -140,10 +156,26 @@ class Repository {
      * Deletes the entity from the database and from the repository
      *
      * @param Entity $entity The entity to delete
+     * @param bool $safe If `true`, the entire operation will be done in a transaction
+     *             and rolled back if something fails
      *
      * @throws DatabaseException If the operation fails
      */
-    public function delete(Entity $entity): void {
+    public function delete(Entity $entity, bool $safe = true): void {
+        if($safe) {
+            Database::get()->beginTransaction();
+
+            try {
+                $this->delete($entity, false);
+            } catch(\Exception $e) {
+                Database::get()->rollBack();
+                throw $e;
+            }
+
+            Database::get()->commit();
+            return;
+        }
+
         $cls = $this->entityClass->getReflection();
         if(!$cls->isInstance($entity)) {
             throw new InvalidArgumentException(
@@ -152,7 +184,7 @@ class Repository {
 
         foreach($entity->deleteRefs() as $affected) {
             if($affected->hasRecord()) {
-                $affected->persist();
+                $affected->persist(false);
             }
         }
 

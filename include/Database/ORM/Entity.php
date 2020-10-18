@@ -2,6 +2,9 @@
 
 namespace Database\ORM;
 
+use Database\Database;
+use Exception;
+
 /**
  * Entity classes define models for database entries
  */
@@ -88,17 +91,17 @@ abstract class Entity {
     }
 
     /**
-     * Shorthand for calling `Repository::persist(Entity)` on this entity
+     * Shorthand for calling `Repository::persist()` on this entity
      */
-    public function persist(): void {
-        Repository::for(get_called_class())->persist($this);
+    public function persist(bool $safe = true): void {
+        Repository::for(get_called_class())->persist($this, $safe);
     }
 
     /**
-     * Shorthand for calling `Repository::delete(Entity)` on this entity
+     * Shorthand for calling `Repository::delete()` on this entity
      */
-    public function delete(): void {
-        Repository::for(get_called_class())->delete($this);
+    public function delete(bool $safe = true): void {
+        Repository::for(get_called_class())->delete($this, $safe);
     }
 
     public function __toString(): string {
