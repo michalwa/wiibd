@@ -52,10 +52,11 @@ class Repository {
             ::select()
             ->from($this->entityClass->getTableName())
             ->where('id', '=', $id)
-            ->execute()
-            ->expect();
+            ->execute();
 
-        $entity = $this->entityClass->deserialize($result->get());
+        if(!$result->ok() || !($row = $result->get())) return null;
+
+        $entity = $this->entityClass->deserialize($row);
         $this->cached[$entity->getId()] = $entity;
         return $entity;
     }

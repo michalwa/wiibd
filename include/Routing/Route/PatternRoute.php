@@ -3,6 +3,7 @@
 namespace Routing\Route;
 
 use \App;
+use Files\Path;
 use Routing\Route\Route;
 use Http\Request;
 use Http\Response;
@@ -51,7 +52,7 @@ abstract class PatternRoute extends Route {
      * {@inheritDoc}
      */
     public function unparseUrl(array $params = []): string {
-        return '/'.$this->pattern->render($params);
+        return '/'.(new Path(App::get()->getRootUrl(), $this->pattern->render($params)));
     }
 
     /**
