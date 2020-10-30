@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use Database\ORM\Entity;
+use Database\Query\Select;
 
 /**
  * @Table('bibliotekarze')
@@ -33,6 +34,10 @@ class AdminUser extends Entity {
      */
     public $lastName;
 
+    public function __toString(): string {
+        return "$this->firstName $this->lastName";
+    }
+
     /**
      * Sets the password for this user
      */
@@ -46,6 +51,14 @@ class AdminUser extends Entity {
      */
     public function passwordEquals(string $password): bool {
         return hash('sha512', $password) === $this->password;
+    }
+
+    /**
+     * Queries the repository for a user with the specified username
+     */
+    public static function findByUsername(string $username): ?self {
+        return self::getRepository()->find(fn(Select $q) => $q
+            ->where('login', '=', $username));
     }
 
 }

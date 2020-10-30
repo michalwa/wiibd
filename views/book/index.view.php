@@ -23,21 +23,21 @@ use App\Entities\Book;
                     <th scope="col">Tytuł</th>
                     <th scope="col">Autor</th>
                     <th scope="col">Wydawnictwo</th>
-                    <th scope="col">Rok wydania</th>
-                    <th scope="col">Gatunek</th>
+                    <!-- <th scope="col">Rok wydania</th> -->
+                    <!-- <th scope="col">Gatunek</th> -->
                 </tr>
             <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
                 <tr>
                     <td><a href="<?= App::routeUrl(
                         BookController::class,
-                        'book_detail',
+                        'bookDetail',
                         ['id' => $book->getId()]) ?>">
                         <?= $book->title ?></a></td>
 
                     <td><?= implode(', ', $book->authors) ?></td>
                     <td><?= $book->publisher ?></td>
-                    <td><?= $book->releaseYear ?></td>
-                    <td><?= implode(', ', $book->genres) ?></td>
+                    <!-- <td><?= $book->releaseYear ?></td> -->
+                    <!-- <td><?= implode(', ', $book->genres) ?></td> -->
                 </tr>
             <?php endforeach; ?>
             </table>

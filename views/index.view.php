@@ -1,3 +1,7 @@
+<?php
+
+use App\Controllers\BookController;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +15,10 @@
     <?= $this->include('include/navbar') ?>
 
     <div class="container">
-        <h1 class="display-2">Witamy w naszej bibliotece!</h1>
+        <h1 class="display-2 mb-5">Witamy w naszej bibliotece!</h1>
+        <a class="btn btn-primary" href="<?= App::routeUrl(BookController::class, 'bookIndex') ?>">
+            Przeglądaj książki
+        </a>
     </div>
 
     <?= $this->include('include/scripts') ?>

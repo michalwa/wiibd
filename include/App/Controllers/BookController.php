@@ -13,7 +13,7 @@ class BookController extends Controller {
     /**
      * @Route('GET', '/books')
      */
-    public function book_index(Request $request, $params): Response {
+    public function bookIndex(Request $request, $params): Response {
         $books = Book::getRepository()->all();
         return View::load('book/index')->toResponse([
             'books' => $books,
@@ -23,7 +23,7 @@ class BookController extends Controller {
     /**
      * @Route('GET', '/books/{id:uint}')
      */
-    public function book_detail(Request $request, $params): Response {
+    public function bookDetail(Request $request, $params): Response {
         $book = Book::getRepository()->findById($params['id']);
 
         if($book === null) {
