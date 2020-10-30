@@ -62,6 +62,26 @@ class Repository {
     }
 
     /**
+     * Queries the database for an entity of the associated type.
+     * Feeds the query object through the given callback before execution.
+     *
+     * @param callable $f The function which will modify the query before
+     *                    it is executed.
+     */
+    public function find($f): ?Entity {
+        $result = $f(
+            Database::select()
+                ->from($this->entityClass->getTableName())
+            )->execute();
+
+        if(!$result->ok() || !($row = $result->get())) return null;
+
+        $entity = $this->entityClass->deserialize($row);
+        $this->cached[$entity->getId()] = $entity;
+        return $entity;
+    }
+
+    /**
      * Queries the database for all entities of the appropriate type and returns the result
      *
      * @return Stream<Entity>

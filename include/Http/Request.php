@@ -115,21 +115,25 @@ class Request {
     }
 
     /**
-     * Returns an arrayiative array of query parameters, if `param` is `null`.
+     * Returns an associative array of query parameters, if `param` is `null`.
      * Otherwise, returns the value of the query parameter with the given name.
      *
      * @param null|string $param Name of the parameter to return or `null`
      * @return array|string
      */
     public function getQuery(?string $param = null) {
-        return $param ? $this->query[$param] : $this->query;
+        return $param !== null ? $this->query[$param] : $this->query;
     }
 
     /**
-     * Submitted `POST` parameters
+     * Returns an associative array of form parameters if `param` is `null`.
+     * Otherwise, returns the value of the specified form parameter.
+     *
+     * @param null|string $param Name of the parameter to return or `null`
+     * @return array|string
      */
-    public function getPost() {
-        return $this->post;
+    public function getPost(?string $param = null) {
+        return $param !== null ? $this->post[$param] : $this->post;
     }
 
     /**

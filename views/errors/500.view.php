@@ -22,8 +22,8 @@ if($params['class'] === 'TypeError') {
         $message);
 
     $message = preg_replace(
-        '/must be an instance of (.+?), (.+?) /',
-        'must be an instance of <code>$1</code>, <code>$2</code> ',
+        '/must be an instance of (.+?), (instance of )?(.+?) returned/',
+        'must be an instance of <code>$1</code>, $2<code>$3</code> returned',
         $message);
 
     $message = preg_replace(
