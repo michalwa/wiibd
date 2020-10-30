@@ -8,7 +8,7 @@ use App\Entities\Book;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= App::get()->getName() ?> | Książki</title>
+    <title><?= App::getName() ?> | Książki</title>
 
     <?= $this->include('include/styles') ?>
 </head>
@@ -28,7 +28,7 @@ use App\Entities\Book;
                 </tr>
             <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
                 <tr>
-                    <td><a href="<?= App::get()->routeUrl(
+                    <td><a href="<?= App::routeUrl(
                         BookController::class,
                         'book_detail',
                         ['id' => $book->getId()]) ?>">

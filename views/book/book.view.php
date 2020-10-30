@@ -8,7 +8,7 @@ $book = $params['book'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= App::get()->getName() ?> | <?= $book->title ?></title>
+    <title><?= App::getName() ?> | <?= $book->title ?></title>
 
     <?= $this->include('include/styles') ?>
 </head>
