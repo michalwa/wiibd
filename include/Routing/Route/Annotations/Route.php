@@ -42,14 +42,14 @@ class Route extends Annotation {
             throw new AnnotationException('The @Route annotation can only be used on functions or methods',
                 $this->getItem(), $this->getLineOffset());
         }
-        
+
         $this->method  = $params[0];
         $this->pattern = $params[1];
     }
 
     /**
      * Creates the described route
-     * 
+     *
      * @param null|object $object The object to create the route for
      *  or `null` if the annotated item was a function
      */
@@ -65,10 +65,10 @@ class Route extends Annotation {
             throw new AnnotationException("The @Route annotation can only be used on functions or methods",
                 $this->getItem(), $this->getLineOffset());
         }
-        
+
         $route = PatternRoute::new($this->method, $this->pattern, $closure);
         $route->setName($name);
-        App::get()->getRouter()->add($route);
+        App::getRouter()->add($route);
 
         return $route;
     }

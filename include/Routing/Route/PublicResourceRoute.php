@@ -17,9 +17,8 @@ class PublicResourceRoute extends Route {
      * {@inheritDoc}
      */
     public function tryHandle(Request $request): ?Response {
-        $app = App::get();
-        if($request->getMethod() === 'GET' && $request->getPath()->isPublicResource($app)) {
-            return Response::file($request->getPath()->prepend($app->getRootDir()));
+        if($request->getMethod() === 'GET' && $request->getPath()->isPublicResource()) {
+            return Response::file($request->getPath()->prepend(App::getRootDir()));
         }
 
         return null;

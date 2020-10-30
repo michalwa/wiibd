@@ -80,7 +80,7 @@ class Result implements Iterator {
         $this->errorInfo = $errorInfo;
 
         $this->success = $stmt !== false && $stmt->errorCode() === PDO::ERR_NONE;
-        $this->stmt = $stmt;
+        $this->stmt = $this->success ? $stmt : false;
         $this->numRows = $this->success ? $stmt->rowCount() : 0;
     }
 
@@ -168,7 +168,7 @@ class Result implements Iterator {
         if(!$this->success) return null;
         $missingRows = $this->row - count($this->cachedRows) + 1;
         while($missingRows > 0) {
-            $this->cachedRows[] = $this->stmt->fetch(PDO::FETCH_ASSOC);
+            $this->cachedRows[] = $this->stmt->fetch(PDO::FETCH_ASSOC) ?: null;
             $missingRows--;
         }
         return $this->cachedRows[$this->row];

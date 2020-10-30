@@ -167,13 +167,12 @@ class Path {
      * Treats the path as relative to the app root directory.
      */
     public function isPublicResource(): bool {
-        $app = App::get();
         // Long enough
         return count($this->elements) >= 2
             // Inside public directory
-            && $this->startsWith(new self($app->getConfig('app.publicDir')))
+            && $this->startsWith(new self(App::getConfig('app.publicDir')))
             // Is readable file
-            && $this->prepend($app->getRootDir())->isReadableFile();
+            && $this->prepend(App::getRootDir())->isReadableFile();
     }
 
 }

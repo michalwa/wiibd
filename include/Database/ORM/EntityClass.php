@@ -211,7 +211,7 @@ class EntityClass {
         if(class_exists($name)) {
             return $name;
         } else {
-            $entitiesNamespace = App::get()->getConfig('database.entities');
+            $entitiesNamespace = App::getConfig('database.entities');
             $name = $entitiesNamespace.'\\'.$name;
 
             if(!class_exists($name)) {

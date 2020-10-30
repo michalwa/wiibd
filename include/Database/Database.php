@@ -152,7 +152,7 @@ class Database {
             $stmt = $this->pdo->prepare($query);
             $stmt->execute($params->getValues());
         } catch(PDOException $e) {
-            return new Result($stmt, $query, $params, $e->errorInfo[2]);
+            return new Result(false, $query, $params, $e->errorInfo[2]);
         }
 
         return new Result($stmt, $query, $params);

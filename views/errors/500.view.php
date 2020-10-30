@@ -1,7 +1,5 @@
 <?php
-$app          = App::get();
-$extendedInfo = $app->getConfig('mode') === 'development';
-$appName      = $app->getConfig('app.name');
+$extendedInfo = App::getConfig('mode') === 'development';
 $status       = Http\Status::toString(500);
 
 $invalidArgFunc = null;
@@ -41,7 +39,7 @@ if($params['class'] === 'TypeError') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?= $appName ?> | <?= Http\Status::toString(500) ?></title>
+    <title><?= App::getConfig('app.name') ?> | <?= Http\Status::toString(500) ?></title>
 
     <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:500i&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400&display=swap" rel="stylesheet">

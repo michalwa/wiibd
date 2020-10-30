@@ -27,7 +27,7 @@ spl_autoload_register(function(string $class) {
 
 // Read config, nitialize the app
 $config = new Config(new Path(__DIR__, 'config.ini').'');
-$app = App::init(__DIR__, $config);
+App::init(__DIR__, $config);
 
 // Set error handler
 set_error_handler(function(int $errno, string $errstr, string $errfile, int $errline) {
@@ -59,12 +59,12 @@ set_exception_handler(function(Throwable $e) {
 Database::init($config);
 
 // Configure the router
-$router = $app->getRouter();
+$router = App::getRouter();
 $router->add(new PublicResourceRoute());
 include 'routes.php';
 
 // Initialize controllers
-$controllers = Files::requireAll(INCLUDE_DIR.$app->getConfig('controllers.dir'), true);
+$controllers = Files::requireAll(INCLUDE_DIR.App::getConfig('controllers.dir'), true);
 
 // Handle the request
 $request = Request::get();

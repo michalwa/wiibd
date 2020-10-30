@@ -99,7 +99,7 @@ class PathPattern {
             if($elt[0] === self::LITERAL) {
                 $path = $path->append($elt[1]);
             } else {
-                $path = $path->append($params[$elt[1]] ?? '{'.$elt[1].'}');
+                $path = $path->append((string)$params[$elt[1]] ?? '{'.$elt[1].'}');
             }
         }
         return $path;

@@ -72,11 +72,10 @@ class View {
      * @param string $name The name of the view to load
      */
     public static function load(string $name): self {
-        $app = App::get();
         $filename = (new Path(
-            $app->getRootDir(),
-            $app->getConfig('views.dir'),
-            $name.$app->getConfig('views.fileSuffix')))->__toString();
+            App::getRootDir(),
+            App::getConfig('views.dir'),
+            $name.App::getConfig('views.fileSuffix')))->__toString();
 
         if(!file_exists($filename)) {
             throw new NotFoundException("View '".$name."' not found");
@@ -93,11 +92,10 @@ class View {
      * @param array $params The params to render the component with
      */
     private function include(string $name, $params = []): string {
-        $app = App::get();
         $filename = new Path(
-            $app->getRootDir(),
-            $app->getConfig('views.dir'),
-            $name.$app->getConfig('views.fileSuffix'));
+            App::getRootDir(),
+            App::getConfig('views.dir'),
+            $name.App::getConfig('views.fileSuffix'));
 
         if(!file_exists($filename)) {
             throw new NotFoundException("View '".$name."' not found");
