@@ -20,7 +20,7 @@ class ExampleController extends Controller {
         return View::load('example')->toResponse([
             'request' => $request,
             'db_ok'   => Database::get()->isConnected(),
-            'db_name' => App::get()->getConfig('database.name'),
+            'db_name' => App::getConfig('database.name'),
         ]);
     }
 
@@ -44,7 +44,7 @@ class ExampleController extends Controller {
         if($dummy !== null) {
             return Response::text($dummy->name);
         }
-        
+
         return $this->redirectToSelf('index');
     }
 

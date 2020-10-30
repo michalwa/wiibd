@@ -52,7 +52,7 @@ abstract class PatternRoute extends Route {
      * {@inheritDoc}
      */
     public function unparseUrl(array $params = []): string {
-        return '/'.(new Path(App::get()->getRootUrl(), $this->pattern->render($params)));
+        return '/'.(new Path(App::getRootUrl(), $this->pattern->render($params)));
     }
 
     /**

@@ -9,28 +9,22 @@ use Routing\Router;
 class App {
 
     /**
-     * The singleton instance of the app
-     * @var App
-     */
-    private static $instance = null;
-
-    /**
      * The path to the root directory of the app
      * @var Path
      */
-    private $rootDir;
+    private static $rootDir;
 
     /**
      * The app configuration
      * @var Config
      */
-    private $config;
+    private static $config;
 
     /**
      * The router
      * @var Router
      */
-    private $router;
+    private static $router;
 
     /**
      * Initializes and returns the app
@@ -39,41 +33,24 @@ class App {
      *  from index.php in root directory, use `__DIR__`.
      * @param Config $config Loaded app configuration
      */
-    public static function init(string $rootDir, Config $config): App {
-        if(self::$instance === null) {
-            self::$instance = new self($rootDir, $config);
-        }
-        return self::$instance;
-    }
-
-    /**
-     * Returns the singleton app instance
-     */
-    public static function get(): App {
-        return self::$instance;
-    }
-
-    /**
-     * Constructs a new `App` object
-     */
-    private function __construct(string $rootDir, Config $config) {
-        $this->rootDir = new Path($rootDir);
-        $this->config = $config;
-        $this->router = new Router();
+    public static function init(string $rootDir, Config $config) {
+        self::$rootDir = new Path($rootDir);
+        self::$config = $config;
+        self::$router = new Router();
     }
 
     /**
      * The app name
      */
-    public function getName(): string {
-        return $this->getConfig('app.name');
+    public static function getName(): string {
+        return self::getConfig('app.name');
     }
 
     /**
      * The path to the root directory of the app.
      */
-    public function getRootDir(): Path {
-        return $this->rootDir;
+    public static function getRootDir(): Path {
+        return self::$rootDir;
     }
 
     /**
@@ -84,15 +61,15 @@ class App {
      * @param string $option Name of the option to return
      * @param string $default The default/fallback value
      */
-    public function getConfig(string $option, string $default = '') {
-        return $this->config->get($option, $default);
+    public static function getConfig(string $option, string $default = '') {
+        return self::$config->get($option, $default);
     }
 
     /**
      * Constructs and returns a `Path` object based on the config option `app.rootUrl`
      */
-    public function getRootUrl(): Path {
-        return new Path($this->config->get('app.rootUrl'));
+    public static function getRootUrl(): Path {
+        return new Path(self::$config->get('app.rootUrl'));
     }
 
     /**
@@ -100,18 +77,18 @@ class App {
      *
      * @param string $resource The path to the resource (relative to the public directory)
      */
-    public function getPublicUrl(string $resource): string {
+    public static function getPublicUrl(string $resource): string {
         return '/'.(new Path(
-            $this->config->get('app.rootUrl'),
-            $this->config->get('app.publicDir'),
+            self::$config->get('app.rootUrl'),
+            self::$config->get('app.publicDir'),
             $resource));
     }
 
     /**
      * Returns the router
      */
-    public function getRouter(): Router {
-        return $this->router;
+    public static function getRouter(): Router {
+        return self::$router;
     }
 
     /**
@@ -121,12 +98,12 @@ class App {
      * @param string $name The name of the route (handler)
      * @param mixed[string] $params The parameters for the route URL
      */
-    public function routeUrl(
+    public static function routeUrl(
         string $controller,
         string $name,
         array $params = []
     ): string {
-        return $this->router->getRoute("$controller::$name")->unparseUrl($params);
+        return self::$router->getRoute("$controller::$name")->unparseUrl($params);
     }
 
 }

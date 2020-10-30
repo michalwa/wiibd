@@ -1,5 +1,5 @@
 <?php
-$appName = App::get()->getConfig('app.name');
+$appName = App::getConfig('app.name');
 $status  = Http\Status::toString(404);
 ?>
 

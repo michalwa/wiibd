@@ -1,6 +1,5 @@
 <?php
-$app = App::get();
-$title = $app->getConfig('app.name') ?? '';
+$title = App::getConfig('app.name') ?? '';
 $request = $params['request'];
 ?>
 
@@ -57,7 +56,7 @@ $request = $params['request'];
             <div class="card container">
                 <h2>Views</h2>
                 <p>
-                    Views directory: <code><?= '/'.App::get()->getConfig('views.dir') ?></code><br>
+                    Views directory: <code><?= '/'.App::getConfig('views.dir') ?></code><br>
                     Include view component: <?= $this->include('include/example-component', ['content' => 'OK']) ?>
                 </p>
             </div>
