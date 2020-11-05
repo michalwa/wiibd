@@ -36,7 +36,7 @@ class UserController extends Controller {
 
         return View::load('user/index')->toResponse([
             'users' => $users,
-            'search' => $request->getQuery('search'),
+            'search' => $search,
         ]);
     }
 

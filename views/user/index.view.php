@@ -19,7 +19,7 @@ use App\Controllers\UserController;
         <h1 class="mb-4">Czytelnicy</h1>
         <div class="row">
             <div class="col-md-3 mb-4">
-                <form action="<?= App::routeUrl(UserController::class, 'userIndex') ?>" method="get">
+                <form action="#" method="get">
                     <div class="input-group mb-2">
                         <input
                             class="form-control"

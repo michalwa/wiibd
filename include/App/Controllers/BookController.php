@@ -14,9 +14,15 @@ class BookController extends Controller {
      * @Route('GET', '/books')
      */
     public function bookIndex(Request $request, $params): Response {
-        $books = Book::getRepository()->all();
+        if($search = $request->getQuery('search')) {
+            $books = Book::textSearch($search);
+        } else {
+            $books = Book::getRepository()->all();
+        }
+
         return View::load('book/index')->toResponse([
             'books' => $books,
+            'search' => $search,
         ]);
     }
 

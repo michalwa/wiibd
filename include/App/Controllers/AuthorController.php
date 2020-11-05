@@ -14,8 +14,15 @@ class AuthorController extends Controller {
      * @Route('GET', '/authors')
      */
     public function authorIndex(Request $request, $params): Response {
+        if($search = $request->getQuery('search')) {
+            $authors = Author::textSearch($search);
+        } else {
+            $authors = Author::getRepository()->all();
+        }
+
         return View::load('author/index')->toResponse([
-            'authors' => Author::getRepository()->all(),
+            'authors' => $authors,
+            'search' => $search,
         ]);
     }
 

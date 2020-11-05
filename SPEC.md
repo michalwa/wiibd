@@ -17,7 +17,7 @@ Wymagana funkcjonalność
     1. [x] Lista wypożyczonych książek
 
 4. [x] Wyświetl listę książek
-    1. [ ] Wyszukiwanie
+    1. [x] Wyszukiwanie
     2. [ ] Filtrowanie wg atrybutów
     3. [ ] Filtrowanie wg kategorii
     4. [ ] Filtrowanie wg dostępności egzemplarzy
