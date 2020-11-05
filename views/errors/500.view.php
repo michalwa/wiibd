@@ -87,7 +87,7 @@ if($params['class'] === 'TypeError') {
         <h1><?= $status ?></h1>
 
         <?php if($extendedInfo): ?>
-            <p>During the handling of the request, an error occured on the server side:</p>
+            <p>Podczas przetwarzania żądania, serwer napotkał problem:</p>
 
             <!-- <Class> (<code>) in <file>, line <line> -->
             <?php if($params['class'] !== null): ?>

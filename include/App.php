@@ -97,13 +97,19 @@ class App {
      * @param string $controller The class name of the controller containing the route
      * @param string $name The name of the route (handler)
      * @param mixed[string] $params The parameters for the route URL
+     * @param mixed[string] $query The query parameters to be appended to the URL
      */
     public static function routeUrl(
         string $controller,
         string $name,
-        array $params = []
+        array $params = [],
+        array $query = []
     ): string {
-        return self::$router->getRoute("$controller::$name")->unparseUrl($params);
+        $url = self::$router->getRoute("$controller::$name")->unparseUrl($params);
+        if($query !== []) {
+            $url .= '?'.http_build_query($query);
+        }
+        return $url;
     }
 
 }

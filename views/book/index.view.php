@@ -15,9 +15,9 @@ use App\Entities\Book;
 <body>
     <?= $this->include('include/navbar') ?>
     <div class="container">
-        <h1>Książki</h1>
+        <h1 class="mb-4">Książki</h1>
 
-        <p>
+        <div class="table-responsive">
             <table class="table " id="books">
                 <tr>
                     <th scope="col">Tytuł</th>
@@ -26,22 +26,22 @@ use App\Entities\Book;
                     <!-- <th scope="col">Rok wydania</th> -->
                     <!-- <th scope="col">Gatunek</th> -->
                 </tr>
-            <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
-                <tr>
-                    <td><a href="<?= App::routeUrl(
-                        BookController::class,
-                        'bookDetail',
-                        ['id' => $book->getId()]) ?>">
-                        <?= $book->title ?></a></td>
+                <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
+                    <tr>
+                        <td><a href="<?= App::routeUrl(
+                            BookController::class,
+                            'bookDetail',
+                            ['id' => $book->getId()]) ?>">
+                            <?= $book->title ?></a></td>
 
-                    <td><?= implode(', ', $book->authors) ?></td>
-                    <td><?= $book->publisher ?></td>
-                    <!-- <td><?= $book->releaseYear ?></td> -->
-                    <!-- <td><?= implode(', ', $book->genres) ?></td> -->
-                </tr>
-            <?php endforeach; ?>
+                        <td><?= implode(', ', $book->authors) ?></td>
+                        <td><?= $book->publisher ?></td>
+                        <!-- <td><?= $book->releaseYear ?></td> -->
+                        <!-- <td><?= implode(', ', $book->genres) ?></td> -->
+                    </tr>
+                <?php endforeach; ?>
             </table>
-        </p>
+        </div>
     </div>
 
     <?= $this->include('include/scripts') ?>

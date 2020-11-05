@@ -5,6 +5,13 @@
  */
 
 /**
+ * Escapes the given string to be safely displayed in HTML
+ */
+function htmlescape(string $unsafe): string {
+    return htmlentities($unsafe, ENT_QUOTES, 'utf-8');
+}
+
+/**
  * Returns `true` if the length of the given iterable is equal to `0`.
  *
  * @param iterable $iterable The iterable to test

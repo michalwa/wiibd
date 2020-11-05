@@ -4,6 +4,7 @@ namespace Database\ORM;
 
 use Database\Database;
 use Database\DatabaseException;
+use Database\Query\QueryParams;
 use InvalidArgumentException;
 use Utils\Stream;
 
@@ -71,8 +72,8 @@ class Repository {
     public function find($f): ?Entity {
         $result = $f(
             Database::select()
-                ->from($this->entityClass->getTableName())
-            )->execute();
+            ->from($this->entityClass->getTableName()))
+            ->execute();
 
         if(!$result->ok() || !($row = $result->get())) return null;
 
@@ -84,16 +85,19 @@ class Repository {
     /**
      * Queries the database for all entities of the appropriate type and returns the result
      *
+     * @param callable $f The function which will modify the query before it is executed
+     *
      * @return Stream<Entity>
      */
-    public function all(): Stream {
-        $result = Database
-            ::select()
-            ->from($this->entityClass->getTableName())
-            ->execute()
-            ->expect();
+    public function all($f = null): Stream {
+        $query = Database::select()
+            ->from($this->entityClass->getTableName());
 
-        $entities = Stream::begin($result)
+        if($f !== null) $query = $f($query);
+
+        $result = $query->execute()->expect();
+
+        return Stream::begin($result)
 
             // Deserialize
             ->map(fn($row) => $this->entityClass->deserialize($row))
@@ -103,8 +107,32 @@ class Repository {
 
             // Cache each consumed entity
             ->map(function($en) { $this->cached[$en->getid()] = $en; return $en; });
+    }
 
-        return $entities;
+    /**
+     * Queries the database using a custom query while maintaining the cache
+     * of this repository and proper deserialization.
+     *
+     * @param callable $f The function which will recieve an instance of `QueryParams`
+     *        to populate and must return the SQL query to execute.
+     *
+     * @return Stream<Entity>
+     */
+    public function query($f): Stream {
+        $params = new QueryParams();
+        $sql = $f($params);
+        $result = Database::get()->query($sql, $params);
+
+        return Stream::begin($result)
+
+            // Deserialize
+            ->map(fn($row) => $this->entityClass->deserialize($row))
+
+            // Substitute new entities with existing cached entities
+            ->map(fn($en) => key_exists($en->getId(), $this->cached) ? $this->cached[$en->getId()] : $en)
+
+            // Cache each consumed entity
+            ->map(function($en) { $this->cached[$en->getid()] = $en; return $en; });
     }
 
     /**

@@ -11,6 +11,7 @@ $book = $params['book'];
     <title><?= App::getName() ?> | <?= $book->title ?></title>
 
     <?= $this->include('include/styles') ?>
+    <link rel="stylesheet" href="<?= App::getPublicUrl('css/product-details.css') ?>">
 </head>
 <body>
     <?= $this->include('include/navbar') ?>
@@ -30,14 +31,22 @@ $book = $params['book'];
                             <div class="col">
                                 <h2><?= $book->title ?></h2>
                                 <ul class="product-details">
-                                    <li><i class="fa fa-user"></i>
-                                        <?= implode(', ', $book->authors) ?></li>
-                                    <li><i class="fa fa-building"></i>
-                                        <?= $book->publisher ?></li>
-                                    <li><i class="fa fa-calendar"></i>
-                                        <?= $book->releaseYear ?></li>
-                                    <li><i class="fa fa-tag"></i>
-                                        <?= implode(', ', $book->genres) ?></li>
+                                    <li>
+                                        <i class="fa fa-user" title="Autorzy"></i>
+                                        <?= implode(', ', $book->authors) ?>
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-building" title="Wydawnictwo"></i>
+                                        <?= $book->publisher ?>
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-calendar" title="Rok wydania"></i>
+                                        <?= $book->releaseYear ?>
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-tag" title="Gatunki"></i>
+                                        <?= implode(', ', $book->genres) ?>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

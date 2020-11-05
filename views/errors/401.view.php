@@ -1,5 +1,5 @@
 <?php
-$status = Http\Status::toString(404);
+$status = Http\Status::toString(401);
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ $status = Http\Status::toString(404);
 <body>
     <div class="wrapper">
         <h1><?= $status ?></h1>
-        <p>Nie znaleziono strony: <code><?= $params['url'] ?></code></p>
+        <p>Nie masz uprawnień, aby wyświetlić żądaną stronę: <code><?= $params['url'] ?></code></p>
     </div>
 </body>
 </html>

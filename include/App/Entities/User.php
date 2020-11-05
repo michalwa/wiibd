@@ -4,6 +4,7 @@ namespace App\Entities;
 
 use Database\ORM\Entity;
 use Database\Query\Select;
+use Utils\Stream;
 
 /**
  * @Table('czytelnicy')
@@ -71,6 +72,23 @@ class User extends Entity {
     public static function findByUsername(string $username): ?self {
         return self::getRepository()->find(fn(Select $q) => $q
             ->where('login', '=', $username));
+    }
+
+    /**
+     * Queries the repository for users matching the given search query
+     */
+    public static function textSearch(string $search): Stream {
+        return self::getRepository()->all(function(Select $q) use ($search) {
+            foreach(explode(' ', $search) as $term) {
+                if($term !== '') {
+                    $q = $q
+                        ->or('imie', 'LIKE', '%'.$term.'%')
+                        ->or('nazwisko', 'LIKE', '%'.$term.'%')
+                        ->or('login', 'LIKE', '%'.$term.'%');
+                }
+            }
+            return $q;
+        });
     }
 
 }
