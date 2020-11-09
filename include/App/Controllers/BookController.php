@@ -13,7 +13,7 @@ class BookController extends Controller {
     /**
      * @Route('GET', '/books')
      */
-    public function bookIndex(Request $request, $params): Response {
+    public function bookIndex(Request $request, $params): ?Response {
         if($search = $request->getQuery('search')) {
             $books = Book::textSearch($search);
         } else {
@@ -29,14 +29,10 @@ class BookController extends Controller {
     /**
      * @Route('GET', '/books/{id:uint}')
      */
-    public function bookDetail(Request $request, $params): Response {
+    public function bookDetail(Request $request, $params): ?Response {
         $book = Book::getRepository()->findById($params['id']);
 
-        if($book === null) {
-            return View::load('errors/404')->toResponse([
-                'url' => $request->getPath()
-            ]);
-        }
+        if($book === null) return null;
 
         return View::load('book/book')->toResponse([
             'book' => $book,

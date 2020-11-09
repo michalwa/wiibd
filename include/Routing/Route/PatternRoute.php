@@ -68,7 +68,7 @@ abstract class PatternRoute extends Route {
      * @param Request $request The request to handle
      * @param array $params Values of the pattern parameters as an associative array
      */
-    protected abstract function handle(Request $request, $params): Response;
+    protected abstract function handle(Request $request, $params): ?Response;
 
     /**
      * Implements `PatternRoute` with the given pattern and callback
@@ -88,7 +88,7 @@ abstract class PatternRoute extends Route {
                 $this->cb = $cb;
             }
 
-            protected function handle(Request $request, $params): Response {
+            protected function handle(Request $request, $params): ?Response {
                 return call_user_func($this->cb, $request, $params);
             }
         };

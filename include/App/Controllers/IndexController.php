@@ -12,7 +12,7 @@ class IndexController extends Controller {
     /**
      * @Route('GET', '/')
      */
-    public function index(Request $request, $params): Response {
+    public function index(Request $request, $params): ?Response {
         return View::load('index')->toResponse();
     }
 

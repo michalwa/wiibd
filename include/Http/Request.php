@@ -4,7 +4,6 @@ namespace Http;
 
 use \App;
 use Files\Path;
-use Auth\Credentials;
 
 /**
  * Contains information about an HTTP request being processed
@@ -22,12 +21,6 @@ class Request {
      * @var string
      */
     private $method;
-
-    /**
-     * Credentials specified in the URL
-     * @var Credentials
-     */
-    private $credentials;
 
     /**
      * The requested Path specified in the URL
@@ -76,8 +69,6 @@ class Request {
         $this->unparsed = $url;
         $req = parse_url($url);
 
-        $this->credentials = new Credentials($req['user'] ?? '', $req['pass'] ?? '');
-
         $this->path = (new Path($req['path']))->toRelative(App::getRootUrl());
 
         parse_str($req['query'] ?? '', $this->query);
@@ -98,13 +89,6 @@ class Request {
      */
     public function getMethod(): string {
         return $this->method;
-    }
-
-    /**
-     * The credentials specified in the URL
-     */
-    public function getCredentials(): Credentials {
-        return $this->credentials;
     }
 
     /**

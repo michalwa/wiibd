@@ -2,12 +2,12 @@
 
 namespace App\Controllers;
 
+use App\Auth\UserSession;
 use App\Entities\AdminUser;
 use App\Entities\User;
 use Controller\Controller;
 use Http\Request;
 use Http\Response;
-use Utils\Session;
 use View\View;
 
 class LoginController extends Controller {
@@ -18,14 +18,14 @@ class LoginController extends Controller {
     /**
      * @Route('GET', '/login')
      */
-    public function form(Request $request, $params): Response {
+    public function form(Request $request, $params): ?Response {
         return View::load('login')->toResponse();
     }
 
     /**
      * @Route('POST', '/login/user')
      */
-    public function userLogin(Request $request, $params): Response {
+    public function userLogin(Request $request, $params): ?Response {
         $username = $request->getPost('username');
         $password = $request->getPost('password');
 
@@ -44,15 +44,14 @@ class LoginController extends Controller {
                 'error' => self::INCORRECT_PASS,
             ]);
 
-        Session::set('user', $user->getId());
-
+        UserSession::loginUser($user);
         return $this->redirect(IndexController::class.'::index');
     }
 
     /**
      * @Route('POST', '/login/admin')
      */
-    public function adminLogin(Request $request, $params): Response {
+    public function adminLogin(Request $request, $params): ?Response {
         $username = $request->getPost('username');
         $password = $request->getPost('password');
 
@@ -71,17 +70,15 @@ class LoginController extends Controller {
                 'error' => self::INCORRECT_PASS,
             ]);
 
-        Session::set('admin', $user->getId());
-
+        UserSession::loginAdmin($user);
         return $this->redirect(IndexController::class.'::index');
     }
 
     /**
      * @Route('GET', '/logout')
      */
-    public function logout(Request $request, $params): Response {
-        Session::unset('user');
-        Session::unset('admin');
+    public function logout(Request $request, $params): ?Response {
+        UserSession::logout();
         return $this->redirect(IndexController::class.'::index');
     }
 

@@ -34,6 +34,13 @@ class Session {
         return isset($_SESSION[$key]) ? $_SESSION[$key] : $default;
     }
 
+    /**
+     * Tells whether the specified property exists in the session storage
+     */
+    public static function isset(string $key): bool {
+        return isset($_SESSION[$key]);
+    }
+
     private static function checkSessions() {
         if(session_status() === PHP_SESSION_DISABLED)
             throw new RuntimeException("Sessions are disabled.");
