@@ -38,6 +38,7 @@ class Session {
      * Tells whether the specified property exists in the session storage
      */
     public static function isset(string $key): bool {
+        self::checkSessions();
         return isset($_SESSION[$key]);
     }
 

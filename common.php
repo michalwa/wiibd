@@ -141,3 +141,23 @@ function array_remove(array &$array, $search, bool $strict = true): void {
 function array_append(array &$array, array ...$new): void {
     $array = array_merge($array, ...$new);
 }
+
+/**
+ * Finds the index of the first character of the n-th line in the given
+ * haystack string, where 0 is the first line.
+ *
+ * @param int $n The index of the line to find where 0 is the first line
+ * @param string $haystack The string to search
+ * @param string $linesep The line separator to use
+ *
+ * @return int|false The index of the first character of the n-th line or `false`
+ *         if the line cannot be found
+ */
+function linepos(int $n, string $haystack, string $linesep = "\n") {
+    $pos = 0;
+    while($n-- > 0) {
+        if(($pos = strpos($haystack, $linesep, $pos)) === false) return false;
+        $pos += strlen($linesep);
+    }
+    return $pos;
+}

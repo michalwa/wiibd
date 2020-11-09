@@ -2,6 +2,7 @@
 
 use Files\Path;
 use Routing\Router;
+use Utils\NotFoundException;
 
 /**
  * Stores app configuration and environment
@@ -105,10 +106,16 @@ class App {
         array $params = [],
         array $query = []
     ): string {
-        $url = self::$router->getRoute("$controller::$name")->unparseUrl($params);
-        if($query !== []) {
+        $route = self::$router->getRoute("$controller::$name");
+
+        if($route === null)
+            throw new NotFoundException("Route $controller::$name not found");
+
+        $url = $route->unparseUrl($params);
+
+        if($query !== [])
             $url .= '?'.http_build_query($query);
-        }
+
         return $url;
     }
 
