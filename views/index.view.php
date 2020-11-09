@@ -1,5 +1,4 @@
 <?php
-
 use App\Controllers\BookController;
 ?>
 <!DOCTYPE html>

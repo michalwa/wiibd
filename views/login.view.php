@@ -21,69 +21,16 @@ $error = key_exists('error', $params) ? $params['error'] : null;
             <h1 class="mb-4">Zaloguj się</h1>
 
             <div class="row">
-
-                <!-- User form -->
                 <div class="col-md-6 mx-auto mb-5">
-                    <form action="<?= App::routeUrl(LoginController::class, 'userLogin') ?>" method="post">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Jako czytelnik</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="userUsernameInput">Login</label>
-                                    <input id="userUsernameInput"
-                                        class="form-control"
-                                        type="text"
-                                        name="username"
-                                        required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="userPasswordInput">Hasło</label>
-                                    <input id="userPasswordInput"
-                                        class="form-control"
-                                        type="password"
-                                        name="password"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <button class="btn btn-primary float-right" type="submit">Zaloguj się</button>
-                            </div>
-                        </div>
-                    </form>
+                    <?= $params['userForm']->html(
+                        ['title' => 'Jako czytelnik'],
+                        'chojnice-card') ?>
                 </div>
 
-                <!-- Admin form -->
                 <div class="col-md-6 mx-auto">
-                    <form action="<?= App::routeUrl(LoginController::class, 'adminLogin') ?>" method="post">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Jako bibliotekarz</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="adminUsernameInput">Login</label>
-                                    <input id="adminUsernameInput"
-                                        class="form-control"
-                                        type="text"
-                                        name="username"
-                                        required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="adminPasswordInput">Hasło</label>
-                                    <input id="adminPasswordInput"
-                                        class="form-control"
-                                        type="password"
-                                        name="password"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <button class="btn btn-primary float-right" type="submit">Zaloguj się</button>
-                            </div>
-                        </div>
-                    </form>
+                    <?= $params['adminForm']->html(
+                        ['title' => 'Jako bibliotekarz'],
+                        'chojnice-card') ?>
                 </div>
             </div>
 
