@@ -6,5 +6,5 @@
         type="password"
         name="<?= $params['name'] ?>"
         id="<?= $id ?>"
-        <?= isset($params['required']) && $params['required'] ? 'required' : '' ?>>
+        <?= $params['required'] ? 'required' : '' ?>>
 </div>

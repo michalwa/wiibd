@@ -33,12 +33,12 @@ class LoginController extends Controller {
         parent::__construct();
 
         $this->userForm = (new Form('POST', App::routeUrl(self::class, 'userLogin')))
-            ->addField(new TextField('username', ['label' => 'Login']))
-            ->addField(new PasswordField('password', ['label' => 'Hasło']));
+            ->addField(new TextField('username', true, ['label' => 'Login']))
+            ->addField(new PasswordField('password', true, ['label' => 'Hasło']));
 
         $this->adminForm = (new Form('POST', App::routeUrl(self::class, 'adminLogin')))
-            ->addField(new TextField('username', ['label' => 'Login']))
-            ->addField(new PasswordField('password', ['label' => 'Hasło']));
+            ->addField(new TextField('username', true, ['label' => 'Login']))
+            ->addField(new PasswordField('password', true, ['label' => 'Hasło']));
     }
 
     /**
@@ -58,7 +58,7 @@ class LoginController extends Controller {
         $username = $this->userForm->getValue('username');
         $password = $this->userForm->getValue('password');
 
-        if(!$username || !$password)
+        if(!$this->userForm->isValid())
             return $this->redirectToSelf('form');
 
         $user = User::findByUsername($username);
@@ -88,7 +88,7 @@ class LoginController extends Controller {
         $username = $this->adminForm->getValue('username');
         $password = $this->adminForm->getValue('password');
 
-        if(!$username || !$password)
+        if(!$this->adminForm->isValid())
             return $this->redirectToSelf('form');
 
         $user = AdminUser::findByUsername($username);

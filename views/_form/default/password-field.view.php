@@ -1,1 +1,4 @@
-<input type="password" name="<?= $params['name'] ?>">
+<input
+    type="password"
+    name="<?= $params['name'] ?>"
+    <?= $params['required'] ? 'required' : '' ?>>

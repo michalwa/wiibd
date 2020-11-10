@@ -15,9 +15,15 @@ interface Field {
     public function getName(): string;
 
     /**
-     * Extracts the value of the field from the given request
+     * Extracts the value of the field from the given request.
+     * Returns `null` if the value is not present in the request.
      */
     public function getValue(Request $request, string $method);
+
+    /**
+     * Tells whether the field can be used correctly based on the given request
+     */
+    public function isValid(Request $request, string $method);
 
     /**
      * Builds and returns the HTML for the field

@@ -15,6 +15,11 @@ class PasswordField implements Field {
     private $name;
 
     /**
+     * @var bool
+     */
+    private $required;
+
+    /**
      * @var array
      */
     private $params;
@@ -22,8 +27,9 @@ class PasswordField implements Field {
     /**
      * Constructs a text input field
      */
-    public function __construct(string $name, array $params = []) {
+    public function __construct(string $name, bool $required = false, array $params = []) {
         $this->name = $name;
+        $this->required = $required;
         $this->params = $params;
     }
 
@@ -47,10 +53,18 @@ class PasswordField implements Field {
     /**
      * {@inheritDoc}
      */
+    public function isValid(Request $request, string $method) {
+        return !$this->required || $this->getValue($request, $method) !== null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function html(array $params = [], string $style = 'default'): string {
         return Form::loadTemplate($style, 'password-field')
             ->render(array_merge([
                 'name' => $this->name,
+                'required' => $this->required,
             ], $this->params, $params));
     }
 

@@ -26,9 +26,9 @@ class PasswordChangeController extends Controller {
         parent::__construct();
 
         $this->form = (new Form('POST', App::routeUrl(self::class, 'change')))
-            ->addField(new PasswordField('old', ['required' => true, 'label' => 'Obecne hasło']))
-            ->addField(new PasswordField('new', ['required' => true, 'label' => 'Nowe hasło']))
-            ->addField(new PasswordField('confirm', ['required' => true, 'label' => 'Powtórz nowe hasło']));
+            ->addField(new PasswordField('old', true, ['label' => 'Obecne hasło']))
+            ->addField(new PasswordField('new', true, ['label' => 'Nowe hasło']))
+            ->addField(new PasswordField('confirm', true, ['label' => 'Powtórz nowe hasło']));
     }
 
     /**
@@ -56,9 +56,8 @@ class PasswordChangeController extends Controller {
         $new = $this->form->getValue('new');
         $confirm = $this->form->getValue('confirm');
 
-        if(!$old || !$new || !$confirm) {
+        if(!$this->form->isValid())
             return $this->redirectToSelf('form');
-        }
 
         if(!$user->passwordEquals($old)) {
             return View::load('user/password-form')->toResponse([

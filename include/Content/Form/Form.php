@@ -80,6 +80,20 @@ class Form {
     }
 
     /**
+     * Returns `true` if all fields in the form are correctly passed in the request
+     */
+    public function isValid(?Request $request = null): bool {
+        $request ??= Request::get();
+
+        foreach($this->fields as $field) {
+            if(!$field->isValid($request, $this->method))
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Builds and returns the HTML form
      *
      * @param array $params Additional parameters to pass to the template
