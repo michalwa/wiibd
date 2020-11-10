@@ -4,6 +4,7 @@ namespace App\Entities;
 
 use Database\ORM\Entity;
 use Database\Query\QueryParams;
+use Database\Query\Select;
 use Utils\Stream;
 
 /**

@@ -1,5 +1,9 @@
 <!-- extends base -->
 
+<?php
+use App\Controllers\AuthorController;
+?>
+
 <!-- begin head -->
 <title><?= App::getName() ?> | Autorzy</title>
 <!-- end -->
@@ -41,9 +45,22 @@
                         <th>Imię</th>
                     </tr>
                 <?php /** @var App\Entities\Author $author */ foreach($params['authors'] as $author): ?>
+                <?php $detailUrl = App::routeUrl(
+                    AuthorController::class,
+                    'authorDetail',
+                    ['id' => $author->getId()]);
+                ?>
                     <tr>
-                        <td><?= $author->lastName ?></td>
-                        <td><?= $author->firstName ?></td>
+                        <td>
+                            <a href="<?= $detailUrl ?>">
+                                <?= $author->lastName ?>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="<?= $detailUrl ?>">
+                                <?= $author->firstName ?>
+                            </a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 </table>

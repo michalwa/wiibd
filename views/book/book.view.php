@@ -1,6 +1,8 @@
 <!-- extends base -->
 
 <?php
+use App\Controllers\AuthorController;
+
 /** @var App\Entities\Book */
 $book = $params['book'];
 ?>
@@ -28,7 +30,15 @@ $book = $params['book'];
                             <ul class="product-details">
                                 <li>
                                     <i class="fa fa-user" title="Autorzy"></i>
-                                    <?= implode(', ', $book->authors) ?>
+                                <?php $first = true; foreach($book->authors as $author): ?>
+                                <?php if(!$first): ?>&bullet;<?php endif; ?>
+                                    <a href="<?=
+                                        App::routeUrl(
+                                            AuthorController::class,
+                                            'authorDetail',
+                                            ['id' => $author->getId()])
+                                    ?>"><?= $author ?></a>
+                                <?php $first = false; endforeach; ?>
                                 </li>
                                 <li>
                                     <i class="fa fa-building" title="Wydawnictwo"></i>

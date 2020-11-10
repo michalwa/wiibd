@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Entities\Author;
+use App\Entities\Book;
 use Controller\Controller;
 use Http\Request;
 use Http\Response;
@@ -23,6 +24,19 @@ class AuthorController extends Controller {
         return View::load('author/index')->toResponse([
             'authors' => $authors,
             'search' => $search,
+        ]);
+    }
+
+    /**
+     * @Route('GET', '/authors/{id:uint}')
+     */
+    public function authorDetail(Request $request, $params): ?Response {
+        if(($author = Author::getRepository()->findById($params['id'])) === null)
+            return null;
+
+        return View::load('author/author')->toResponse([
+            'author' => $author,
+            'books' => Book::findByAuthorId($author->getId()),
         ]);
     }
 

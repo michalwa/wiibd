@@ -24,7 +24,7 @@ class Author extends Entity {
     public $lastName;
 
     public function __toString(): string {
-        return "$this->firstName $this->lastName";
+        return "$this->lastName $this->firstName";
     }
 
     /**

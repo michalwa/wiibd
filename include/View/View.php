@@ -75,6 +75,8 @@ class View {
      * @param array $params Parameters for the template
      */
     public function render($params = []): string {
+        // TODO: Should the parent template be rendered?
+
         $template = $this->template;
         $template = preg_replace(self::REGEX_EXTENDS, '', $template);
         $template = preg_replace(self::REGEX_BLOCK, '', $template);
