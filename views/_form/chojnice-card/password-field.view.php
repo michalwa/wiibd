@@ -5,5 +5,6 @@
         class="form-control"
         type="password"
         name="<?= $params['name'] ?>"
-        id="<?= $id ?>">
+        id="<?= $id ?>"
+        <?= isset($params['required']) && $params['required'] ? 'required' : '' ?>>
 </div>

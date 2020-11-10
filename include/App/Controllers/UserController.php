@@ -41,7 +41,11 @@ class UserController extends Controller {
         $user = User::getRepository()->findById($params['id']);
         if($user === null) return null;
 
-        if(!UserSession::isAdmin() && !UserSession::isUser($params['id'])) {
+        if(!UserSession::isAdmin()) {
+            if(UserSession::isUser($params['id'])) {
+                return $this->redirectToSelf('selfUserDetail');
+            }
+
             return View::load('errors/401')->toResponse([
                 'url' => $request->getPath(),
             ]);
@@ -50,6 +54,23 @@ class UserController extends Controller {
         $borrow = Borrow::findActiveByUserId($user->getId());
 
         return View::load('user/user')->toResponse([
+            'user' => $user,
+            'borrows' => $borrow,
+        ]);
+    }
+
+    /**
+     * @Route('GET', '/me')
+     */
+    public function selfUserDetail(Request $request, $param): ?Response {
+        if(($user = UserSession::getUser()) === null) {
+            return $this->redirect(IndexController::class.'::index');
+        }
+
+        $borrow = Borrow::findActiveByUserId($user->getId());
+
+        return View::load('user/user')->toResponse([
+            'self' => true,
             'user' => $user,
             'borrows' => $borrow,
         ]);

@@ -37,22 +37,28 @@ use App\Entities\Item;
             </form>
         </div>
         <div class="col-lg-9">
-            <div class="table-responsive">
-                <table class="table " id="books">
+            <div class="table-responsive-lg">
+                <table class="table table-sm" id="books">
                     <tr>
                         <th>Numer inwentarzowy</th>
                         <th>Tytuł</th>
                         <th>Autor</th>
-                        <th>Wydawnictwo</th>
                         <th>Rok wydania</th>
+                        <th>Stan</th>
                     </tr>
                     <?php /** @var Item $item */ foreach($params['items'] as $item): ?>
                         <tr>
                             <td><?= $item->identifier ?></td>
                             <td><?= $item->book->title ?></td>
                             <td><?= implode(', ', $item->book->authors) ?></td>
-                            <td><?= $item->book->publisher ?></td>
                             <td><?= $item->book->releaseYear ?></td>
+                            <td>
+                            <?php if($item->available): ?>
+                                <span class="text-success">Dostępny</span>
+                            <?php else: ?>
+                                <span class="text-danger">Wypożyczony</span>
+                            <?php endif; ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </table>

@@ -4,7 +4,7 @@ Wymagana funkcjonalność
 1. [x] Użytkownicy (bibliotekarze, czytelnicy)
     1. [x] Logowanie
     2. [x] Informacja o zalogowaniu
-    3. [ ] Zmiana hasła
+    3. [x] Zmiana hasła
     4. [ ] Rejestracja czytelnika
     5. [ ] Dodaj użytkownika (bibliotekarz, czytelnik)
 
@@ -28,5 +28,5 @@ Wymagana funkcjonalność
 7. [ ] Wypożycz egzemplarz
 8. [ ] Zwróć egzemplarz
 
-9. [ ] Wyświetl dane autora
-    1. [ ] Lista napisanych książek
+9. [x] Wyświetl dane autora
+    1. [x] Lista napisanych książek

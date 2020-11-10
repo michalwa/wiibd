@@ -2,6 +2,7 @@
 
 <?php
 use App\Controllers\BookController;
+use App\Controllers\PasswordChangeController;
 
 /** @var App\Entities\User $user */
 $user = $params['user'];
@@ -28,6 +29,23 @@ $user = $params['user'];
                     <div class="row">
                         <div class="col">
                             <h2><?= $user ?></h2>
+                        <?php if(isset($params['self']) && $params['self']): ?>
+                            <div class="dropdown float-right">
+                                <button
+                                    class="btn"
+                                    type="button"
+                                    id="cogMenuButton"
+                                    data-toggle="dropdown">
+                                    <i class="fa fa-lg fa-cog"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a href="<?= App::routeUrl(PasswordChangeController::class, 'form'); ?>"
+                                        class="dropdown-item">
+                                        Zmień hasło
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                             <ul class="product-details">
                                 <li>
                                     <i

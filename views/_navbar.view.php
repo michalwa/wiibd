@@ -94,7 +94,7 @@ if($id = Session::get('user')) {
 
                 <li class="nav-item mr-2">
                     <a class="nav-link"
-                        href="<?= !$isadmin ? App::routeUrl(UserController::class, 'userDetail', ['id' => $id]) : '#' ?>">
+                        href="<?= !$isadmin ? App::routeUrl(UserController::class, 'selfUserDetail') : '#' ?>">
                         <i class="fa fa-user"></i>&nbsp;
                         Witaj, <?= $user ?>
                     </a>

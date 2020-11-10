@@ -38,7 +38,7 @@ use App\Entities\Book;
             </form>
         </div>
         <div class="col-lg-9">
-            <div class="table-responsive">
+            <div class="table-responsive-lg">
                 <table class="table " id="books">
                     <tr>
                         <th>Tytuł</th>

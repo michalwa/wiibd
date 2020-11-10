@@ -38,7 +38,7 @@ use App\Controllers\AuthorController;
             </form>
         </div>
         <div class="col-lg-9">
-            <div class="table-responsive">
+            <div class="table-responsive-lg">
                 <table class="table">
                     <tr>
                         <th>Nazwisko</th>
