@@ -1,17 +1,16 @@
 <!-- extends base -->
 
 <?php
-use App\Controllers\BookController;
-use App\Entities\Book;
+use App\Entities\Item;
 ?>
 
 <!-- begin head -->
-<title><?= App::getName() ?> | Książki</title>
+<title><?= App::getName() ?> | Egzemplarze</title>
 <!-- end -->
 
 <!-- begin body -->
 <div class="container">
-    <h1 class="mb-4">Książki</h1>
+    <h1 class="mb-4">Egzemplarze</h1>
     <div class="row">
         <div class="col-lg-3 mb-4">
             <form action="#" method="get">
@@ -41,30 +40,19 @@ use App\Entities\Book;
             <div class="table-responsive">
                 <table class="table " id="books">
                     <tr>
+                        <th>Numer inwentarzowy</th>
                         <th>Tytuł</th>
                         <th>Autor</th>
                         <th>Wydawnictwo</th>
                         <th>Rok wydania</th>
-                        <th>Dostępność</th>
                     </tr>
-                    <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
+                    <?php /** @var Item $item */ foreach($params['items'] as $item): ?>
                         <tr>
-                            <td><a href="<?= App::routeUrl(
-                                BookController::class,
-                                'bookDetail',
-                                ['id' => $book->getId()]) ?>">
-                                <?= $book->title ?></a></td>
-
-                            <td><?= implode(', ', $book->authors) ?></td>
-                            <td><?= $book->publisher ?></td>
-                            <td><?= $book->releaseYear ?></td>
-                            <td>
-                            <?php if(($n = $book->numAvailableCopies()) === 0): ?>
-                                <span class="text-danger">Niedostępna</span>
-                            <?php else: ?>
-                                <span class="text-success"><?= $n ?></span>
-                            <?php endif; ?>
-                            </td>
+                            <td><?= $item->identifier ?></td>
+                            <td><?= $item->book->title ?></td>
+                            <td><?= implode(', ', $item->book->authors) ?></td>
+                            <td><?= $item->book->publisher ?></td>
+                            <td><?= $item->book->releaseYear ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>

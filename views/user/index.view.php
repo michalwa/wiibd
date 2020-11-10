@@ -13,7 +13,7 @@ use App\Controllers\UserController;
 <div class="container">
     <h1 class="mb-4">Czytelnicy</h1>
     <div class="row">
-        <div class="col-md-3 mb-4">
+        <div class="col-lg-3 mb-4">
             <form action="#" method="get">
                 <div class="input-group mb-2">
                     <input
@@ -37,7 +37,7 @@ use App\Controllers\UserController;
                 </div>
             </form>
         </div>
-        <div class="col-md-9">
+        <div class="col-lg-9">
             <div class="table-responsive">
                 <table class="table">
                     <tr>

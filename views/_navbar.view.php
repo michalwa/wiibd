@@ -3,6 +3,7 @@
 use App\Controllers\AuthorController;
 use App\Controllers\BookController;
 use App\Controllers\IndexController;
+use App\Controllers\ItemController;
 use App\Controllers\LoginController;
 use App\Controllers\UserController;
 use App\Entities\AdminUser;
@@ -21,7 +22,7 @@ if($id = Session::get('user')) {
 }
 ?>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-5">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
     <a href="<?= App::routeUrl(IndexController::class, 'index') ?>"
         class="navbar-brand">
         <?= App::getName() ?>
@@ -55,6 +56,14 @@ if($id = Session::get('user')) {
                         <i class="fa fa-users"></i>&nbsp;
                         Autorzy
                     </a>
+
+                <?php if($isadmin): ?>
+                    <a class="dropdown-item"
+                        href="<?= App::routeUrl(ItemController::class, 'itemIndex') ?>">
+                        <i class="fa fa-cubes"></i>&nbsp;
+                        Egzemplarze
+                    </a>
+                <?php endif; ?>
 
                 </div>
             </li>

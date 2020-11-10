@@ -20,6 +20,18 @@ class Select extends TableQuery {
     private $joins = [];
 
     /**
+     * ORDER BY column name
+     * @var null|string
+     */
+    private $orderBy = null;
+
+    /**
+     * ORDER BY orientation
+     * @var string
+     */
+    private $orderDir = 'ASC';
+
+    /**
      * Constructs a SELECT query
      *
      * @param string[] $fields The fields to select
@@ -56,6 +68,20 @@ class Select extends TableQuery {
     }
 
     /**
+     * Sets the result to be orderered by the specified column.
+     *
+     * @param string $columnName The column to order the results records by
+     * @param string $dir The direction in which to order the records
+     *
+     * @return self for chaining
+     */
+    public function orderBy(string $columnName, string $dir = 'ASC'): self {
+        $this->orderBy = $columnName;
+        $this->orderDir = $dir;
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function build(QueryParams $params): string {
@@ -66,7 +92,8 @@ class Select extends TableQuery {
         return 'SELECT '.$fields
             .' FROM '.$this->tableName
             .($join !== '' ? ' '.$join : '')
-            .($where !== '' ? ' WHERE '.$where : '');
+            .($where !== '' ? ' WHERE '.$where : '')
+            .($this->orderBy !== null ? ' ORDER BY '.$this->orderBy.' '.$this->orderDir : '');
     }
 
 }
