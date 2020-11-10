@@ -14,32 +14,44 @@ class Join {
     private $type;
 
     /**
+     * Left-hand table name
+     * @var string
+     */
+    private $leftTableName;
+
+    /**
      * Right-hand table name
      * @var string
      */
     private $rightTableName;
 
     /**
-     * Foreign key column in the right-hand table
+     * Key column in the left-hand table
      */
-    private $foreignKeyColumnName;
+    private $leftKey;
+
+    /**
+     * Key column in the right-hand table
+     */
+    private $rightKey;
 
     /**
      * Constructs a JOIN clause object
      *
      * @param string $type Join type (`''`, `'INNER'`, `'OUTER'`, `'LEFT'`, `'RIGHT'`)
-     * @param string $rightTableName The right-hand table name
-     * @param string $foreignKeyColumnName The column in the right-hand table referencing
-     *                                     primary keys of the left-hand table
      */
     public function __construct(
         string $type,
+        string $leftTableName,
         string $rightTableName,
-        string $foreignKeyColumnName
+        string $leftKey,
+        string $rightKey
     ) {
         $this->type = $type;
+        $this->leftTableName = $leftTableName;
         $this->rightTableName = $rightTableName;
-        $this->foreignKeyColumnName = $foreignKeyColumnName;
+        $this->leftKey = $leftKey;
+        $this->rightKey = $rightKey;
     }
 
     /**
@@ -47,11 +59,11 @@ class Join {
      *
      * @param string $leftTableName The left-hand table name (the one being joined to)
      */
-    public function build(string $leftTableName): string {
+    public function build(): string {
         return ($this->type === '' ? '' : $this->type.' ').'JOIN'
             .' '.$this->rightTableName
-            .' ON '.$this->rightTableName.'.'.$this->foreignKeyColumnName
-            .' = '.$leftTableName.'.id';
+            .' ON '.$this->leftTableName.'.'.$this->leftKey
+            .' = '.$this->rightTableName.'.'.$this->rightKey;
     }
 
 }

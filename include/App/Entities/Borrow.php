@@ -45,14 +45,10 @@ class Borrow extends Entity {
      * @return Stream<Borrow>
      */
     public static function findActiveByUserId(int $id): Stream {
-        return self::getRepository()
-            ->query(fn(QueryParams $params) => <<<SQL
-                SELECT wypozyczenia.*
-                FROM wypozyczenia
-                INNER JOIN egzemplarze ON wypozyczenia.egzemplarz = egzemplarze.id
-                WHERE wypozyczenia.czytelnik = {$params->add($id)}
-                AND NOT egzemplarze.dostepny
-            SQL);
+        return self::getRepository()->all(fn(Select $q) => $q
+            ->join('INNER', 'egzemplarze', 'egzemplarz')
+            ->where('wypozyczenia.czytelnik', '=', $id)
+            ->and('egzemplarze.dostepny', '=', 0));
     }
 
 }

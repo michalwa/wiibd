@@ -59,13 +59,10 @@ class Book extends Entity {
      * Queries the repository for books published by the specified author
      */
     public static function findByAuthorId(int $id): Stream {
-        return self::getRepository()->query(fn($params) => <<<SQL
-            SELECT ksiazki.*
-            FROM ksiazki
-            INNER JOIN ksiazki_autorzy ON ksiazki_autorzy.ksiazka = ksiazki.id
-            INNER JOIN autorzy ON autorzy.id = ksiazki_autorzy.autor
-            WHERE autorzy.id = {$params->add($id)};
-        SQL);
+        return self::getRepository()->all(fn(Select $q) => $q
+            ->join('INNER', 'ksiazki_autorzy', 'id', 'ksiazka')
+            ->join('INNER', 'autorzy', 'autor', 'id', 'ksiazki_autorzy')
+            ->where('autorzy.id', '=', $id));
     }
 
 }

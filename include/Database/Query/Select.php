@@ -49,8 +49,9 @@ class Select extends TableQuery {
      *
      * @return self for chaining
      */
-    public function join(string $type, string $table, string $foreignKey): self {
-        $this->joins[] = new Join($type, $table, $foreignKey);
+    public function join(string $type, string $rightTable, string $leftKey, string $rightKey = 'id', ?string $leftTable = null): self {
+        $leftTable ??= $this->tableName;
+        $this->joins[] = new Join($type, $leftTable, $rightTable, $leftKey, $rightKey);
         return $this;
     }
 
@@ -60,7 +61,7 @@ class Select extends TableQuery {
     public function build(QueryParams $params): string {
         $fields = implode(', ', $this->fields);
         $where = $this->whereClause($params);
-        $join = implode(' ', array_map(fn($j) => $j->build($this->tableName), $this->joins));
+        $join = implode(' ', array_map(fn($j) => $j->build(), $this->joins));
 
         return 'SELECT '.$fields
             .' FROM '.$this->tableName
