@@ -42,6 +42,13 @@ class Book extends Entity {
     public $genres;
 
     /**
+     * Fetches the number of available copies of this book from the database
+     */
+    public function numAvailableCopies(): int {
+        return count(Item::findAvailableByBookId($this->getId())->toArray());
+    }
+
+    /**
      * Queries the repository for books matching the given search query
      */
     public static function textSearch(string $search): Stream {

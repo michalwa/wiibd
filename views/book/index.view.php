@@ -46,6 +46,7 @@ use App\Entities\Book;
                         <th scope="col">Wydawnictwo</th>
                         <!-- <th scope="col">Rok wydania</th> -->
                         <!-- <th scope="col">Gatunek</th> -->
+                        <th scope="col">Dostępność</th>
                     </tr>
                     <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
                         <tr>
@@ -59,6 +60,13 @@ use App\Entities\Book;
                             <td><?= $book->publisher ?></td>
                             <!-- <td><?= $book->releaseYear ?></td> -->
                             <!-- <td><?= implode(', ', $book->genres) ?></td> -->
+                            <td>
+                            <?php if(($n = $book->numAvailableCopies()) === 0): ?>
+                                <span class="text-danger">Niedostępna</span>
+                            <?php else: ?>
+                                <span class="text-success"><?= $n ?></span>
+                            <?php endif; ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
