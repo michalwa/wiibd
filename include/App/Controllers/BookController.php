@@ -2,7 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Auth\UserSession;
 use App\Entities\Book;
+use App\Entities\Borrow;
 use Controller\Controller;
 use Http\Request;
 use Http\Response;
@@ -31,12 +33,14 @@ class BookController extends Controller {
      */
     public function bookDetail(Request $request, $params): ?Response {
         $book = Book::getRepository()->findById($params['id']);
-
         if($book === null) return null;
 
-        return View::load('book/book')->toResponse([
-            'book' => $book,
-        ]);
+        $ctx = ['book' => $book];
+
+        if(UserSession::isAdmin())
+            $ctx['borrows'] = Borrow::findByBookId($book->getId());
+
+        return View::load('book/book')->toResponse($ctx);
     }
 
 }

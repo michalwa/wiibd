@@ -3,7 +3,6 @@
 namespace App\Entities;
 
 use Database\ORM\Entity;
-use Database\Query\QueryParams;
 use Database\Query\Select;
 use Utils\Stream;
 
@@ -49,6 +48,17 @@ class Borrow extends Entity {
             ->join('INNER', 'egzemplarze', 'egzemplarz')
             ->where('wypozyczenia.czytelnik', '=', $id)
             ->and('egzemplarze.dostepny', '=', 0));
+    }
+
+    /**
+     * Finds borrows associated with the specified book
+     *
+     * @return Stream<Borrow>
+     */
+    public static function findByBookId(int $id): Stream {
+        return self::getRepository()->all(fn(Select $q) => $q
+            ->join('INNER', 'egzemplarze', 'egzemplarz')
+            ->where('egzemplarze.ksiazka', '=', $id));
     }
 
 }

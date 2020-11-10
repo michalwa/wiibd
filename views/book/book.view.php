@@ -2,6 +2,8 @@
 
 <?php
 use App\Controllers\AuthorController;
+use App\Controllers\UserController;
+use App\Entities\Borrow;
 
 /** @var App\Entities\Book */
 $book = $params['book'];
@@ -15,7 +17,7 @@ $book = $params['book'];
 <!-- begin body -->
 <div class="container">
     <div class="row">
-        <div class="col-md">
+        <div class="col">
             <div class="row">
                 <div class="col-md-auto mb-3">
                     <img class="img-responsive"
@@ -52,6 +54,14 @@ $book = $params['book'];
                                     <i class="fa fa-tag" title="Gatunki"></i>
                                     <?= implode(', ', $book->genres) ?>
                                 </li>
+                                <li>
+                                    <i class="fa fa-cubes"></i>
+                                <?php if(($n = $book->numAvailableCopies()) === 0): ?>
+                                    <span class="text-danger">Niedostępna</span>
+                                <?php else: ?>
+                                    <span class="text-success">Dostępne egzemplarze: <?= $n ?></span>
+                                <?php endif; ?>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -59,5 +69,38 @@ $book = $params['book'];
             </div>
         </div>
     </div>
+
+<?php if(isset($params['borrows'])): ?>
+    <div class="row mt-4">
+        <h2 class="mb-4">Wypożyczona przez</h2>
+
+        <table class="table">
+            <tr>
+                <th>Login</th>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Data wypożyczenia</th>
+                <th>Data oddania</th>
+            </tr>
+        <?php /** @var Borrow $borrow */ foreach($params['borrows'] as $borrow): ?>
+        <?php $userUrl = App::routeUrl(
+            UserController::class,
+            'userDetail',
+            ['id' => $borrow->user->getId()]);
+        ?>
+            <tr>
+                <td><a href="<?= $userUrl ?>">
+                    <?= $borrow->user->username ?></a></td>
+                <td><a href="<?= $userUrl ?>">
+                    <?= $borrow->user->firstName ?></a></td>
+                <td><a href="<?= $userUrl ?>">
+                    <?= $borrow->user->lastName ?></a></td>
+                <td><time><?= $borrow->began ?></time></td>
+                <td><time><?= $borrow->ends ?></time></td>
+            </tr>
+        <?php endforeach; ?>
+        </table>
+    </div>
+<?php endif; ?>
 </div>
 <!-- end -->
