@@ -55,4 +55,12 @@ class Item extends Entity {
             ->and('wypozyczenia.aktywne', 'IS NULL')
             ->or('wypozyczenia.aktywne', '= 0'));
     }
+
+    /**
+     * Queries the database for an item with the specified identifier
+     */
+    public static function findByIdentifier(string $id): ?self {
+        return self::getRepository()->find(fn(Select $q) => $q
+            ->where('identyfikator', '=', $id));
+    }
 }

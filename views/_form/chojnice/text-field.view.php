@@ -12,4 +12,7 @@
         value="<?= $params['value'] ?? '' ?>"
         <?= $params['required'] ? 'required' : '' ?>
         <?= ($params['valid'] ?? true) ? '' : 'is-invalid' ?>>
+<?php if(isset($params['hint'])): ?>
+    <small class="form-text text-muted"><?= $params['hint'] ?></small>
+<?php endif; ?>
 </div>

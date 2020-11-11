@@ -2,6 +2,7 @@
 
 <?php
 
+use App\Auth\UserSession;
 use App\Controllers\BookController;
 use App\Controllers\ItemController;
 use App\Controllers\UserController;
@@ -40,6 +41,13 @@ use App\Entities\Item;
                     </button>
                 </div>
             </form>
+        <?php if(UserSession::isAdmin()): ?>
+            <a href="<?= App::routeUrl(ItemController::class, 'newItemsForm') ?>"
+                class="btn btn-light w-100 mt-4">
+                <i class="fa fa-plus"></i>&nbsp;
+                Dodaj egzemplarze
+            </a>
+        <?php endif; ?>
         </div>
         <div class="col-lg-9">
             <div class="table-responsive-lg">
