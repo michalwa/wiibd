@@ -1,12 +1,21 @@
 <!-- extends base -->
 
 <?php
+
+use App\Auth\UserSession;
 use App\Controllers\BookController;
 use App\Controllers\ItemController;
 use App\Controllers\PasswordChangeController;
+use App\Controllers\UserController;
 
 /** @var App\Entities\User $user */
 $user = $params['user'];
+
+$borrows = $params['borrows']->toArray();
+
+$self = isset($params['self']) && $params['self'];
+$admin = UserSession::isAdmin();
+$canDelete = count($borrows) === 0;
 ?>
 
 <!-- begin head -->
@@ -30,7 +39,8 @@ $user = $params['user'];
                     <div class="row">
                         <div class="col">
                             <h2><?= $user ?></h2>
-                        <?php if(isset($params['self']) && $params['self']): ?>
+
+                        <?php if($self || $admin): ?>
                             <div class="dropdown float-right">
                                 <button
                                     class="btn"
@@ -40,13 +50,27 @@ $user = $params['user'];
                                     <i class="fa fa-lg fa-cog"></i>
                                 </button>
                                 <div class="dropdown-menu">
+
+                                <?php if($self): ?>
                                     <a href="<?= App::routeUrl(PasswordChangeController::class, 'form'); ?>"
                                         class="dropdown-item">
                                         Zmień hasło
                                     </a>
+                                <?php elseif($admin): ?>
+                                    <a href="<?=
+                                        App::routeUrl(
+                                            UserController::class,
+                                            'deleteUser',
+                                            ['id' => $user->getId()]); ?>"
+                                        class="dropdown-item <?= $canDelete ? '' : 'disabled' ?>"
+                                        data-toggle="danger-confirmation">
+                                        Usuń czytelnika
+                                    </a>
+                                <?php endif; ?>
                                 </div>
                             </div>
                         <?php endif; ?>
+
                             <ul class="product-details">
                                 <li>
                                     <i
@@ -79,7 +103,7 @@ $user = $params['user'];
                 <th>Data oddania</th>
                 <th></th>
             </tr>
-        <?php /** @var App\Entities\Borrow $borrow */ foreach($params['borrows'] as $borrow): ?>
+        <?php /** @var App\Entities\Borrow $borrow */ foreach($borrows as $borrow): ?>
             <tr>
                 <td><?= $borrow->item->identifier ?></td>
                 <td>

@@ -62,18 +62,32 @@ class UserController extends Controller {
     /**
      * @Route('GET', '/me')
      */
-    public function selfUserDetail(Request $request, $param): ?Response {
+    public function selfUserDetail(Request $request, $params): ?Response {
         if(($user = UserSession::getUser()) === null) {
             return $this->redirect(IndexController::class.'::index');
         }
 
-        $borrow = Borrow::findActiveByUserId($user->getId());
+        $borrows = Borrow::findActiveByUserId($user->getId());
 
         return View::load('user/user')->toResponse([
             'self' => true,
             'user' => $user,
-            'borrows' => $borrow,
+            'borrows' => $borrows,
         ]);
+    }
+
+    /**
+     * @Route('GET', '/users/{id:uint}/delete')
+     */
+    public function deleteUser(Request $request, $params): ?Response {
+        if(UserSession::isAdmin()) {
+            $user = User::getRepository()->findById($params['id']);
+
+            $borrows = Borrow::findActiveByUserId($user->getId())->toArray();
+            if(count($borrows) === 0) $user->delete();
+        }
+
+        return $this->redirect(IndexController::class.'::index');
     }
 
 }

@@ -35,6 +35,8 @@
         crossorigin="anonymous"></script>
 
     <script src="<?= App::getPublicUrl('js/bootstrap-multiselect.js') ?>"></script>
+    <script src="<?= App::getPublicUrl('js/bootstrap-confirmation.min.js') ?>"></script>
+
     <script>
         $(document).ready(function() {
             $('select[multiple]').multiselect({
@@ -55,6 +57,18 @@
                         return labels.join(', ') + '';
                     }
                 }
+            });
+
+            $('[data-toggle=danger-confirmation]').confirmation({
+                rootSelector: '[data-toggle=danger-confirmation]',
+                title: 'Czy jesteś pewien?',
+                popout: true,
+                btnOkLabel: 'Tak',
+                btnOkClass: 'btn btn-sm btn-danger',
+                btnOkIconClass: 'fa fa-check mr-1',
+                btnCancelLabel: 'Anuluj',
+                btnCancelClass: 'btn btn-sm btn-success',
+                btnCancelIconClass: 'fa fa-ban mr-1',
             });
         });
     </script>
