@@ -11,7 +11,7 @@ class Delete extends TableQuery {
      * {@inheritDoc}
      */
     public function build(QueryParams $params): string {
-        $where = $this->whereClause($params);
+        $where = $this->where === null ? '' : $this->where->build($params);
 
         return 'DELETE FROM'
             .' '.$this->tableName

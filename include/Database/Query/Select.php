@@ -112,7 +112,7 @@ class Select extends TableQuery {
         }
 
         $fields = implode(', ', $fields);
-        $where = $this->whereClause($params);
+        $where = $this->where === null ? '' : $this->where->build($params);
         $join = implode(' ', array_map(fn($j) => $j->build(), $this->joins));
 
         return 'SELECT '.$fields

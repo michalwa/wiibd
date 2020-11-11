@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use Database\ORM\Entity;
+use Database\Query\QueryParams;
 use Database\Query\Select;
 use Utils\Stream;
 
@@ -51,7 +52,7 @@ class Item extends Entity {
         return self::getRepository()->all(fn(Select $q) => $q
             ->join('LEFT', 'wypozyczenia', 'id', 'egzemplarz')
             ->where('egzemplarze.ksiazka', '=', $id)
-            ->and('(wypozyczenia.aktywne', 'IS NULL')
-            ->or('wypozyczenia.aktywne', '= 0)'));
+            ->and('wypozyczenia.aktywne', 'IS NULL')
+            ->or('wypozyczenia.aktywne', '= 0'));
     }
 }

@@ -65,14 +65,13 @@ class Update extends TableQuery {
      * {@inheritDoc}
      */
     public function build(QueryParams $params): string {
-
         $sets = array_map_assoc(
             fn($col, $val) => $col.' = '.$params->add($val),
             $this->record);
 
         $set = implode(', ', $sets);
 
-        $where = $this->whereClause($params);
+        $where = $this->where === null ? '' : $this->where->build($params);
 
         return 'UPDATE'
             .' '.$this->tableName
