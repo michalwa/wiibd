@@ -1,6 +1,8 @@
 <!-- extends base -->
 
 <?php
+
+use App\Controllers\BookController;
 use App\Controllers\ItemController;
 use App\Controllers\UserController;
 use App\Entities\Borrow;
@@ -51,7 +53,14 @@ use App\Entities\Item;
                     <?php /** @var Item $item */ foreach($params['items'] as $item): ?>
                         <tr id="item-<?= $item->identifier ?>">
                             <td class="align-baseline"><?= $item->identifier ?></td>
-                            <td class="align-baseline"><?= $item->book->title ?></td>
+                            <td class="align-baseline">
+                                <a href="<?= App::routeUrl(
+                                    BookController::class,
+                                    'bookDetail',
+                                    ['id' => $item->book->getId()]) ?>">
+                                    <?= $item->book->title ?>
+                                </a>
+                            </td>
                             <td class="align-baseline"><?= implode(', ', $item->book->authors) ?></td>
                         <?php if(($borrow = Borrow::findActiveByItemId($item->getId())) === null): ?>
                             <td class="align-baseline">

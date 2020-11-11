@@ -95,6 +95,8 @@ class UserController extends Controller {
             foreach($borrows as $borrow) {
                 if($borrow->active)
                     return $this->redirect(IndexController::class.'::index');
+
+                $borrow->delete();
             }
 
             $user->delete();
