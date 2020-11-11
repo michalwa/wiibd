@@ -132,7 +132,7 @@ class Repository {
     public function query($f): Stream {
         $params = new QueryParams();
         $sql = $f($params);
-        $result = Database::get()->query($sql, $params);
+        $result = Database::get()->query($sql, $params)->expect();
 
         return Stream::begin($result)
 

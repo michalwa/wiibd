@@ -76,6 +76,7 @@ class Borrow extends Entity {
     public static function findByBookId(int $id): Stream {
         return self::getRepository()->all(fn(Select $q) => $q
             ->join('INNER', 'egzemplarze', 'egzemplarz')
+            ->orderBy('aktywne', 'DESC')
             ->where('egzemplarze.ksiazka', '=', $id));
     }
 

@@ -49,11 +49,14 @@ class Item extends Entity {
      * Fetches available copies of the specified book from the repository
      */
     public static function findAvailableByBookId(int $id): Stream {
-        return self::getRepository()->all(fn(Select $q) => $q
-            ->join('LEFT', 'wypozyczenia', 'id', 'egzemplarz')
-            ->where('egzemplarze.ksiazka', '=', $id)
-            ->and('wypozyczenia.aktywne', 'IS NULL')
-            ->or('wypozyczenia.aktywne', '= 0'));
+
+        // NOTE: Nie wiem jak to zrobić inaczej na razie
+
+        $items = self::getRepository()->all(fn($q) => $q
+            ->where('ksiazka', '=', $id))
+            ->toArray();
+
+        return Stream::begin(array_filter($items, fn($i) => $i->available()));
     }
 
     /**
