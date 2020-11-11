@@ -83,9 +83,16 @@ class SelectField implements Field {
     /**
      * {@inheritDoc}
      */
-    public function html(array $params = [], string $style = 'default'): string {
+    public function html(
+        Request $request,
+        string $method,
+        array $params = [],
+        string $style = 'default'
+    ): string {
         return Form::loadTemplate($style, 'select-field')
             ->render(array_merge([
+                'valid' => $this->isValid($request, $method),
+                'value' => $this->getValue($request, $method),
                 'name' => $this->name . ($this->multiple ? '[]' : ''),
                 'options' => $this->options,
                 'required' => $this->required,

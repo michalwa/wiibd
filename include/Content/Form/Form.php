@@ -98,10 +98,16 @@ class Form {
      *
      * @param array $params Additional parameters to pass to the template
      */
-    public function html(array $params = [], string $style = 'default'): string {
+    public function html(
+        array $params = [],
+        string $style = 'default',
+        ?Request $request = null
+    ): string {
+        $request ??= Request::get();
+
         $fields = '';
         foreach($this->fields as $field) {
-            $fields .= $field->html($params, $style);
+            $fields .= $field->html($request, $this->method, $params, $style);
         }
 
         return self::loadTemplate($style, 'form')

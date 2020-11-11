@@ -112,13 +112,7 @@ class Request {
      * @return array|string
      */
     public function getQuery(?string $param = null) {
-        if($param === null) {
-            return $this->query;
-        } elseif(key_exists($param, $this->query)) {
-            return $this->query[$param];
-        } else {
-            return null;
-        }
+        return $param !== null ? ($this->query[$param] ?? null) : $this->query;
     }
 
     /**
@@ -129,7 +123,7 @@ class Request {
      * @return array|string
      */
     public function getPost(?string $param = null) {
-        return $param !== null ? $this->post[$param] : $this->post;
+        return $param !== null ? ($this->post[$param] ?? null) : $this->post;
     }
 
     /**

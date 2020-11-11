@@ -4,7 +4,7 @@
 
 <form action="<?= $params['action'] ?>" method="<?= $params['method'] ?>">
     <?= $params['fields'] ?>
-    <button class="btn btn-primary float-right mt-2" type="submit">
+    <button class="btn btn-primary my-2" type="submit">
         <i class="fa fa-<?= $params['submitIcon'] ?? 'check' ?>"></i>&nbsp;
         <?= $params['submit'] ?? 'Prześlij' ?>
     </button>

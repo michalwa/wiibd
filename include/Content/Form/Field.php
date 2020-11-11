@@ -27,9 +27,12 @@ interface Field {
 
     /**
      * Builds and returns the HTML for the field
-     *
-     * @param array $params Additional parameters to pass to the view
      */
-    public function html(array $params = [], string $style = 'default'): string;
+    public function html(
+        Request $request,
+        string $method,
+        array $params = [],
+        string $style = 'default'
+    ): string;
 
 }

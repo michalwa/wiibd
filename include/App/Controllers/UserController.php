@@ -2,15 +2,41 @@
 
 namespace App\Controllers;
 
+use App;
 use App\Auth\UserSession;
 use App\Entities\Borrow;
 use App\Entities\User;
+use App\PasswordValidator;
+use Content\Form\Form;
+use Content\Form\PasswordField;
+use Content\Form\SelectField;
+use Content\Form\TextField;
 use Controller\Controller;
 use Http\Request;
 use Http\Response;
 use View\View;
 
 class UserController extends Controller {
+
+    public const SUCCESS = 'SUCCESS';
+    public const ERROR_USERNAME_EXISTS = 'ERROR_USERNAME_EXISTS';
+    public const ERROR_PASSWORD_TOO_WEAK = 'ERROR_PASSWORD_TOO_WEAK';
+
+    /**
+     * @var Form
+     */
+    private $newUserForm;
+
+    public function __construct() {
+        parent::__construct();
+
+        $this->newUserForm = (new Form('POST', App::routeUrl(self::class, 'newUser')))
+            ->addField(new TextField('username', true, ['label' => 'Login']))
+            ->addField(new PasswordField('password', true, ['label' => 'Hasło']))
+            ->addField(new TextField('firstName', true, ['label' => 'Imię']))
+            ->addField(new TextField('lastName', true, ['label' => 'Nazwisko']))
+            ->addField(new TextField('class', true, ['label' => 'Klasa']));
+    }
 
     /**
      * @Route('GET', '/users')
@@ -107,6 +133,62 @@ class UserController extends Controller {
         }
 
         return $this->redirect(IndexController::class.'::index');
+    }
+
+    /**
+     * @Route('GET', '/users/new')
+     */
+    public function newUserForm(Request $request, $params): ?Response {
+        if(!UserSession::isAdmin())
+            return $this->redirectToSelf('userIndex');
+
+        return View::load('user/new')->toResponse([
+            'form' => $this->newUserForm,
+        ]);
+    }
+
+    /**
+     * @Route('POST', '/users/new')
+     */
+    public function newUser(Request $request, $params): ?Response {
+        if(!UserSession::isAdmin())
+            return $this->redirectToSelf('userIndex');
+
+        $form = $this->newUserForm;
+
+        if(!$form->isValid())
+            return $this->redirectToSelf('newUserForm');
+
+        $username = $form->getValue('username');
+        $password = $form->getValue('password');
+
+        if(User::findByUsername($username) !== null) {
+            return View::load('user/new')->toResponse([
+                'form' => $this->newUserForm,
+                'info' => self::ERROR_USERNAME_EXISTS,
+            ]);
+        }
+
+        if(!PasswordValidator::isValidPassword($password)) {
+            return View::load('user/new')->toResponse([
+                'form' => $this->newUserForm,
+                'info' => self::ERROR_PASSWORD_TOO_WEAK,
+            ]);
+        }
+
+        $user = new User();
+        $user->username = $username;
+        $user->setPassword($password);
+        $user->firstName = $form->getValue('firstName');
+        $user->lastName = $form->getValue('lastName');
+        $user->class = $form->getValue('class');
+        $user->active = false;
+        $user->persist();
+
+        return View::load('user/new')->toResponse([
+            'form' => $this->newUserForm,
+            'info' => self::SUCCESS,
+        ]);
     }
 
 }

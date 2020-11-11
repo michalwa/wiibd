@@ -9,5 +9,7 @@
         type="text"
         name="<?= $params['name'] ?>"
         id="<?= $id ?>"
-        <?= $params['required'] ? 'required' : '' ?>>
+        value="<?= $params['value'] ?? '' ?>"
+        <?= $params['required'] ? 'required' : '' ?>
+        <?= ($params['valid'] ?? true) ? '' : 'is-invalid' ?>>
 </div>

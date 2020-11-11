@@ -19,7 +19,7 @@ use App\Controllers\BookController;
 
         <?php if($params['info'] ?? null === BookController::SUCCESS): ?>
             <div class="alert alert-success">
-                <i class="fa fa-exclamation-check"></i>&nbsp;
+                <i class="fa fa-check"></i>&nbsp;
                 Dodano książkę!
             </div>
         <?php endif; ?>

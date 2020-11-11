@@ -12,11 +12,12 @@ $selected = $params['selected'][$params['name']] ?? null;
         name="<?= $params['name'] ?>"
         id="<?= $id ?>"
         class="form-control"
-        <?= $multiple ? 'multiple' : '' ?>>
+        <?= $multiple ? 'multiple' : '' ?>
+        <?= ($params['valid'] ?? true) ? '' : 'is-invalid' ?>>
     <?php foreach($params['options'] as $value => $label): ?>
         <option
             value="<?= $value ?>"
-            <?= $value === $selected ? 'selected' : '' ?>>
+            <?= ($params['value'] ?? $value) === $selected ? 'selected' : '' ?>>
             <?= $label ?>
         </option>
     <?php endforeach; ?>

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App;
 use App\Auth\UserSession;
+use App\PasswordValidator;
 use Content\Form\Form;
 use Content\Form\PasswordField;
 use Controller\Controller;
@@ -74,7 +75,7 @@ class PasswordChangeController extends Controller {
             ]);
         }
 
-        if(!$this->isValidPassword($new)) {
+        if(!PasswordValidator::isValidPassword($new)) {
             return View::load('user/password-form')->toResponse([
                 'form' => $this->form,
                 'info' => self::ERROR_PASSWORD_TOO_WEAK,
@@ -88,23 +89,6 @@ class PasswordChangeController extends Controller {
             'form' => $this->form,
             'info' => self::SUCCESS,
         ]);
-    }
-
-    private function isValidPassword(string $password): bool {
-        if(strlen($password) < 5) return false;
-
-        $hasDigit = false;
-        $hasCapital = false;
-        foreach(str_split($password) as $char) {
-            if(ctype_digit($char)) {
-                $hasDigit = true;
-            }
-            if(ctype_upper($char)) {
-                $hasCapital = true;
-            }
-        }
-
-        return $hasDigit && $hasCapital;
     }
 
 }

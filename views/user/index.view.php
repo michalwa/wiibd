@@ -1,6 +1,8 @@
 <!-- extends base -->
 
 <?php
+
+use App\Auth\UserSession;
 use App\Controllers\UserController;
 ?>
 
@@ -46,6 +48,13 @@ use App\Controllers\UserController;
                     Szukaj
                 </button>
             </form>
+        <?php if(UserSession::isAdmin()): ?>
+            <a href="<?= App::routeUrl(UserController::class, 'newUserForm') ?>"
+                class="btn btn-light w-100 mt-4">
+                <i class="fa fa-plus"></i>&nbsp;
+                Dodaj czytelnika
+            </a>
+        <?php endif; ?>
         </div>
         <div class="col-lg-9">
             <div class="table-responsive-lg">

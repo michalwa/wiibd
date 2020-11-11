@@ -9,6 +9,7 @@
         type="date"
         name="<?= $params['name'] ?>"
         id="<?= $id ?>"
+        value="<?= $params['value'] ?? '' ?>"
         <?= ($params['required'] ?? false) ? 'required' : '' ?>
-        value="<?= $params['value'] ?? '' ?>">
+        <?= ($params['valid'] ?? true) ? '' : 'is-invalid' ?>>
 </div>

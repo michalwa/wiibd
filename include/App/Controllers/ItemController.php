@@ -130,6 +130,9 @@ class ItemController extends Controller {
         $borrow->active = true;
         $borrow->persist();
 
+        $borrow->user->active = true;
+        $borrow->user->persist();
+
         return View::load('item/lend')->toResponse([
             'form' => $this->lendForm,
             'info' => self::SUCCESS,

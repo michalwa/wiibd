@@ -34,6 +34,11 @@ $info = $params['info'] ?? null;
             <i class="fa fa-exclamation-circle"></i>&nbsp;
             Błędne hasło!
         </div>
+    <?php elseif($info === PasswordChangeController::ERROR_PASSWORD_TOO_WEAK): ?>
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-triangle"></i>&nbsp;
+            Hasło jest zbyt słabe!
+        </div>
     <?php elseif($info === PasswordChangeController::SUCCESS): ?>
         <div class="alert alert-success">
             <i class="fa fa-check"></i>&nbsp;

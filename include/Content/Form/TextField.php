@@ -60,9 +60,16 @@ class TextField implements Field {
     /**
      * {@inheritDoc}
      */
-    public function html(array $params = [], string $style = 'default'): string {
+    public function html(
+        Request $request,
+        string $method,
+        array $params = [],
+        string $style = 'default'
+    ): string {
         return Form::loadTemplate($style, 'text-field')
             ->render(array_merge([
+                'valid' => $this->isValid($request, $method),
+                'value' => $this->getValue($request, $method),
                 'name' => $this->name,
                 'required' => $this->required,
             ], $this->params, $params));
