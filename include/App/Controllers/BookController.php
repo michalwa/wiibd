@@ -69,6 +69,7 @@ class BookController extends Controller {
         return View::load('book/index')->toResponse([
             'books' => $books,
             'search' => $search,
+            'filter' => $request->getQuery('filter'),
         ]);
     }
 
@@ -111,7 +112,7 @@ class BookController extends Controller {
             return $this->redirectToSelf('newBookForm');
 
         $book = new Book();
-        $book->title       = $form->getValue('title');
+        $book->title = $form->getValue('title');
         $book->releaseYear = $form->getValue('releaseYear');
 
         $book->authors = Author::getRepository()

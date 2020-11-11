@@ -17,7 +17,7 @@ use App\Entities\Book;
     <div class="row">
         <div class="col-lg-3 mb-4">
             <form action="#" method="get">
-                <div class="input-group mb-2">
+                <div class="input-group">
                     <input
                         class="form-control"
                         id="searchInput"
@@ -31,12 +31,24 @@ use App\Entities\Book;
                         </div>
                     </div>
                 </div>
-                <div class="input-group">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fa fa-search"></i>&nbsp;
-                        Szukaj
-                    </button>
+                <div class="form-check my-2">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="filter"
+                        value="available"
+                        id="availableFilterChkb"
+                        <?= $params['filter'] === 'available' ? 'checked' : '' ?>>
+                    <label
+                        class="form-check-label"
+                        for="availableFilterChkb">
+                        Tylko dostępne
+                    </label>
                 </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa fa-search"></i>&nbsp;
+                    Szukaj
+                </button>
             </form>
 
         <?php if(UserSession::isAdmin()): ?>
@@ -58,6 +70,7 @@ use App\Entities\Book;
                         <th>Dostępność</th>
                     </tr>
                     <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
+                    <?php if($params['filter'] !== 'available' || $book->numAvailableCopies() > 0): ?>
                         <tr>
                             <td><a href="<?= App::routeUrl(
                                 BookController::class,
@@ -76,6 +89,7 @@ use App\Entities\Book;
                             <?php endif; ?>
                             </td>
                         </tr>
+                    <?php endif; ?>
                     <?php endforeach; ?>
                 </table>
             </div>
