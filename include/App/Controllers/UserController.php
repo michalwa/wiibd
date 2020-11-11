@@ -28,9 +28,13 @@ class UserController extends Controller {
             $users = User::getRepository()->all();
         }
 
+        $classNames = iterator_to_array(User::allClasses());
+
         return View::load('user/index')->toResponse([
             'users' => $users,
             'search' => $search,
+            'classNames' => $classNames,
+            'class' => $request->getQuery('class') ?: null,
         ]);
     }
 

@@ -2,8 +2,11 @@
 
 namespace App\Entities;
 
+use Database\Database;
 use Database\ORM\Entity;
+use Database\Query\QueryParams;
 use Database\Query\Select;
+use Database\Result;
 use Utils\Stream;
 
 /**
@@ -89,6 +92,15 @@ class User extends Entity {
             }
             return $q;
         });
+    }
+
+    /**
+     * Fetches all distinct class names from the user table
+     */
+    public static function allClasses(): Stream {
+        return Stream::begin(Database::get()
+            ->query('SELECT DISTINCT klasa FROM czytelnicy'))
+            ->map(fn($a) => $a['klasa']);
     }
 
 }

@@ -28,12 +28,23 @@ use App\Controllers\UserController;
                         </div>
                     </div>
                 </div>
-                <div class="input-group">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fa fa-search"></i>&nbsp;
-                        Szukaj
-                    </button>
+                <div class="form-group">
+                    <label for="classSelect">Klasa</label>
+                    <select class="form-control" name="class" id="classSelect">
+                        <option value="">Wszystkie</option>
+                    <?php foreach($params['classNames'] as $className): ?>
+                        <option
+                            value="<?= $className ?>"
+                            <?= ($params['class'] ?? null) === $className ? 'selected' : '' ?>>
+                            <?= $className ?>
+                        </option>
+                    <?php endforeach; ?>
+                    </select>
                 </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa fa-search"></i>&nbsp;
+                    Szukaj
+                </button>
             </form>
         </div>
         <div class="col-lg-9">
@@ -47,6 +58,7 @@ use App\Controllers\UserController;
                         <th>Klasa</th>
                     </tr>
                 <?php /** @var App\Entities\User $user */ foreach($params['users'] as $user): ?>
+                <?php if(($params['class'] ?? null) === null || $params['class'] === $user->class): ?>
                     <?php
                     $detailUrl = App::routeUrl(
                         UserController::class,
@@ -66,6 +78,7 @@ use App\Controllers\UserController;
                         <td><a href="<?= $detailUrl ?>"><?= $user->firstName ?></a></td>
                         <td><?= $user->class ?></td>
                     </tr>
+                <?php endif; ?>
                 <?php endforeach; ?>
                 </table>
             </div>

@@ -31,6 +31,9 @@ App::init(__DIR__, $config);
 
 // Set error handler
 set_error_handler(function(int $errno, string $errstr, string $errfile, int $errline) {
+    while(ob_get_status()['level'] > 0)
+        ob_end_clean();
+
     View::load('errors/500')->toResponse([
         'class'   => null,
         'code'    => $errno,
