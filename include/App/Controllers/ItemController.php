@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Auth\UserSession;
+use App\Entities\Borrow;
 use App\Entities\Item;
 use Controller\Controller;
 use Http\Request;
@@ -31,6 +32,39 @@ class ItemController extends Controller {
             'items' => $items,
             'search' => $search,
         ]);
+    }
+
+    /**
+     * @Route('GET', '/items/{id:uint}/return')
+     */
+    public function returnItem(Request $request, $params): ?Response {
+        /** @var Item $item */
+        $item = Item::getRepository()->findById($params['id']);
+
+        dump($item);
+
+        if(UserSession::isAdmin()) {
+            /** @var Borrow $borrow */
+            $borrow = Borrow::findActiveByItemId($item->getId());
+            $borrow->active = false;
+            $borrow->persist();
+        }
+
+        return $this->redirectToSelf('itemIndex', [], [], 'item-'.$item->identifier);
+    }
+
+    /**
+     * @Route('GET', '/items/{id:uint}/lend')
+     */
+    public function lendItem(Request $request, $params): ?Response {
+        /** @var Item $item */
+        $item = Item::getRepository()->findById($params['id']);
+
+        if(UserSession::isAdmin()) {
+            // TODO: Lend item
+        }
+
+        return $this->redirectToSelf('itemIndex', [], [], 'item-'.$item->identifier);
     }
 
 }

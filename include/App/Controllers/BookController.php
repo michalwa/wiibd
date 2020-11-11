@@ -91,9 +91,8 @@ class BookController extends Controller {
      * @Route('GET', '/books/new')
      */
     public function newBookForm(Request $request, $param): ?Response {
-        if(!UserSession::isAdmin()) {
+        if(!UserSession::isAdmin())
             return $this->redirect(IndexController::class.'::index');
-        }
 
         return View::load('book/new')->toResponse([
             'form' => $this->newBookForm,
@@ -104,9 +103,8 @@ class BookController extends Controller {
      * @Route('POST', '/books/new')
      */
     public function createBook(Request $request, $param): ?Response {
-        if(!UserSession::isAdmin()) {
+        if(!UserSession::isAdmin())
             return $this->redirect(IndexController::class.'::index');
-        }
 
         $form = $this->newBookForm;
         if(!$this->newBookForm->isValid())

@@ -23,11 +23,9 @@ class Item extends Entity {
      */
     public $book;
 
-    /**
-     * @Atomic('dostepny')
-     * @var bool
-     */
-    public $available;
+    public function available(): bool {
+        return Borrow::findActiveByItemId($this->getId()) === null;
+    }
 
     /**
      * Queries the repository for books matching the given search query
@@ -50,8 +48,10 @@ class Item extends Entity {
      * Fetches available copies of the specified book from the repository
      */
     public static function findAvailableByBookId(int $id): Stream {
-        return self::getRepository()->all(fn($q) => $q
-            ->where('ksiazka', '=', $id)
-            ->and('dostepny', '=', 1));
+        return self::getRepository()->all(fn(Select $q) => $q
+            ->join('LEFT', 'wypozyczenia', 'id', 'egzemplarz')
+            ->groupBy('egzemplarze.id')
+            ->where('egzemplarze.ksiazka', '=', $id)
+            ->and('wypozyczenia.aktywne', '=', 0));
     }
 }

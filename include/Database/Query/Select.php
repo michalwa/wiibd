@@ -103,7 +103,15 @@ class Select extends TableQuery {
      * {@inheritDoc}
      */
     public function build(QueryParams $params): string {
-        $fields = implode(', ', $this->fields);
+        if($this->fields === ['*']) {
+            $fields = ['*', $this->tableName.'.id AS id'];
+        } else {
+            $fields = array_map(
+                fn($f) => $f === 'id' ? $this->tableName.'.id' : $f,
+                $this->fields);
+        }
+
+        $fields = implode(', ', $fields);
         $where = $this->whereClause($params);
         $join = implode(' ', array_map(fn($j) => $j->build(), $this->joins));
 

@@ -26,7 +26,7 @@ Wymagana funkcjonalność
 
 6. [ ] Dodaj egzemplarz
 7. [ ] Wypożycz egzemplarz
-8. [ ] Zwróć egzemplarz
+8. [x] Zwróć egzemplarz
 
 9. [x] Wyświetl dane autora
     1. [x] Lista napisanych książek

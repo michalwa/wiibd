@@ -2,6 +2,7 @@
 
 <?php
 use App\Controllers\BookController;
+use App\Controllers\ItemController;
 use App\Controllers\PasswordChangeController;
 
 /** @var App\Entities\User $user */
@@ -72,12 +73,15 @@ $user = $params['user'];
 
         <table class="table">
             <tr>
+                <th>Numer egzemplarza</th>
                 <th>Tytuł</th>
                 <th>Data wypożyczenia</th>
                 <th>Data oddania</th>
+                <th></th>
             </tr>
         <?php /** @var App\Entities\Borrow $borrow */ foreach($params['borrows'] as $borrow): ?>
             <tr>
+                <td><?= $borrow->item->identifier ?></td>
                 <td>
                     <a href="<?=
                         App::routeUrl(
@@ -90,6 +94,16 @@ $user = $params['user'];
                 </td>
                 <td><time><?= $borrow->began ?></time></td>
                 <td><time><?= $borrow->ends ?></time></td>
+                <td>
+                    <a class="btn btn-light" href="<?=
+                        App::routeUrl(
+                            ItemController::class,
+                            'returnItem',
+                            ['id' => $borrow->item->getId()])
+                    ?>">
+                        Zwróć
+                    </a>
+                </td>
             </tr>
         <?php endforeach; ?>
         </table>

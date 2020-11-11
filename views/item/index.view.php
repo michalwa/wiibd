@@ -1,6 +1,7 @@
 <!-- extends base -->
 
 <?php
+use App\Controllers\ItemController;
 use App\Entities\Item;
 ?>
 
@@ -40,25 +41,43 @@ use App\Entities\Item;
             <div class="table-responsive-lg">
                 <table class="table table-sm" id="books">
                     <tr>
-                        <th>Numer inwentarzowy</th>
-                        <th>Tytuł</th>
-                        <th>Autor</th>
-                        <th>Rok wydania</th>
-                        <th>Stan</th>
+                        <th class="text-center align-middle">Numer inwentarzowy</th>
+                        <th class="text-center align-middle">Tytuł</th>
+                        <th class="text-center align-middle">Autor</th>
+                        <th class="text-center align-middle" colspan="2">Stan</th>
                     </tr>
                     <?php /** @var Item $item */ foreach($params['items'] as $item): ?>
-                        <tr>
-                            <td><?= $item->identifier ?></td>
-                            <td><?= $item->book->title ?></td>
-                            <td><?= implode(', ', $item->book->authors) ?></td>
-                            <td><?= $item->book->releaseYear ?></td>
-                            <td>
-                            <?php if($item->available): ?>
+                        <tr id="item-<?= $item->identifier ?>">
+                            <td class="align-baseline"><?= $item->identifier ?></td>
+                            <td class="align-baseline"><?= $item->book->title ?></td>
+                            <td class="align-baseline"><?= implode(', ', $item->book->authors) ?></td>
+                        <?php if($item->available()): ?>
+                            <td class="align-baseline">
                                 <span class="text-success">Dostępny</span>
-                            <?php else: ?>
-                                <span class="text-danger">Wypożyczony</span>
-                            <?php endif; ?>
                             </td>
+                            <td class="align-baseline">
+                                <a href="<?= App::routeUrl(
+                                    ItemController::class,
+                                    'lendItem',
+                                    ['id' => $item->getId()]) ?>"
+                                    class="btn btn-sm w-100 btn-light">
+                                    Wypożycz
+                                </a>
+                            </td>
+                        <?php else: ?>
+                            <td class="align-baseline">
+                                <span class="text-danger">Wypożyczony</span>
+                            </td>
+                            <td class="align-baseline">
+                                <a href="<?= App::routeUrl(
+                                    ItemController::class,
+                                    'returnItem',
+                                    ['id' => $item->getId()]) ?>"
+                                    class="btn btn-sm w-100 btn-light">
+                                    Zwróć
+                                </a>
+                            </td>
+                        <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </table>

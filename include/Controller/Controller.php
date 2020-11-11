@@ -40,7 +40,12 @@ abstract class Controller {
      *
      * @throws ControllerException If the route is not found or is invalid
      */
-    protected function redirect(string $name, $params = []): Response {
+    protected function redirect(
+        string $name,
+        array $params = [],
+        array $query = [],
+        ?string $fragment = null
+    ): Response {
         $route = App::getRouter()->getRoute($name);
         if($route === null) {
             throw new ControllerException("Route '".$name."' not found");
@@ -49,6 +54,13 @@ abstract class Controller {
             throw new ControllerException($route.' is not an instance of PatternRoute');
         }
         $url = '/'.App::getRootUrl()->append($route->getPattern()->render($params));
+
+        if($query !== [])
+            $url .= http_build_query($query);
+
+        if($fragment !== null)
+            $url .= '#'.$fragment;
+
         return Response::redirect($url);
     }
 
@@ -61,8 +73,13 @@ abstract class Controller {
      *
      * @throws ControllerException If the route is not found or is invalid
      */
-    protected function redirectToSelf(string $name, $params = []): Response {
-        return $this->redirect(get_called_class().'::'.$name, $params);
+    protected function redirectToSelf(
+        string $name,
+        array $params = [],
+        array $query = [],
+        ?string $fragment = null
+    ): Response {
+        return $this->redirect(get_called_class().'::'.$name, $params, $query, $fragment);
     }
 
 }
