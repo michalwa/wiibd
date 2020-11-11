@@ -69,8 +69,9 @@ use App\Entities\Item;
                             <td class="align-baseline">
                                 <a href="<?= App::routeUrl(
                                     ItemController::class,
-                                    'lendItem',
-                                    ['id' => $item->getId()]) ?>"
+                                    'lendForm',
+                                    [],
+                                    ['item' => $item->getId()]) ?>"
                                     class="btn btn-sm w-100 btn-light">
                                     Wypożycz
                                 </a>
