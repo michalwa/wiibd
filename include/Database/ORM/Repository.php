@@ -5,6 +5,7 @@ namespace Database\ORM;
 use Database\Database;
 use Database\DatabaseException;
 use Database\Query\QueryParams;
+use Database\Query\Select;
 use InvalidArgumentException;
 use Utils\Stream;
 
@@ -60,6 +61,16 @@ class Repository {
         $entity = $this->entityClass->deserialize($row);
         $this->cached[$entity->getId()] = $entity;
         return $entity;
+    }
+
+    /**
+     * Queries the database for entities with any of the given ids
+     *
+     * @param array $ids The ids of the entities to fetch
+     */
+    public function findAllById(array $ids): Stream {
+        return $this->all(fn(Select $q) => $q
+            ->where('id', 'IN', $ids));
     }
 
     /**

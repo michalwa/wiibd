@@ -32,6 +32,12 @@ class Select extends TableQuery {
     private $orderDir = 'ASC';
 
     /**
+     * GROUP BY column name
+     * @var null|string
+     */
+    private $groupBy = null;
+
+    /**
      * Constructs a SELECT query
      *
      * @param string[] $fields The fields to select
@@ -82,6 +88,18 @@ class Select extends TableQuery {
     }
 
     /**
+     * Sets the result to be grouped by the specified column
+     *
+     * @param string $columnName The column to group the records by
+     *
+     * @return self for chaining
+     */
+    public function groupBy(string $columnName): self {
+        $this->groupBy = $columnName;
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function build(QueryParams $params): string {
@@ -93,7 +111,8 @@ class Select extends TableQuery {
             .' FROM '.$this->tableName
             .($join !== '' ? ' '.$join : '')
             .($where !== '' ? ' WHERE '.$where : '')
-            .($this->orderBy !== null ? ' ORDER BY '.$this->orderBy.' '.$this->orderDir : '');
+            .($this->orderBy !== null ? ' ORDER BY '.$this->orderBy.' '.$this->orderDir : '')
+            .($this->groupBy !== null ? ' GROUP BY '.$this->groupBy : '');
     }
 
 }

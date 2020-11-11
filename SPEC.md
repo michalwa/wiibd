@@ -6,7 +6,7 @@ Wymagana funkcjonalność
     2. [x] Informacja o zalogowaniu
     3. [x] Zmiana hasła
     4. [ ] Rejestracja czytelnika
-    5. [ ] Dodaj użytkownika (bibliotekarz, czytelnik)
+    5. [ ] Usuwanie czytelnika
 
 2. [x] Wyświetl listę czytelników
     1. [x] Wyszukiwanie
@@ -22,7 +22,7 @@ Wymagana funkcjonalność
     3. [ ] Filtrowanie wg kategorii
     4. [ ] Filtrowanie wg dostępności egzemplarzy
 
-5. [ ] Dodaj książkę
+5. [x] Dodaj książkę
 
 6. [ ] Dodaj egzemplarz
 7. [ ] Wypożycz egzemplarz

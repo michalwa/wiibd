@@ -39,9 +39,8 @@ class AtomicColumnSerde implements ColumnSerde {
      * {@inheritDoc}
      */
     public function deserialize(array $record, EntityProxy $entity): void {
-        if(!key_exists($this->columnName, $record)) {
+        if(!key_exists($this->columnName, $record))
             throw new ColumnSerdeException("Value for column {$this->columnName} missing");
-        }
 
         $entity->setProperty($this->propertyName, $record[$this->columnName]);
     }

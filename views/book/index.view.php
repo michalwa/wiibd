@@ -1,6 +1,8 @@
 <!-- extends base -->
 
 <?php
+
+use App\Auth\UserSession;
 use App\Controllers\BookController;
 use App\Entities\Book;
 ?>
@@ -36,6 +38,14 @@ use App\Entities\Book;
                     </button>
                 </div>
             </form>
+
+        <?php if(UserSession::isAdmin()): ?>
+            <a href="<?= App::routeUrl(BookController::class, 'newBookForm') ?>"
+                class="btn btn-light w-100 mt-4">
+                <i class="fa fa-plus"></i>&nbsp;
+                Dodaj książkę
+            </a>
+        <?php endif; ?>
         </div>
         <div class="col-lg-9">
             <div class="table-responsive-lg">

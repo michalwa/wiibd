@@ -5,9 +5,9 @@ namespace Content\Form;
 use Http\Request;
 
 /**
- * Represents an &lt;input type="text"&gt; field
+ * Represents an &lt;input type="number"&gt; element
  */
-class TextField implements Field {
+class NumberField implements Field {
 
     /**
      * @var string
@@ -25,7 +25,7 @@ class TextField implements Field {
     private $params;
 
     /**
-     * Constructs a text input field
+     * Constructs a number input field
      */
     public function __construct(string $name, bool $required = false, array $params = []) {
         $this->name = $name;
@@ -45,9 +45,9 @@ class TextField implements Field {
      */
     public function getValue(Request $request, string $method) {
         if($method === 'GET')
-            return $request->getQuery($this->name);
+            return (int)$request->getQuery($this->name);
 
-        return $request->getPost($this->name);
+        return (int)$request->getPost($this->name);
     }
 
     /**
@@ -61,7 +61,7 @@ class TextField implements Field {
      * {@inheritDoc}
      */
     public function html(array $params = [], string $style = 'default'): string {
-        return Form::loadTemplate($style, 'text-field')
+        return Form::loadTemplate($style, 'number-field')
             ->render(array_merge([
                 'name' => $this->name,
                 'required' => $this->required,

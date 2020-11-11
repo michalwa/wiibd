@@ -12,22 +12,6 @@ function htmlescape(string $unsafe): string {
 }
 
 /**
- * Returns `true` if the length of the given iterable is equal to `0`.
- *
- * @param iterable $iterable The iterable to test
- */
-function is_empty(iterable $iterable): bool {
-    if(is_array($iterable)) {
-        return count($iterable) === 0;
-    }
-
-    foreach($iterable as $_) {
-        return false;
-    }
-    return true;
-}
-
-/**
  * Finds a predicate in the keys of `$cases` that returns `true` for `$value`,
  * then returns the value associated with that predicate or the result of calling the value
  * with `$value` as an argument, if the value is a function.

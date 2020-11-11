@@ -5,7 +5,7 @@ namespace Content\Form;
 use Http\Request;
 
 /**
- * Represents an &lt;input type="text"&gt; element
+ * Represents an &lt;input type="password"&gt; field
  */
 class PasswordField implements Field {
 
@@ -25,7 +25,7 @@ class PasswordField implements Field {
     private $params;
 
     /**
-     * Constructs a text input field
+     * Constructs a password input field
      */
     public function __construct(string $name, bool $required = false, array $params = []) {
         $this->name = $name;

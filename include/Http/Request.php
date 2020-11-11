@@ -11,6 +11,11 @@ use Files\Path;
 class Request {
 
     /**
+     * @var null|self
+     */
+    private static $current = null;
+
+    /**
      * Original, unparsed URL of the request
      * @var string
      */
@@ -74,6 +79,7 @@ class Request {
         parse_str($req['query'] ?? '', $this->query);
         $this->method = $method;
         $this->post = $post;
+
         $this->headers = $headers;
     }
 
@@ -155,11 +161,15 @@ class Request {
      * @param App $app The app
      */
     public static function get(): self {
-        return new self(
-            $_SERVER['REQUEST_METHOD'],
-            $_SERVER['REQUEST_URI'],
-            $_POST,
-            self::currentHeaders());
+        if(self::$current === null) {
+            self::$current = new self(
+                $_SERVER['REQUEST_METHOD'],
+                $_SERVER['REQUEST_URI'],
+                $_POST,
+                self::currentHeaders());
+        }
+
+        return self::$current;
     }
 
     /**

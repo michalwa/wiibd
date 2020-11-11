@@ -12,6 +12,8 @@
         integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
         crossorigin="anonymous" />
 
+    <link rel="stylesheet" href="<?= App::getPublicUrl('css/bootstrap-multiselect.css') ?>">
+
     <!-- slot head -->
 </head>
 <body>
@@ -31,5 +33,30 @@
         src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+
+    <script src="<?= App::getPublicUrl('js/bootstrap-multiselect.js') ?>"></script>
+    <script>
+        $(document).ready(function() {
+            $('select[multiple]').multiselect({
+                buttonWidth: '100%',
+                buttonClass: 'form-control',
+                buttonText: function(options, select) {
+                    if (options.length === 0) {
+                        return 'Wybierz z listy';
+                    } else {
+                        var labels = [];
+                        options.each(function() {
+                            if ($(this).attr('label') !== undefined) {
+                                labels.push($(this).attr('label'));
+                            } else {
+                                labels.push($(this).html());
+                            }
+                        });
+                        return labels.join(', ') + '';
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
