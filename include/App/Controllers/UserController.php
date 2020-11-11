@@ -51,11 +51,19 @@ class UserController extends Controller {
             ]);
         }
 
-        $borrow = Borrow::findActiveByUserId($user->getId());
+        $borrows = Borrow::findByUserId($user->getId());
+        $canDelete = true;
+        foreach($borrows as $borrow) {
+            if($borrow->active) {
+                $canDelete = false;
+                break;
+            }
+        }
 
         return View::load('user/user')->toResponse([
             'user' => $user,
-            'borrows' => $borrow,
+            'borrows' => $borrows,
+            'canDelete' => $canDelete,
         ]);
     }
 
@@ -67,7 +75,7 @@ class UserController extends Controller {
             return $this->redirect(IndexController::class.'::index');
         }
 
-        $borrows = Borrow::findActiveByUserId($user->getId());
+        $borrows = Borrow::findByUserId($user->getId())->toArray();
 
         return View::load('user/user')->toResponse([
             'self' => true,
@@ -83,8 +91,13 @@ class UserController extends Controller {
         if(UserSession::isAdmin()) {
             $user = User::getRepository()->findById($params['id']);
 
-            $borrows = Borrow::findActiveByUserId($user->getId())->toArray();
-            if(count($borrows) === 0) $user->delete();
+            $borrows = Borrow::findByUserId($user->getId())->toArray();
+            foreach($borrows as $borrow) {
+                if($borrow->active)
+                    return $this->redirect(IndexController::class.'::index');
+            }
+
+            $user->delete();
         }
 
         return $this->redirect(IndexController::class.'::index');

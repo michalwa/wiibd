@@ -15,6 +15,7 @@ class PasswordChangeController extends Controller {
 
     public const ERROR_PASSWORDS_DONT_MATCH = 'ERROR_PASSWORDS_DONT_MATCH';
     public const ERROR_INVALID_PASSWORD = 'ERROR_INVALID_PASSWORD';
+    public const ERROR_PASSWORD_TOO_WEAK = 'ERROR_PASSWORD_TOO_WEAK';
     public const SUCCESS = 'SUCCESS';
 
     /**
@@ -73,6 +74,13 @@ class PasswordChangeController extends Controller {
             ]);
         }
 
+        if(!$this->isValidPassword($new)) {
+            return View::load('user/password-form')->toResponse([
+                'form' => $this->form,
+                'info' => self::ERROR_PASSWORD_TOO_WEAK,
+            ]);
+        }
+
         $user->setPassword($new);
         $user->persist();
 
@@ -80,6 +88,23 @@ class PasswordChangeController extends Controller {
             'form' => $this->form,
             'info' => self::SUCCESS,
         ]);
+    }
+
+    private function isValidPassword(string $password): bool {
+        if(strlen($password) < 5) return false;
+
+        $hasDigit = false;
+        $hasCapital = false;
+        foreach(str_split($password) as $char) {
+            if(ctype_digit($char)) {
+                $hasDigit = true;
+            }
+            if(ctype_upper($char)) {
+                $hasCapital = true;
+            }
+        }
+
+        return $hasDigit && $hasCapital;
     }
 
 }

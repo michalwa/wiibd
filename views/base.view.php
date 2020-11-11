@@ -14,6 +14,8 @@
 
     <link rel="stylesheet" href="<?= App::getPublicUrl('css/bootstrap-multiselect.css') ?>">
 
+    <link rel="stylesheet" href="<?= App::getPublicUrl('css/common.css') ?>">
+
     <!-- slot head -->
 </head>
 <body>
@@ -63,6 +65,7 @@
                 rootSelector: '[data-toggle=danger-confirmation]',
                 title: 'Czy jesteś pewien?',
                 popout: true,
+                singleton: true,
                 btnOkLabel: 'Tak',
                 btnOkClass: 'btn btn-sm btn-danger',
                 btnOkIconClass: 'fa fa-check mr-1',

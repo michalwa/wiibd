@@ -2,6 +2,8 @@
 
 <?php
 use App\Controllers\ItemController;
+use App\Controllers\UserController;
+use App\Entities\Borrow;
 use App\Entities\Item;
 ?>
 
@@ -51,7 +53,7 @@ use App\Entities\Item;
                             <td class="align-baseline"><?= $item->identifier ?></td>
                             <td class="align-baseline"><?= $item->book->title ?></td>
                             <td class="align-baseline"><?= implode(', ', $item->book->authors) ?></td>
-                        <?php if($item->available()): ?>
+                        <?php if(($borrow = Borrow::findActiveByItemId($item->getId())) === null): ?>
                             <td class="align-baseline">
                                 <span class="text-success">Dostępny</span>
                             </td>
@@ -66,14 +68,23 @@ use App\Entities\Item;
                             </td>
                         <?php else: ?>
                             <td class="align-baseline">
-                                <span class="text-danger">Wypożyczony</span>
+                                <span class="text-danger">
+                                    Wypożyczona&nbsp;przez<br>
+                                    <a href="<?= App::routeUrl(
+                                        UserController::class,
+                                        'userDetail',
+                                        ['id' => $borrow->user->getId()]) ?>">
+                                        <?= $borrow->user ?>
+                                    </a>
+                                </span>
                             </td>
                             <td class="align-baseline">
                                 <a href="<?= App::routeUrl(
                                     ItemController::class,
                                     'returnItem',
                                     ['id' => $item->getId()]) ?>"
-                                    class="btn btn-sm w-100 btn-light">
+                                    class="btn btn-sm w-100 btn-light"
+                                    data-toggle="danger-confirmation">
                                     Zwróć
                                 </a>
                             </td>

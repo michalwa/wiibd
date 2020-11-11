@@ -6,7 +6,6 @@ use App\Controllers\UserController;
 
 <!-- begin head -->
 <title><?= App::getName() ?> | Czytelnicy</title>
-<link rel="stylesheet" href="<?= App::getPublicUrl('css/common.css') ?>">
 <!-- end -->
 
 <!-- begin body -->

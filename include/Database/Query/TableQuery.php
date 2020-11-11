@@ -54,7 +54,7 @@ abstract class TableQuery extends Query {
      *
      * @return self for chaining
      */
-    public function where(string $column, string $operator = '=', $operand = 1, string $_join = 'AND'): self {
+    public function where(string $column, ?string $operator = null, $operand = null, string $_join = 'AND'): self {
         if(count($this->where) > 0) $this->whereOps[] = $_join;
         $this->where[] = new Where($column, $operator, $operand);
         return $this;
@@ -69,7 +69,7 @@ abstract class TableQuery extends Query {
      *
      * @return self for chaining
      */
-    public function and(string $column, string $operator = '=', $operand = 1): self {
+    public function and(string $column, ?string $operator = null, $operand = null): self {
         return $this->where($column, $operator, $operand, 'AND');
     }
 
@@ -82,7 +82,7 @@ abstract class TableQuery extends Query {
      *
      * @return self for chaining
      */
-    public function or(string $column, string $operator = '=', $operand = true): self {
+    public function or(string $column, ?string $operator = null, $operand = null): self {
         return $this->where($column, $operator, $operand, 'OR');
     }
 

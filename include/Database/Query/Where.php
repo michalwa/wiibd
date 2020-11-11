@@ -30,10 +30,10 @@ class Where {
      * Constructs a where condition
      *
      * @param string $column The column to test
-     * @param string $operator The operator to use for the test
+     * @param null|string $operator The operator to use for the test
      * @param mixed $operand The second operand
      */
-    public function __construct(string $column, string $operator = '=', $operand = 1) {
+    public function __construct(string $column, ?string $operator = null, $operand = null) {
         $this->column   = $column;
         $this->operator = $operator;
         $this->operand  = $operand;
@@ -45,10 +45,17 @@ class Where {
      * @param QueryParams $params The query params to populate
      */
     public function build(QueryParams $params): string {
-        if(is_array($this->operand)) {
-            return $this->column.' '.$this->operator.' ('.$params->addAll($this->operand).')';
+        if($this->operator === null) {
+            return $this->column;
+        } elseif($this->operand === null) {
+            return $this->column.' '.$this->operator;
         }
-        return $this->column.' '.$this->operator.' '.$params->add($this->operand);
+
+        $operand = is_array($this->operand)
+            ? '('.$params->addAll($this->operand).')'
+            : $params->add($this->operand);
+
+        return $this->column.' '.$this->operator.' '.$operand;
     }
 
     /**

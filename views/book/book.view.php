@@ -2,6 +2,7 @@
 
 <?php
 use App\Controllers\AuthorController;
+use App\Controllers\ItemController;
 use App\Controllers\UserController;
 use App\Entities\Borrow;
 
@@ -76,11 +77,13 @@ $book = $params['book'];
 
         <table class="table">
             <tr>
+                <th>Numer egzemplarza</th>
                 <th>Login</th>
                 <th>Imię</th>
                 <th>Nazwisko</th>
                 <th>Data wypożyczenia</th>
                 <th>Data oddania</th>
+                <th colspan="2">Stan</th>
             </tr>
         <?php /** @var Borrow $borrow */ foreach($params['borrows'] as $borrow): ?>
         <?php $userUrl = App::routeUrl(
@@ -89,6 +92,7 @@ $book = $params['book'];
             ['id' => $borrow->user->getId()]);
         ?>
             <tr>
+                <td><?= $borrow->item->identifier ?></td>
                 <td><a href="<?= $userUrl ?>">
                     <?= $borrow->user->username ?></a></td>
                 <td><a href="<?= $userUrl ?>">
@@ -97,6 +101,26 @@ $book = $params['book'];
                     <?= $borrow->user->lastName ?></a></td>
                 <td><time><?= $borrow->began ?></time></td>
                 <td><time><?= $borrow->ends ?></time></td>
+            <?php if($borrow->active): ?>
+                <td>
+                    Wypożyczona
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-light" href="<?=
+                        App::routeUrl(
+                            ItemController::class,
+                            'returnItem',
+                            ['id' => $borrow->item->getId()])?>"
+                        data-toggle="danger-confirmation">
+                        Zwróć
+                    </a>
+                </td>
+            <?php else: ?>
+                <td>
+                    <span class="text-very-muted">Zwrócona</span>
+                </td>
+                <td></td>
+            <?php endif; ?>
             </tr>
         <?php endforeach; ?>
         </table>

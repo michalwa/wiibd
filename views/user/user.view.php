@@ -11,17 +11,13 @@ use App\Controllers\UserController;
 /** @var App\Entities\User $user */
 $user = $params['user'];
 
-$borrows = $params['borrows']->toArray();
-
 $self = isset($params['self']) && $params['self'];
 $admin = UserSession::isAdmin();
-$canDelete = count($borrows) === 0;
 ?>
 
 <!-- begin head -->
 <title><?= App::getName() ?> | <?= $user ?></title>
 <link rel="stylesheet" href="<?= App::getPublicUrl('css/product-details.css') ?>">
-<link rel="stylesheet" href="<?= App::getPublicUrl('css/common.css') ?>">
 <!-- end -->
 
 <!-- begin body -->
@@ -62,7 +58,8 @@ $canDelete = count($borrows) === 0;
                                             UserController::class,
                                             'deleteUser',
                                             ['id' => $user->getId()]); ?>"
-                                        class="dropdown-item <?= $canDelete ? '' : 'disabled' ?>"
+                                        class="dropdown-item
+                                            <?= ($params['canDelete'] ?? false) ? '' : 'disabled' ?>"
                                         data-toggle="danger-confirmation">
                                         Usuń czytelnika
                                     </a>
@@ -101,9 +98,9 @@ $canDelete = count($borrows) === 0;
                 <th>Tytuł</th>
                 <th>Data wypożyczenia</th>
                 <th>Data oddania</th>
-                <th></th>
+                <th colspan="2">Stan</th>
             </tr>
-        <?php /** @var App\Entities\Borrow $borrow */ foreach($borrows as $borrow): ?>
+        <?php /** @var App\Entities\Borrow $borrow */ foreach($params['borrows'] as $borrow): ?>
             <tr>
                 <td><?= $borrow->item->identifier ?></td>
                 <td>
@@ -117,17 +114,38 @@ $canDelete = count($borrows) === 0;
                     </a>
                 </td>
                 <td><time><?= $borrow->began ?></time></td>
-                <td><time><?= $borrow->ends ?></time></td>
                 <td>
-                    <a class="btn btn-light" href="<?=
+                <?php if($borrow->active && $borrow->ends < date('Y-m-d')): ?>
+                    <span class="text-danger" title="Spóźniony zwrot!">
+                        <time class="text-danger"><?= $borrow->ends ?></time>&nbsp;
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </span>
+                <?php else: ?>
+                    <time><?= $borrow->ends ?></time>
+                <?php endif; ?>
+                </td>
+            <?php if($borrow->active): ?>
+                <td>
+                    Wypożyczona
+                </td>
+            <?php if($admin): ?>
+                <td>
+                    <a class="btn btn-sm btn-light" href="<?=
                         App::routeUrl(
                             ItemController::class,
                             'returnItem',
-                            ['id' => $borrow->item->getId()])
-                    ?>">
+                            ['id' => $borrow->item->getId()])?>"
+                        data-toggle="danger-confirmation">
                         Zwróć
                     </a>
                 </td>
+            <?php endif; ?>
+            <?php else: ?>
+                <td>
+                    <span class="text-very-muted">Zwrócona</span>
+                </td>
+                <td></td>
+            <?php endif; ?>
             </tr>
         <?php endforeach; ?>
         </table>

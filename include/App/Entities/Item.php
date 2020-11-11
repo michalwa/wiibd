@@ -50,8 +50,8 @@ class Item extends Entity {
     public static function findAvailableByBookId(int $id): Stream {
         return self::getRepository()->all(fn(Select $q) => $q
             ->join('LEFT', 'wypozyczenia', 'id', 'egzemplarz')
-            ->groupBy('egzemplarze.id')
             ->where('egzemplarze.ksiazka', '=', $id)
-            ->and('wypozyczenia.aktywne', '=', 0));
+            ->and('(wypozyczenia.aktywne', 'IS NULL')
+            ->or('wypozyczenia.aktywne', '= 0)'));
     }
 }

@@ -42,16 +42,16 @@ class Borrow extends Entity {
     public $active;
 
     /**
-     * Finds active borrows associated with the user with the specified ID
+     * Finds borrows associated with the user with the specified ID
      *
      * @param int $id The user id to use in the query
      *
      * @return Stream<Borrow>
      */
-    public static function findActiveByUserId(int $id): Stream {
+    public static function findByUserId(int $id): Stream {
         return self::getRepository()->all(fn(Select $q) => $q
-            ->where('czytelnik', '=', $id)
-            ->and('aktywne', '=', 1));
+            ->orderBy('aktywne', 'DESC')
+            ->where('czytelnik', '=', $id));
     }
 
     /**
