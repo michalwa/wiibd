@@ -45,9 +45,9 @@ class TextField implements Field {
      */
     public function getValue(Request $request, string $method) {
         if($method === 'GET')
-            return $request->getQuery($this->name);
+            return trim($request->getQuery($this->name));
 
-        return $request->getPost($this->name);
+        return trim($request->getPost($this->name));
     }
 
     /**
