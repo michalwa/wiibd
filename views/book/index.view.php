@@ -45,7 +45,18 @@ use App\Entities\Book;
                         Tylko dostępne
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">
+                <div class="form-group">
+                    <label for="genresSelect">Gatunki</label>
+                    <select class="form-control" name="genres[]" id="genresSelect" multiple>
+                    <?php foreach($params['genres'] as $genre): ?>
+                        <option value="<?= $genre->getid() ?>"
+                            <?= in_array($genre->getId(), $params['selectedGenres'] ?? []) ? 'selected' : '' ?>>
+                            <?= $genre ?>
+                        </option>
+                    <?php endforeach; ?>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-2">
                     <i class="fa fa-search"></i>&nbsp;
                     Szukaj
                 </button>
@@ -66,7 +77,7 @@ use App\Entities\Book;
                         <th>Tytuł</th>
                         <th>Autor</th>
                         <th>Wydawnictwo</th>
-                        <th>Rok wydania</th>
+                        <th>Gatunek</th>
                         <th>Dostępność</th>
                     </tr>
                     <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
@@ -79,7 +90,7 @@ use App\Entities\Book;
                             </td>
                             <td><?= implode(', ', $book->authors) ?></td>
                             <td><?= $book->publisher ?></td>
-                            <td><?= $book->releaseYear ?></td>
+                            <td><?= implode(', ', $book->genres) ?></td>
                             <td>
                             <?php if(($n = $book->numAvailableCopies()) === 0): ?>
                                 <span class="text-danger">Niedostępna</span>

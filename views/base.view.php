@@ -51,9 +51,9 @@
                         var labels = [];
                         options.each(function() {
                             if ($(this).attr('label') !== undefined) {
-                                labels.push($(this).attr('label'));
+                                labels.push($(this).attr('label').trim());
                             } else {
-                                labels.push($(this).html());
+                                labels.push($(this).html().trim());
                             }
                         });
                         return labels.join(', ') + '';

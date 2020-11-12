@@ -51,13 +51,19 @@ class Book extends Entity {
     /**
      * Queries the repository for books matching the given search query
      */
-    public static function textSearch(string $search): Stream {
-        return self::getRepository()->all(function(Select $q) use ($search) {
+    public static function search(string $search, ?array $genres = []): Stream {
+        return self::getRepository()->all(function(Select $q) use ($search, $genres) {
             foreach(explode(' ', $search) as $term) {
                 if($term !== '') {
+                    /** @var Select $q */
                     $q = $q->where('tytul', 'LIKE', '%'.$term.'%');
                 }
             }
+
+            if($genres !== null) $q = $q
+                ->join('INNER', 'ksiazki_gatunki', 'id', 'ksiazka')
+                ->where('gatunek', 'IN', $genres);
+
             return $q;
         });
     }

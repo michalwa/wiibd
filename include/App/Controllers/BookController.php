@@ -60,16 +60,18 @@ class BookController extends Controller {
      * @Route('GET', '/books')
      */
     public function bookIndex(Request $request, $params): ?Response {
-        if($search = $request->getQuery('search')) {
-            $books = Book::textSearch($search);
-        } else {
-            $books = Book::getRepository()->all();
-        }
+        $books = Book::search(
+            $request->getQuery('search'),
+            $request->getQuery('genres'));
+
+        $genres = Genre::getRepository()->all();
 
         return View::load('book/index')->toResponse([
             'books' => $books,
-            'search' => $search,
+            'genres' => $genres,
+            'search' => $request->getQuery('search'),
             'filter' => $request->getQuery('filter'),
+            'selectedGenres' => $request->getQuery('genres'),
         ]);
     }
 
