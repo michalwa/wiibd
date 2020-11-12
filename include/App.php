@@ -93,28 +93,31 @@ class App {
     }
 
     /**
-     * Shorthand for unparsing a URL for a controller route
+     * Shorthand for unparsing a URL for a route
      *
-     * @param string $controller The class name of the controller containing the route
-     * @param string $name The name of the route (handler)
+     * @param string $name The name of the route
      * @param mixed[string] $params The parameters for the route URL
      * @param mixed[string] $query The query parameters to be appended to the URL
+     * @param null|string $fragment The fragment specifier to append to the URL
      */
     public static function routeUrl(
-        string $controller,
         string $name,
         array $params = [],
-        array $query = []
+        array $query = [],
+        ?string $fragment = null
     ): string {
-        $route = self::$router->getRoute("$controller::$name");
+        $route = self::$router->getRoute("$name");
 
         if($route === null)
-            throw new NotFoundException("Route $controller::$name not found");
+            throw new NotFoundException("Route $name not found");
 
         $url = $route->unparseUrl($params);
 
         if($query !== [])
             $url .= '?'.http_build_query($query);
+
+        if($fragment !== null)
+            $url .= '#'.$fragment;
 
         return $url;
     }

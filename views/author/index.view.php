@@ -45,11 +45,7 @@ use App\Controllers\AuthorController;
                         <th>Imię</th>
                     </tr>
                 <?php /** @var App\Entities\Author $author */ foreach($params['authors'] as $author): ?>
-                <?php $detailUrl = App::routeUrl(
-                    AuthorController::class,
-                    'authorDetail',
-                    ['id' => $author->getId()]);
-                ?>
+                <?php $detailUrl = AuthorController::routeUrl('authorDetail', ['id' => $author->getId()]); ?>
                     <tr>
                         <td>
                             <a href="<?= $detailUrl ?>">

@@ -12,7 +12,7 @@ use App\Controllers\BookController;
 <div class="container">
     <h1 class="display-2 mb-5">Witamy w naszej bibliotece!</h1>
     <a class="btn btn-primary"
-        href="<?= App::routeUrl(BookController::class, 'bookIndex') ?>">
+        href="<?= BookController::routeUrl('bookIndex') ?>">
         Przeglądaj książki
     </a>
 </div>

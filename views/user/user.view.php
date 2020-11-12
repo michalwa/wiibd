@@ -48,18 +48,13 @@ $admin = UserSession::isAdmin();
                                 <div class="dropdown-menu">
 
                                 <?php if($self): ?>
-                                    <a href="<?= App::routeUrl(PasswordChangeController::class, 'form'); ?>"
+                                    <a href="<?= PasswordChangeController::routeUrl('form'); ?>"
                                         class="dropdown-item">
                                         Zmień hasło
                                     </a>
                                 <?php elseif($admin): ?>
-                                    <a href="<?=
-                                        App::routeUrl(
-                                            UserController::class,
-                                            'deleteUser',
-                                            ['id' => $user->getId()]); ?>"
-                                        class="dropdown-item
-                                            <?= ($params['canDelete'] ?? false) ? '' : 'disabled' ?>"
+                                    <a href="<?= UserController::routeUrl('deleteUser', ['id' => $user->getId()]) ?>"
+                                        class="dropdown-item <?= ($params['canDelete'] ?? false) ? '' : 'disabled' ?>"
                                         data-toggle="danger-confirmation">
                                         Usuń czytelnika
                                     </a>
@@ -104,12 +99,7 @@ $admin = UserSession::isAdmin();
             <tr>
                 <td><?= $borrow->item->identifier ?></td>
                 <td>
-                    <a href="<?=
-                        App::routeUrl(
-                            BookController::class,
-                            'bookDetail',
-                            ['id' => $borrow->item->book->getId()])
-                    ?>">
+                    <a href="<?= BookController::routeUrl('bookDetail', ['id' => $borrow->item->book->getId()]) ?>">
                         <?= $borrow->item->book->title ?>
                     </a>
                 </td>
@@ -128,18 +118,15 @@ $admin = UserSession::isAdmin();
                 <td>
                     Wypożyczona
                 </td>
-            <?php if($admin): ?>
                 <td>
-                    <a class="btn btn-sm btn-light" href="<?=
-                        App::routeUrl(
-                            ItemController::class,
-                            'returnItem',
-                            ['id' => $borrow->item->getId()])?>"
+                <?php if($admin): ?>
+                    <a class="btn btn-sm btn-light"
+                        href="<?= ItemController::routeUrl('returnItem', ['id' => $borrow->item->getId()]) ?>"
                         data-toggle="danger-confirmation">
                         Zwróć
                     </a>
+                <?php endif; ?>
                 </td>
-            <?php endif; ?>
             <?php else: ?>
                 <td>
                     <span class="text-very-muted">Zwrócona</span>

@@ -34,38 +34,6 @@ abstract class Controller {
 
     /**
      * Returns a redirect response to the rendered URL of the specified `PatternRoute`
-     *
-     * @param string $name The name of the route to redirect to
-     * @param array $params Parameter values for the path pattern
-     *
-     * @throws ControllerException If the route is not found or is invalid
-     */
-    protected function redirect(
-        string $name,
-        array $params = [],
-        array $query = [],
-        ?string $fragment = null
-    ): Response {
-        $route = App::getRouter()->getRoute($name);
-        if($route === null) {
-            throw new ControllerException("Route '".$name."' not found");
-        }
-        if( !($route instanceof PatternRoute) ) {
-            throw new ControllerException($route.' is not an instance of PatternRoute');
-        }
-        $url = '/'.App::getRootUrl()->append($route->getPattern()->render($params));
-
-        if($query !== [])
-            $url .= http_build_query($query);
-
-        if($fragment !== null)
-            $url .= '#'.$fragment;
-
-        return Response::redirect($url);
-    }
-
-    /**
-     * Returns a redirect response to the rendered URL of the specified `PatternRoute`
      * defined in this controller class.
      *
      * @param string $name The name of the route to redirect to
@@ -79,7 +47,25 @@ abstract class Controller {
         array $query = [],
         ?string $fragment = null
     ): Response {
-        return $this->redirect(get_called_class().'::'.$name, $params, $query, $fragment);
+        return Response::redirect($this->routeUrl($name, $params, $query, $fragment));
+    }
+
+    /**
+     * Returns a URL to the specified route defined in the controller class.
+     *
+     * @param array $params The parameters to plug into the path pattern
+     * @param array $query The query parameters to append to the URL
+     * @param null|string $fragment The fragment specified to append to the URL
+     *
+     * @return string The resulting URL
+     */
+    public static function routeUrl(
+        string $name,
+        array $params = [],
+        array $query = [],
+        ?string $fragment = null
+    ): string {
+        return App::routeUrl(get_called_class().'::'.$name, $params, $query, $fragment);
     }
 
 }

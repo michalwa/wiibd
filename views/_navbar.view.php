@@ -8,6 +8,7 @@ use App\Controllers\LoginController;
 use App\Controllers\UserController;
 use App\Entities\AdminUser;
 use App\Entities\User;
+use Http\Request;
 use Utils\Session;
 
 $isadmin = false;
@@ -23,7 +24,7 @@ if($id = Session::get('user')) {
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
-    <a href="<?= App::routeUrl(IndexController::class, 'index') ?>"
+    <a href="<?= IndexController::routeUrl('index') ?>"
         class="navbar-brand">
         <?= App::getName() ?>
     </a>
@@ -46,20 +47,20 @@ if($id = Session::get('user')) {
                 <div class="dropdown-menu">
 
                     <a class="dropdown-item"
-                        href="<?= App::routeUrl(BookController::class, 'bookIndex') ?>">
+                        href="<?= BookController::routeUrl('bookIndex') ?>">
                         <i class="fa fa-book"></i>&nbsp;
                         Książki
                     </a>
 
                     <a class="dropdown-item"
-                        href="<?= App::routeUrl(AuthorController::class, 'authorIndex') ?>">
+                        href="<?= AuthorController::routeUrl('authorIndex') ?>">
                         <i class="fa fa-users"></i>&nbsp;
                         Autorzy
                     </a>
 
                 <?php if($isadmin): ?>
                     <a class="dropdown-item"
-                        href="<?= App::routeUrl(ItemController::class, 'itemIndex') ?>">
+                        href="<?= ItemController::routeUrl('itemIndex') ?>">
                         <i class="fa fa-cubes"></i>&nbsp;
                         Egzemplarze
                     </a>
@@ -80,7 +81,7 @@ if($id = Session::get('user')) {
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item"
-                        href="<?= App::routeUrl(UserController::class, 'userIndex') ?>">
+                        href="<?= UserController::routeUrl('userIndex') ?>">
                         <i class="fa fa-users"></i>&nbsp;
                         Czytelnicy
                     </a>
@@ -94,7 +95,7 @@ if($id = Session::get('user')) {
 
                 <li class="nav-item mr-2">
                     <a class="nav-link"
-                        href="<?= !$isadmin ? App::routeUrl(UserController::class, 'selfUserDetail') : '#' ?>">
+                        href="<?= !$isadmin ? UserController::routeUrl('selfUserDetail') : '#' ?>">
                         <i class="fa fa-user"></i>&nbsp;
                         Witaj, <?= $user ?>
                     </a>
@@ -102,7 +103,8 @@ if($id = Session::get('user')) {
 
                 <li class="nav-item">
                     <a class="btn btn-danger"
-                        href="<?= App::routeUrl(LoginController::class, 'logout') ?>">
+                        href="<?= LoginController::routeUrl('logout', [],
+                            ['redirect' => '/'.Request::get()->getFullPath()]) ?>">
                         <i class="fa fa-sign-out-alt"></i>&nbsp;
                         Wyloguj
                     </a>
@@ -112,7 +114,8 @@ if($id = Session::get('user')) {
 
                 <li class="nav-item">
                     <a class="btn btn-primary"
-                        href="<?= App::routeUrl(LoginController::class, 'form') ?>">
+                        href="<?= LoginController::routeUrl('form', [],
+                            ['redirect' => '/'.Request::get()->getFullPath()]) ?>">
                         <i class="fa fa-sign-in-alt"></i>&nbsp;
                         Zaloguj
                     </a>

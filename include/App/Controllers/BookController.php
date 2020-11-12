@@ -48,7 +48,7 @@ class BookController extends Controller {
             $publisherOptions[$publisher->getId()] = ''.$publisher;
         }
 
-        $this->newBookForm = (new Form('POST', App::routeUrl(self::class, 'createBook')))
+        $this->newBookForm = (new Form('POST', self::routeUrl('createBook')))
             ->addField(new TextField('title', true, ['label' => 'Tytuł']))
             ->addField(new SelectField('authors', $authorOptions, true, true, ['label' => 'Autor']))
             ->addField(new NumberField('releaseYear', true, ['min' => 1, 'label' => 'Rok wydania']))
@@ -93,7 +93,7 @@ class BookController extends Controller {
      */
     public function newBookForm(Request $request, $param): ?Response {
         if(!UserSession::isAdmin())
-            return $this->redirect(IndexController::class.'::index');
+            return Response::redirect(IndexController::routeUrl('index'));
 
         return View::load('book/new')->toResponse([
             'form' => $this->newBookForm,
@@ -105,7 +105,7 @@ class BookController extends Controller {
      */
     public function createBook(Request $request, $param): ?Response {
         if(!UserSession::isAdmin())
-            return $this->redirect(IndexController::class.'::index');
+            return Response::redirect(IndexController::routeUrl('index'));
 
         $form = $this->newBookForm;
         if(!$this->newBookForm->isValid())

@@ -32,11 +32,11 @@ class LoginController extends Controller {
     public function __construct() {
         parent::__construct();
 
-        $this->userForm = (new Form('POST', App::routeUrl(self::class, 'userLogin')))
+        $this->userForm = (new Form('POST'))
             ->addField(new TextField('username', true, ['label' => 'Login']))
             ->addField(new PasswordField('password', true, ['label' => 'Hasło']));
 
-        $this->adminForm = (new Form('POST', App::routeUrl(self::class, 'adminLogin')))
+        $this->adminForm = (new Form('POST'))
             ->addField(new TextField('username', true, ['label' => 'Login']))
             ->addField(new PasswordField('password', true, ['label' => 'Hasło']));
     }
@@ -45,6 +45,9 @@ class LoginController extends Controller {
      * @Route('GET', '/login')
      */
     public function form(Request $request, $params): ?Response {
+        $this->userForm->setAction(self::routeUrl('userLogin', [], $request->getQuery()));
+        $this->adminForm->setAction(self::routeUrl('adminLogin', [], $request->getQuery()));
+
         return View::load('login')->toResponse([
             'userForm' => $this->userForm,
             'adminForm' => $this->adminForm,
@@ -78,7 +81,11 @@ class LoginController extends Controller {
             ]);
 
         UserSession::loginUser($user);
-        return $this->redirect(IndexController::class.'::index');
+
+        if(($url = $request->getQuery('redirect')) !== null)
+            return Response::redirect($url);
+
+        return Response::redirect(IndexController::routeUrl('index'));
     }
 
     /**
@@ -108,7 +115,11 @@ class LoginController extends Controller {
             ]);
 
         UserSession::loginAdmin($user);
-        return $this->redirect(IndexController::class.'::index');
+
+        if(($url = $request->getQuery('redirect')) !== null)
+            return Response::redirect($url);
+
+        return Response::redirect(IndexController::routeUrl('index'));
     }
 
     /**
@@ -116,7 +127,11 @@ class LoginController extends Controller {
      */
     public function logout(Request $request, $params): ?Response {
         UserSession::logout();
-        return $this->redirect(IndexController::class.'::index');
+
+        if(($url = $request->getQuery('redirect')) !== null)
+            return Response::redirect($url);
+
+        return Response::redirect(IndexController::routeUrl('index'));
     }
 
 }

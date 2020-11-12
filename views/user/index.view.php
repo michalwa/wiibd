@@ -49,7 +49,7 @@ use App\Controllers\UserController;
                 </button>
             </form>
         <?php if(UserSession::isAdmin()): ?>
-            <a href="<?= App::routeUrl(UserController::class, 'newUserForm') ?>"
+            <a href="<?= UserController::routeUrl('newUserForm') ?>"
                 class="btn btn-light w-100 mt-4">
                 <i class="fa fa-plus"></i>&nbsp;
                 Dodaj czytelnika
@@ -68,12 +68,7 @@ use App\Controllers\UserController;
                     </tr>
                 <?php /** @var App\Entities\User $user */ foreach($params['users'] as $user): ?>
                 <?php if(($params['class'] ?? null) === null || $params['class'] === $user->class): ?>
-                    <?php
-                    $detailUrl = App::routeUrl(
-                        UserController::class,
-                        'userDetail',
-                        ['id' => $user->getId()])
-                    ?>
+                <?php $detailUrl = UserController::routeUrl('userDetail', ['id' => $user->getId()]) ?>
                     <tr>
                         <td>
                             <i

@@ -30,7 +30,7 @@ class UserController extends Controller {
     public function __construct() {
         parent::__construct();
 
-        $this->newUserForm = (new Form('POST', App::routeUrl(self::class, 'newUser')))
+        $this->newUserForm = (new Form('POST', self::routeUrl('newUser')))
             ->addField(new TextField('username', true, ['label' => 'Login']))
             ->addField(new PasswordField('password', true, ['label' => 'Hasło']))
             ->addField(new TextField('firstName', true, ['label' => 'Imię']))
@@ -101,9 +101,8 @@ class UserController extends Controller {
      * @Route('GET', '/me')
      */
     public function selfUserDetail(Request $request, $params): ?Response {
-        if(($user = UserSession::getUser()) === null) {
-            return $this->redirect(IndexController::class.'::index');
-        }
+        if(($user = UserSession::getUser()) === null)
+            return Response::redirect(IndexController::routeUrl('index'));
 
         $borrows = Borrow::findByUserId($user->getId())->toArray();
 
@@ -124,7 +123,7 @@ class UserController extends Controller {
             $borrows = Borrow::findByUserId($user->getId())->toArray();
             foreach($borrows as $borrow) {
                 if($borrow->active)
-                    return $this->redirect(IndexController::class.'::index');
+                    return Response::redirect(IndexController::routeUrl('index'));
 
                 $borrow->delete();
             }
@@ -132,7 +131,7 @@ class UserController extends Controller {
             $user->delete();
         }
 
-        return $this->redirect(IndexController::class.'::index');
+        return Response::redirect(IndexController::routeUrl('index'));
     }
 
     /**

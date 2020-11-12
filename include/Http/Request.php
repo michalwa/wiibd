@@ -28,7 +28,13 @@ class Request {
     private $method;
 
     /**
-     * The requested Path specified in the URL
+     * The full path specified in the URL
+     * @var Path
+     */
+    private $fullPath;
+
+    /**
+     * The path specified in the URL relative to the configured root path
      * @var Path
      */
     private $path;
@@ -74,7 +80,8 @@ class Request {
         $this->unparsed = $url;
         $req = parse_url($url);
 
-        $this->path = (new Path($req['path']))->toRelative(App::getRootUrl());
+        $this->fullPath = new Path($req['path']);
+        $this->path = $this->fullPath->toRelative(App::getRootUrl());
 
         parse_str($req['query'] ?? '', $this->query);
         $this->method = $method;
@@ -98,10 +105,17 @@ class Request {
     }
 
     /**
-     * The requested path specified in the URL
+     * The path specified in the URL relative to the configured root path
      */
     public function getPath(): Path {
         return $this->path;
+    }
+
+    /**
+     * The full path specified in the URL
+     */
+    public function getFullPath(): Path {
+        return $this->fullPath;
     }
 
     /**

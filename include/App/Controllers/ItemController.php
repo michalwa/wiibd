@@ -49,7 +49,7 @@ class ItemController extends Controller {
             $userOptions[$user->getId()] = "$user->lastName $user->firstName, $user->class";
         }
 
-        $this->lendForm = (new Form('POST', App::routeUrl(self::class, 'lendItem')))
+        $this->lendForm = (new Form('POST', self::routeUrl('lendItem')))
             ->addField(new SelectField('item', $itemOptions, true, false, ['label' => 'Egzemplarz']))
             ->addField(new SelectField('user', $userOptions, true, false, ['label' => 'Użytkownik']))
             ->addField(new DateField('began', true, ['label' => 'Data wypożyczenia', 'value' => date('Y-m-d')]))
@@ -61,7 +61,7 @@ class ItemController extends Controller {
             $bookOptions[$book->getId()] = $book->title.' ('.implode(', ', $book->authors).')';
         }
 
-        $this->newItemsForm = (new Form('POST', App::routeUrl(self::class, 'newItems')))
+        $this->newItemsForm = (new Form('POST', self::routeUrl('newItems')))
             ->addField(new SelectField('book', $bookOptions, true, false, ['label' => 'Książka']))
             ->addField(new TextField('identifiers', true, [
                 'label' => 'Numery inwentarzowe',
@@ -114,7 +114,7 @@ class ItemController extends Controller {
      */
     public function lendForm(Request $request, $params): ?Response {
         if(!UserSession::isAdmin())
-            return $this->redirect(IndexController::class.'::index');
+            return Response::redirect(IndexController::routeUrl('index'));
 
         return View::load('item/lend')->toResponse([
             'itemId' => (int)$request->getQuery('item'),
@@ -127,7 +127,7 @@ class ItemController extends Controller {
      */
     public function lendItem(Request $request, $params): ?Response {
         if(!UserSession::isAdmin())
-            return $this->redirect(IndexController::class.'::index');
+            return Response::redirect(IndexController::routeUrl('index'));
 
         $form = $this->lendForm;
 
@@ -164,7 +164,7 @@ class ItemController extends Controller {
      */
     public function newItemsForm(Request $request, $params): ?Response {
         if(!UserSession::isAdmin())
-            return $this->redirect(IndexController::class.'::index');
+            return Response::redirect(IndexController::routeUrl('index'));
 
         return View::load('item/new')->toResponse([
             'form' => $this->newItemsForm,
@@ -176,7 +176,7 @@ class ItemController extends Controller {
      */
     public function newItems(Request $request, $params): ?Response {
         if(!UserSession::isAdmin())
-            return $this->redirect(IndexController::class.'::index');
+            return Response::redirect(IndexController::routeUrl('index'));
 
         $form = $this->newItemsForm;
 

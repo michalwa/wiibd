@@ -42,7 +42,7 @@ use App\Entities\Item;
                 </div>
             </form>
         <?php if(UserSession::isAdmin()): ?>
-            <a href="<?= App::routeUrl(ItemController::class, 'newItemsForm') ?>"
+            <a href="<?= ItemController::routeUrl('newItemsForm') ?>"
                 class="btn btn-light w-100 mt-4">
                 <i class="fa fa-plus"></i>&nbsp;
                 Dodaj egzemplarze
@@ -62,10 +62,7 @@ use App\Entities\Item;
                         <tr id="item-<?= $item->identifier ?>">
                             <td class="align-baseline"><?= $item->identifier ?></td>
                             <td class="align-baseline">
-                                <a href="<?= App::routeUrl(
-                                    BookController::class,
-                                    'bookDetail',
-                                    ['id' => $item->book->getId()]) ?>">
+                                <a href="<?= BookController::routeUrl('bookDetail', ['id' => $item->book->getId()]) ?>">
                                     <?= $item->book->title ?>
                                 </a>
                             </td>
@@ -75,11 +72,7 @@ use App\Entities\Item;
                                 <span class="text-success">Dostępny</span>
                             </td>
                             <td class="align-baseline">
-                                <a href="<?= App::routeUrl(
-                                    ItemController::class,
-                                    'lendForm',
-                                    [],
-                                    ['item' => $item->getId()]) ?>"
+                                <a href="<?= ItemController::routeUrl('lendForm', [], ['item' => $item->getId()]) ?>"
                                     class="btn btn-sm w-100 btn-light">
                                     Wypożycz
                                 </a>
@@ -88,19 +81,13 @@ use App\Entities\Item;
                             <td class="align-baseline">
                                 <span class="text-danger">
                                     Wypożyczona&nbsp;przez<br>
-                                    <a href="<?= App::routeUrl(
-                                        UserController::class,
-                                        'userDetail',
-                                        ['id' => $borrow->user->getId()]) ?>">
+                                    <a href="<?= UserController::routeUrl('userDetail', ['id' => $borrow->user->getId()]) ?>">
                                         <?= $borrow->user ?>
                                     </a>
                                 </span>
                             </td>
                             <td class="align-baseline">
-                                <a href="<?= App::routeUrl(
-                                    ItemController::class,
-                                    'returnItem',
-                                    ['id' => $item->getId()]) ?>"
+                                <a href="<?= ItemController::routeUrl('returnItem', ['id' => $item->getId()]) ?>"
                                     class="btn btn-sm w-100 btn-light"
                                     data-toggle="danger-confirmation">
                                     Zwróć

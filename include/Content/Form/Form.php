@@ -51,6 +51,14 @@ class Form {
     }
 
     /**
+     * Sets the target URL for the form
+     */
+    public function setAction(string $url): self {
+        $this->action = $url;
+        return $this;
+    }
+
+    /**
      * Returns the value of the field with the specified name
      *
      * @param string $fieldName The name of the field to return the value of

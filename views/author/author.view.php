@@ -44,12 +44,7 @@ use App\Controllers\BookController;
         <?php /** @var App\Entities\Book $book */ foreach($params['books'] as $book): ?>
             <tr>
                 <td>
-                    <a href="<?=
-                        App::routeUrl(
-                            BookController::class,
-                            'bookDetail',
-                            ['id' => $book->getId()])
-                    ?>">
+                    <a href="<?= BookController::routeUrl('bookDetail', ['id' => $book->getId()]) ?>">
                         <?= $book->title ?>
                     </a>
                 </td>

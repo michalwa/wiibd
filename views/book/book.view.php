@@ -35,12 +35,9 @@ $book = $params['book'];
                                     <i class="fa fa-user" title="Autorzy"></i>
                                 <?php $first = true; foreach($book->authors as $author): ?>
                                 <?php if(!$first): ?>&bullet;<?php endif; ?>
-                                    <a href="<?=
-                                        App::routeUrl(
-                                            AuthorController::class,
-                                            'authorDetail',
-                                            ['id' => $author->getId()])
-                                    ?>"><?= $author ?></a>
+                                    <a href="<?= AuthorController::routeUrl('authorDetail', ['id' => $author->getId()]) ?>">
+                                        <?= $author ?>
+                                    </a>
                                 <?php $first = false; endforeach; ?>
                                 </li>
                                 <li>
@@ -86,11 +83,7 @@ $book = $params['book'];
                 <th colspan="2">Stan</th>
             </tr>
         <?php /** @var Borrow $borrow */ foreach($params['borrows'] as $borrow): ?>
-        <?php $userUrl = App::routeUrl(
-            UserController::class,
-            'userDetail',
-            ['id' => $borrow->user->getId()]);
-        ?>
+        <?php $userUrl = UserController::routeUrl('userDetail', ['id' => $borrow->user->getId()]); ?>
             <tr>
                 <td><?= $borrow->item->identifier ?></td>
                 <td><a href="<?= $userUrl ?>">
@@ -106,11 +99,8 @@ $book = $params['book'];
                     Wypożyczona
                 </td>
                 <td>
-                    <a class="btn btn-sm btn-light" href="<?=
-                        App::routeUrl(
-                            ItemController::class,
-                            'returnItem',
-                            ['id' => $borrow->item->getId()])?>"
+                    <a class="btn btn-sm btn-light"
+                        href="<?= ItemController::routeUrl('returnItem', ['id' => $borrow->item->getId()]) ?>"
                         data-toggle="danger-confirmation">
                         Zwróć
                     </a>

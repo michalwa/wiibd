@@ -27,7 +27,7 @@ class PasswordChangeController extends Controller {
     public function __construct() {
         parent::__construct();
 
-        $this->form = (new Form('POST', App::routeUrl(self::class, 'change')))
+        $this->form = (new Form('POST', self::routeUrl('change')))
             ->addField(new PasswordField('old', true, ['label' => 'Obecne hasło']))
             ->addField(new PasswordField('new', true, ['label' => 'Nowe hasło']))
             ->addField(new PasswordField('confirm', true, ['label' => 'Powtórz nowe hasło']));
@@ -37,9 +37,8 @@ class PasswordChangeController extends Controller {
      * @Route('GET', '/me/password')
      */
     public function form(Request $request, $param): ?Response {
-        if(!UserSession::isUser()) {
-            return $this->redirect(IndexController::class.'::index');
-        }
+        if(!UserSession::isUser())
+            return Response::redirect(IndexController::routeUrl('index'));
 
         return View::load('user/password-form')->toResponse([
             'form' => $this->form,
@@ -50,9 +49,8 @@ class PasswordChangeController extends Controller {
      * @Route('POST', '/me/password')
      */
     public function change(Request $request, $param): ?Response {
-        if(($user = UserSession::getUser()) === null) {
-            return $this->redirect(IndexController::class.'::index');
-        }
+        if(($user = UserSession::getUser()) === null)
+            return Response::redirect(IndexController::routeUrl('index'));
 
         $old = $this->form->getValue('old');
         $new = $this->form->getValue('new');

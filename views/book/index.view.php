@@ -52,7 +52,7 @@ use App\Entities\Book;
             </form>
 
         <?php if(UserSession::isAdmin()): ?>
-            <a href="<?= App::routeUrl(BookController::class, 'newBookForm') ?>"
+            <a href="<?= BookController::routeUrl('newBookForm') ?>"
                 class="btn btn-light w-100 mt-4">
                 <i class="fa fa-plus"></i>&nbsp;
                 Dodaj książkę
@@ -72,12 +72,11 @@ use App\Entities\Book;
                     <?php /** @var Book $book */ foreach($params['books'] as $book): ?>
                     <?php if($params['filter'] !== 'available' || $book->numAvailableCopies() > 0): ?>
                         <tr>
-                            <td><a href="<?= App::routeUrl(
-                                BookController::class,
-                                'bookDetail',
-                                ['id' => $book->getId()]) ?>">
-                                <?= $book->title ?></a></td>
-
+                            <td>
+                                <a href="<?= BookController::routeUrl('bookDetail', ['id' => $book->getId()]) ?>">
+                                    <?= $book->title ?>
+                                </a>
+                            </td>
                             <td><?= implode(', ', $book->authors) ?></td>
                             <td><?= $book->publisher ?></td>
                             <td><?= $book->releaseYear ?></td>
