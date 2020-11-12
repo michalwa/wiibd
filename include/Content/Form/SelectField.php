@@ -76,7 +76,7 @@ class SelectField implements Field {
     /**
      * {@inheritDoc}
      */
-    public function isValid(Request $request, string $method) {
+    public function isValid(Request $request, string $method): bool {
         return $this->getValue($request, $method) !== null;
     }
 

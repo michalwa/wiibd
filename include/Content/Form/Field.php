@@ -23,7 +23,7 @@ interface Field {
     /**
      * Tells whether the field can be used correctly based on the given request
      */
-    public function isValid(Request $request, string $method);
+    public function isValid(Request $request, string $method): bool;
 
     /**
      * Builds and returns the HTML for the field

@@ -53,8 +53,15 @@ class TextField implements Field {
     /**
      * {@inheritDoc}
      */
-    public function isValid(Request $request, string $method) {
-        return !$this->required || $this->getValue($request, $method) !== null;
+    public function isValid(Request $request, string $method): bool {
+        if(!$this->required) return true;
+        if(($value = $this->getValue($request, $method)) === null) return false;
+
+        // Make sure the string is not all spaces
+        foreach(str_split($value) as $char) {
+            if(!ctype_space($char)) return true;
+        }
+        return false;
     }
 
     /**
