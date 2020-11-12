@@ -42,11 +42,8 @@ class UserController extends Controller {
      * @Route('GET', '/users')
      */
     public function userIndex(Request $request, $params): ?Response {
-        if(!UserSession::isAdmin()) {
-            return View::load('errors/401')->toResponse([
-                'url' => $request->getPath(),
-            ]);
-        }
+        if(!UserSession::isAdmin())
+            return Response::redirect(IndexController::routeUrl('index'));
 
         if($search = $request->getQuery('search')) {
             $users = User::textSearch($search);
@@ -76,9 +73,7 @@ class UserController extends Controller {
                 return $this->redirectToSelf('selfUserDetail');
             }
 
-            return View::load('errors/401')->toResponse([
-                'url' => $request->getPath(),
-            ]);
+            return Response::redirect(IndexController::routeUrl('index'));
         }
 
         $borrows = Borrow::findByUserId($user->getId());

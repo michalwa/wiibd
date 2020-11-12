@@ -72,11 +72,8 @@ class ItemController extends Controller {
      * @Route('GET', '/items')
      */
     public function itemIndex(Request $request, $params): ?Response {
-        if(!UserSession::isAdmin()) {
-            return View::load('errors/401')->toResponse([
-                'url' => $request->getPath(),
-            ]);
-        }
+        if(!UserSession::isAdmin())
+            return Response::redirect(IndexController::routeUrl('index'));
 
         if($search = $request->getQuery('search')) {
             $items = Item::textSearch($search);
