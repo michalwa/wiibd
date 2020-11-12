@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App;
 use App\Auth\UserSession;
 use App\Entities\AdminUser;
 use App\Entities\User;

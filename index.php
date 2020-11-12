@@ -20,9 +20,7 @@ define('INCLUDE_DIR', rtrim(__DIR__, '/\\').'/include/');
 // Register an autoloader
 spl_autoload_register(function(string $class) {
     $file = INCLUDE_DIR.str_replace('\\', '/', $class).'.php';
-    if(file_exists($file)) {
-        include $file;
-    }
+    if(file_exists($file)) include $file;
 });
 
 // Read config, nitialize the app
@@ -67,7 +65,7 @@ $router->add(new PublicResourceRoute());
 include 'routes.php';
 
 // Initialize controllers
-$controllers = Files::requireAll(INCLUDE_DIR.App::getConfig('controllers.dir'), true);
+$controllers = Files::requireAll(INCLUDE_DIR.'App/Controllers', true);
 
 // Handle the request
 $request = Request::get();

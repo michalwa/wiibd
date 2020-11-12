@@ -211,8 +211,7 @@ class EntityClass {
         if(class_exists($name)) {
             return $name;
         } else {
-            $entitiesNamespace = App::getConfig('database.entities');
-            $name = $entitiesNamespace.'\\'.$name;
+            $name = 'App\\Entities\\'.$name;
 
             if(!class_exists($name)) {
                 throw new InvalidArgumentException("Entity class $name could not be found");
