@@ -2,7 +2,7 @@
 
 /*
  * This script is called by `index.php` and is meant to configure
- * the `Router` (`$router`) by registering appropriate `Routes`.
+ * the `Router` by registering appropriate `Routes`.
  */
 
 use Http\Request;
