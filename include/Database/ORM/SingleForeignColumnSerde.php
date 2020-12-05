@@ -43,14 +43,15 @@ class SingleForeignColumnSerde implements ColumnSerde {
      * {@inheritDoc}
      */
     public function serialize(EntityProxy $entity, array &$record, array &$refs): void {
-        $foreign = $entity->getProperty($this->propertyName);
-        $id = $record[$this->columnName]
-            = $foreign === null ? null : $foreign->getId();
+        if($foreign = $entity->getProperty($this->propertyName)) {
+            $id = $record[$this->columnName]
+                = $foreign === null ? null : $foreign->getId();
 
-        if($id) {
-            $refs[] = Repository
-                ::for($this->foreignEntityClassName)
-                ->findById($id);
+            if($id) {
+                $refs[] = Repository
+                    ::for($this->foreignEntityClassName)
+                    ->findById($id);
+            }
         }
     }
 
@@ -58,12 +59,14 @@ class SingleForeignColumnSerde implements ColumnSerde {
      * {@inheritDoc}
      */
     public function deserialize(array $record, EntityProxy $entity): void {
-        $foreign = Repository
-            ::for($this->foreignEntityClassName)
-            ->findById($record[$this->columnName]);
+        if($record[$this->columnName]) {
+            $foreign = Repository
+                ::for($this->foreignEntityClassName)
+                ->findById($record[$this->columnName]);
 
-        $entity->setProperty($this->propertyName, $foreign);
-        $foreign->addRef($entity->getEntity());
+            $entity->setProperty($this->propertyName, $foreign);
+            $foreign->addRef($entity->getEntity());
+        }
     }
 
     /**
