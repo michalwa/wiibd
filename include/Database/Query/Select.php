@@ -20,6 +20,24 @@ class Select extends TableQuery {
     private $joins = [];
 
     /**
+     * ORDER BY column name
+     * @var null|string
+     */
+    private $orderBy = null;
+
+    /**
+     * ORDER BY orientation
+     * @var string
+     */
+    private $orderDir = 'ASC';
+
+    /**
+     * GROUP BY column name
+     * @var null|string
+     */
+    private $groupBy = null;
+
+    /**
      * Constructs a SELECT query
      *
      * @param string[] $fields The fields to select
@@ -49,8 +67,35 @@ class Select extends TableQuery {
      *
      * @return self for chaining
      */
-    public function join(string $type, string $table, string $foreignKey): self {
-        $this->joins[] = new Join($type, $table, $foreignKey);
+    public function join(string $type, string $rightTable, string $leftKey, string $rightKey = 'id', ?string $leftTable = null): self {
+        $leftTable ??= $this->tableName;
+        $this->joins[] = new Join($type, $leftTable, $rightTable, $leftKey, $rightKey);
+        return $this;
+    }
+
+    /**
+     * Sets the result to be orderered by the specified column.
+     *
+     * @param string $columnName The column to order the results records by
+     * @param string $dir The direction in which to order the records
+     *
+     * @return self for chaining
+     */
+    public function orderBy(string $columnName, string $dir = 'ASC'): self {
+        $this->orderBy = $columnName;
+        $this->orderDir = $dir;
+        return $this;
+    }
+
+    /**
+     * Sets the result to be grouped by the specified column
+     *
+     * @param string $columnName The column to group the records by
+     *
+     * @return self for chaining
+     */
+    public function groupBy(string $columnName): self {
+        $this->groupBy = $columnName;
         return $this;
     }
 
@@ -58,14 +103,24 @@ class Select extends TableQuery {
      * {@inheritDoc}
      */
     public function build(QueryParams $params): string {
-        $fields = implode(', ', $this->fields);
-        $where = $this->whereClause($params);
-        $join = implode(' ', array_map(fn($j) => $j->build($this->tableName), $this->joins));
+        if($this->fields === ['*']) {
+            $fields = ['*', $this->tableName.'.id AS id'];
+        } else {
+            $fields = array_map(
+                fn($f) => $f === 'id' ? $this->tableName.'.id' : $f,
+                $this->fields);
+        }
+
+        $fields = implode(', ', $fields);
+        $where = $this->where === null ? '' : $this->where->build($params);
+        $join = implode(' ', array_map(fn($j) => $j->build(), $this->joins));
 
         return 'SELECT '.$fields
             .' FROM '.$this->tableName
             .($join !== '' ? ' '.$join : '')
-            .($where !== '' ? ' WHERE '.$where : '');
+            .($where !== '' ? ' WHERE '.$where : '')
+            .($this->orderBy !== null ? ' ORDER BY '.$this->orderBy.' '.$this->orderDir : '')
+            .($this->groupBy !== null ? ' GROUP BY '.$this->groupBy : '');
     }
 
 }

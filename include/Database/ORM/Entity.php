@@ -105,7 +105,7 @@ abstract class Entity {
     }
 
     public function __toString(): string {
-        return '<'.get_called_class().':'.$this->id.'>';
+        return '<'.get_called_class().($this->id !== null ? ':'.$this->id : '').'>';
     }
 
     /**

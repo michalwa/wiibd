@@ -84,7 +84,7 @@ class Response {
      * @param string $url The URL to redirect to
      * @param int $status The HTTP response status
      */
-    public static function redirect(string $url, int $status = 302): Response {
+    public static function redirect(string $url, int $status = 302): self {
         $response = new self($status);
         $response->setHeader('Location', $url);
         return $response;
@@ -97,7 +97,7 @@ class Response {
      * @param int $status The status code to send
      * @param string $charset The charset to send in the Content-Type header
      */
-    public static function text(string $text, int $status = 200, string $charset = 'utf-8'): Response {
+    public static function text(string $text, int $status = 200, string $charset = 'utf-8'): self {
         $response = new self($status);
         $response->setHeader('Content-Type', 'text/plain; charset='.$charset);
         $response->setBody($text);

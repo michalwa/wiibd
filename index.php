@@ -20,9 +20,7 @@ define('INCLUDE_DIR', rtrim(__DIR__, '/\\').'/include/');
 // Register an autoloader
 spl_autoload_register(function(string $class) {
     $file = INCLUDE_DIR.str_replace('\\', '/', $class).'.php';
-    if(file_exists($file)) {
-        include $file;
-    }
+    if(file_exists($file)) include $file;
 });
 
 // Read config, nitialize the app
@@ -31,6 +29,9 @@ App::init(__DIR__, $config);
 
 // Set error handler
 set_error_handler(function(int $errno, string $errstr, string $errfile, int $errline) {
+    while(ob_get_status()['level'] > 0)
+        ob_end_clean();
+
     View::load('errors/500')->toResponse([
         'class'   => null,
         'code'    => $errno,
@@ -64,7 +65,7 @@ $router->add(new PublicResourceRoute());
 include 'routes.php';
 
 // Initialize controllers
-$controllers = Files::requireAll(INCLUDE_DIR.App::getConfig('controllers.dir'), true);
+$controllers = Files::requireAll(INCLUDE_DIR.'App/Controllers', true);
 
 // Handle the request
 $request = Request::get();

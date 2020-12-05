@@ -27,16 +27,38 @@ class Where {
     private $operand;
 
     /**
+     * @var null|self
+     */
+    private $next = null;
+
+    /**
+     * @var null|string
+     */
+    private $nextOperator = null;
+
+    /**
      * Constructs a where condition
      *
      * @param string $column The column to test
-     * @param string $operator The operator to use for the test
+     * @param null|string $operator The operator to use for the test
      * @param mixed $operand The second operand
      */
-    public function __construct(string $column, string $operator = '=', $operand = 1) {
+    public function __construct(string $column, ?string $operator = null, $operand = null) {
         $this->column   = $column;
         $this->operator = $operator;
         $this->operand  = $operand;
+    }
+
+    /**
+     * Appends another where condition to this condition to be joined with
+     * the specified logical operator.
+     *
+     * @return self $next for chaining
+     */
+    public function append(string $operator, self $next): self {
+        $this->next = $next;
+        $this->nextOperator = $operator;
+        return $next;
     }
 
     /**
@@ -45,30 +67,24 @@ class Where {
      * @param QueryParams $params The query params to populate
      */
     public function build(QueryParams $params): string {
-        if(is_array($this->operand)) {
-            return $this->column.' '.$this->operator.' ('.$params->addAll($this->operand).')';
-        }
-        return $this->column.' '.$this->operator.' '.$params->add($this->operand);
-    }
-
-    /**
-     * Joins the given `WHERE` conditions and logical operators in to a `WHERE` clause string
-     *
-     * @param Where[] $conditions The conditons to join
-     * @param string[] $operators The logical operators to join the conditions with
-     * @param QueryParams $params The query params to populate with operands
-     */
-    public static function buildClause(iterable $conditions, iterable $operators, QueryParams $params): string {
         $str = '';
-        if(count($operators) < count($conditions) - 1) {
-            throw new InvalidArgumentException("Not enough logical operators to join");
+
+        if($this->operator === null) {
+            $str = $this->column;
+        } elseif($this->operand === null) {
+            $str = $this->column.' '.$this->operator;
+        } else {
+            $operand = is_array($this->operand)
+                ? '('.$params->addAll($this->operand).')'
+                : $params->add($this->operand);
+
+            $str = $this->column.' '.$this->operator.' '.$operand;
         }
-        for($i = 0; $i < count($conditions); $i++) {
-            if($i > 0) {
-                $str .= ' '.$operators[$i - 1].' ';
-            }
-            $str .= $conditions[$i]->build($params);
-        }
+
+        $str = ($this->next !== null
+            ? '('.$str.' '.$this->nextOperator.' '.$this->next->build($params).')'
+            : $str);
+
         return $str;
     }
 

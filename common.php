@@ -5,19 +5,10 @@
  */
 
 /**
- * Returns `true` if the length of the given iterable is equal to `0`.
- *
- * @param iterable $iterable The iterable to test
+ * Escapes the given string to be safely displayed in HTML
  */
-function is_empty(iterable $iterable): bool {
-    if(is_array($iterable)) {
-        return count($iterable) === 0;
-    }
-
-    foreach($iterable as $_) {
-        return false;
-    }
-    return true;
+function htmlescape(string $unsafe): string {
+    return htmlentities($unsafe, ENT_QUOTES, 'utf-8');
 }
 
 /**
@@ -133,4 +124,24 @@ function array_remove(array &$array, $search, bool $strict = true): void {
  */
 function array_append(array &$array, array ...$new): void {
     $array = array_merge($array, ...$new);
+}
+
+/**
+ * Finds the index of the first character of the n-th line in the given
+ * haystack string, where 0 is the first line.
+ *
+ * @param int $n The index of the line to find where 0 is the first line
+ * @param string $haystack The string to search
+ * @param string $linesep The line separator to use
+ *
+ * @return int|false The index of the first character of the n-th line or `false`
+ *         if the line cannot be found
+ */
+function linepos(int $n, string $haystack, string $linesep = "\n") {
+    $pos = 0;
+    while($n-- > 0) {
+        if(($pos = strpos($haystack, $linesep, $pos)) === false) return false;
+        $pos += strlen($linesep);
+    }
+    return $pos;
 }

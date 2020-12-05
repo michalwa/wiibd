@@ -4,12 +4,16 @@ namespace Http;
 
 use \App;
 use Files\Path;
-use Auth\Credentials;
 
 /**
  * Contains information about an HTTP request being processed
  */
 class Request {
+
+    /**
+     * @var null|self
+     */
+    private static $current = null;
 
     /**
      * Original, unparsed URL of the request
@@ -24,13 +28,13 @@ class Request {
     private $method;
 
     /**
-     * Credentials specified in the URL
-     * @var Credentials
+     * The full path specified in the URL
+     * @var Path
      */
-    private $credentials;
+    private $fullPath;
 
     /**
-     * The requested Path specified in the URL
+     * The path specified in the URL relative to the configured root path
      * @var Path
      */
     private $path;
@@ -76,13 +80,13 @@ class Request {
         $this->unparsed = $url;
         $req = parse_url($url);
 
-        $this->credentials = new Credentials($req['user'] ?? '', $req['pass'] ?? '');
-
-        $this->path = (new Path($req['path']))->toRelative(App::getRootUrl());
+        $this->fullPath = new Path($req['path']);
+        $this->path = $this->fullPath->toRelative(App::getRootUrl());
 
         parse_str($req['query'] ?? '', $this->query);
         $this->method = $method;
         $this->post = $post;
+
         $this->headers = $headers;
     }
 
@@ -101,17 +105,17 @@ class Request {
     }
 
     /**
-     * The credentials specified in the URL
-     */
-    public function getCredentials(): Credentials {
-        return $this->credentials;
-    }
-
-    /**
-     * The requested path specified in the URL
+     * The path specified in the URL relative to the configured root path
      */
     public function getPath(): Path {
         return $this->path;
+    }
+
+    /**
+     * The full path specified in the URL
+     */
+    public function getFullPath(): Path {
+        return $this->fullPath;
     }
 
     /**
@@ -122,7 +126,7 @@ class Request {
      * @return array|string
      */
     public function getQuery(?string $param = null) {
-        return $param !== null ? $this->query[$param] : $this->query;
+        return $param !== null ? ($this->query[$param] ?? null) : $this->query;
     }
 
     /**
@@ -133,7 +137,7 @@ class Request {
      * @return array|string
      */
     public function getPost(?string $param = null) {
-        return $param !== null ? $this->post[$param] : $this->post;
+        return $param !== null ? ($this->post[$param] ?? null) : $this->post;
     }
 
     /**
@@ -165,11 +169,15 @@ class Request {
      * @param App $app The app
      */
     public static function get(): self {
-        return new self(
-            $_SERVER['REQUEST_METHOD'],
-            $_SERVER['REQUEST_URI'],
-            $_POST,
-            self::currentHeaders());
+        if(self::$current === null) {
+            self::$current = new self(
+                $_SERVER['REQUEST_METHOD'],
+                $_SERVER['REQUEST_URI'],
+                $_POST,
+                self::currentHeaders());
+        }
+
+        return self::$current;
     }
 
     /**

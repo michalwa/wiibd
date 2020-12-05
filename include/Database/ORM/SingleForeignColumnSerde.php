@@ -58,10 +58,6 @@ class SingleForeignColumnSerde implements ColumnSerde {
      * {@inheritDoc}
      */
     public function deserialize(array $record, EntityProxy $entity): void {
-        if(!key_exists($this->columnName, $record)) {
-            throw new ColumnSerdeException("Value for column {$this->columnName} missing");
-        }
-
         $foreign = Repository
             ::for($this->foreignEntityClassName)
             ->findById($record[$this->columnName]);

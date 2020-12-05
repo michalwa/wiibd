@@ -14,23 +14,16 @@ abstract class TableQuery extends Query {
     protected $tableName;
 
     /**
-     * `WHERE` conditions
-     * @var Where[]
+     * `WHERE` clause root
+     * @var null|Where
      */
-    private $where = [];
+    protected $where = null;
 
     /**
-     * Logic operators for joining `WHERE` conditions
-     * @var string[]
+     * `WHERE` clause current node
+     * @var null|Where
      */
-    private $whereOps = [];
-
-    /**
-     * Builds and returns the `WHERE` clause for this query
-     */
-    protected function whereClause(QueryParams $params): string {
-        return Where::buildClause($this->where, $this->whereOps, $params);
-    }
+    private $whereCurrent = null;
 
     /**
      * Sets the table name
@@ -54,9 +47,14 @@ abstract class TableQuery extends Query {
      *
      * @return self for chaining
      */
-    public function where(string $column, string $operator = '=', $operand = 1, string $_join = 'AND'): self {
-        if(count($this->where) > 0) $this->whereOps[] = $_join;
-        $this->where[] = new Where($column, $operator, $operand);
+    public function where(string $column, ?string $operator = null, $operand = null, string $_join = 'AND'): self {
+        $where = new Where($column, $operator, $operand);
+
+        if($this->where === null) {
+            $this->where = $this->whereCurrent = $where;
+        } else {
+            $this->whereCurrent = $this->whereCurrent->append($_join, $where);
+        }
         return $this;
     }
 
@@ -69,7 +67,7 @@ abstract class TableQuery extends Query {
      *
      * @return self for chaining
      */
-    public function and(string $column, string $operator = '=', $operand = 1): self {
+    public function and(string $column, ?string $operator = null, $operand = null): self {
         return $this->where($column, $operator, $operand, 'AND');
     }
 
@@ -82,7 +80,7 @@ abstract class TableQuery extends Query {
      *
      * @return self for chaining
      */
-    public function or(string $column, string $operator = '=', $operand = true): self {
+    public function or(string $column, ?string $operator = null, $operand = null): self {
         return $this->where($column, $operator, $operand, 'OR');
     }
 

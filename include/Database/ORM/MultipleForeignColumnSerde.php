@@ -170,7 +170,7 @@ class MultipleForeignColumnSerde implements ColumnSerde {
         $result = Database
             ::select("$foreignTableName.id")
             ->from($foreignTableName)
-            ->join('INNER', $this->crossTableName, $this->rightForeignKeyColumnName)
+            ->join('INNER', $this->crossTableName, 'id', $this->rightForeignKeyColumnName)
             ->where($this->leftForeignKeyColumnName, '=', $id)
             ->execute()
             ->expect();
