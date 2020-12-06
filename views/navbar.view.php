@@ -1,5 +1,11 @@
 <?php
+
 use App\Controllers\IndexController;
+use App\Controllers\LoginController;
+use App\UserSession;
+
+$user = UserSession::user();
+
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
@@ -18,6 +24,29 @@ use App\Controllers\IndexController;
                     href="<?= IndexController::routeUrl('index') ?>">
                     Strona główna</a>
             </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto">
+        <?php if($user): ?>
+            <li class="nav-item mr-2">
+                <a href="#" class="nav-link">
+                    Witaj, <?= $user->firstName ?>!
+                </a>
+            </li>
+            <li class="nav-item">
+            <a href="<?= LoginController::routeUrl('logout') ?>"
+                    class="btn btn-danger">
+                    Wyloguj
+                </a>
+            </li>
+        <?php else: ?>
+            <li class="nav-item">
+                <a href="<?= LoginController::routeUrl('loginForm') ?>"
+                    class="btn btn-primary">
+                    Zaloguj
+                </a>
+            </li>
+        <?php endif; ?>
         </ul>
     </div>
 </nav>

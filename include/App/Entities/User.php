@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use Database\ORM\Entity;
+use Database\Query\Select;
 
 /**
  * @Table('users')
@@ -63,6 +64,12 @@ class User extends Entity {
     public function passwordEquals(string $password)
     {
         return $this->passwordHash == hash('sha512', $password);
+    }
+
+    public static function findByUsername(string $username)
+    {
+        return self::getRepository()->find(fn(Select $f) => $f
+            ->where('username', '=', $username));
     }
 
 }
